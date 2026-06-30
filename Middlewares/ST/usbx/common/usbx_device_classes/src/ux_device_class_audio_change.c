@@ -102,6 +102,9 @@ UX_SLAVE_ENDPOINT                       *endpoint;
 UCHAR                                   *frame_buffer;
 ULONG                                    stream_index;
 ULONG                                    endpoint_dir;
+#if defined(UX_DEVICE_CLASS_AUDIO_FEEDBACK_SUPPORT)
+ULONG                                    feedback_length;
+#endif
 
 
     /* Get the class container.  */
@@ -190,24 +193,24 @@ ULONG                                    endpoint_dir;
                 else
                 {
 
+                    feedback_length = endpoint -> ux_slave_endpoint_transfer_request.ux_slave_transfer_request_transfer_length;
+
                     /* We found the feedback endpoint, check its size.  */
-                    if (endpoint -> ux_slave_endpoint_transfer_request.ux_slave_transfer_request_transfer_length <
-                        (_ux_system_slave->ux_system_slave_speed == UX_HIGH_SPEED_DEVICE ? 4 : 3))
+                    if ((feedback_length <
+                         (_ux_system_slave->ux_system_slave_speed == UX_HIGH_SPEED_DEVICE ?
+                          UX_FEEDBACK_SIZE_HIGH_SPEED : UX_FEEDBACK_SIZE_FULL_SPEED)) ||
+                        (feedback_length > UX_FEEDBACK_SIZE_HIGH_SPEED))
                     {
 
                         /* Error trap!  */
                         _ux_system_error_handler(UX_SYSTEM_LEVEL_THREAD, UX_SYSTEM_CONTEXT_CLASS, UX_MEMORY_INSUFFICIENT);
 
-                        /* Frame buffer too small for endpoints.  */
+                        /* Feedback endpoint packet size must be 3 or 4 bytes.  */
                         return(UX_MEMORY_INSUFFICIENT);
                     }
 
-                    /* Set request length, uses full packet for OUT to avoid possible overflow.  */
-                    endpoint -> ux_slave_endpoint_transfer_request.ux_slave_transfer_request_requested_length =
-                        endpoint_dir == UX_ENDPOINT_OUT ?
-                        endpoint -> ux_slave_endpoint_transfer_request.ux_slave_transfer_request_transfer_length :
-                        ((_ux_system_slave -> ux_system_slave_speed == UX_HIGH_SPEED_DEVICE) ?
-                         UX_FEEDBACK_SIZE_HIGH_SPEED : UX_FEEDBACK_SIZE_FULL_SPEED);
+                    /* Keep the runtime transfer length aligned with the endpoint packet size.  */
+                    endpoint -> ux_slave_endpoint_transfer_request.ux_slave_transfer_request_requested_length = feedback_length;
 
                     /* Save it.  */
                     stream -> ux_device_class_audio_stream_feedback = endpoint;

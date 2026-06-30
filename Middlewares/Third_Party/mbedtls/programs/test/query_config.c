@@ -2668,6 +2668,14 @@ int query_config(const char *config)
     }
 #endif /* MBEDTLS_PRINTF_MS_TIME */
 
+#if defined(MBEDTLS_PLATFORM_DEV_RANDOM)
+    if( strcmp( "MBEDTLS_PLATFORM_DEV_RANDOM", config ) == 0 )
+    {
+        MACRO_EXPANSION_TO_STR( MBEDTLS_PLATFORM_DEV_RANDOM );
+        return( 0 );
+    }
+#endif /* MBEDTLS_PLATFORM_DEV_RANDOM */
+
 #if defined(MBEDTLS_CHECK_RETURN)
     if( strcmp( "MBEDTLS_CHECK_RETURN", config ) == 0 )
     {
@@ -4833,6 +4841,10 @@ void list_config(void)
 #if defined(MBEDTLS_PRINTF_MS_TIME)
     OUTPUT_MACRO_NAME_VALUE(MBEDTLS_PRINTF_MS_TIME);
 #endif /* MBEDTLS_PRINTF_MS_TIME */
+
+#if defined(MBEDTLS_PLATFORM_DEV_RANDOM)
+    OUTPUT_MACRO_NAME_VALUE(MBEDTLS_PLATFORM_DEV_RANDOM);
+#endif /* MBEDTLS_PLATFORM_DEV_RANDOM */
 
 #if defined(MBEDTLS_CHECK_RETURN)
     OUTPUT_MACRO_NAME_VALUE(MBEDTLS_CHECK_RETURN);

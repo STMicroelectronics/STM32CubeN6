@@ -2,7 +2,7 @@
 
 This project demonstrates the use of the STM32N6 video encoder and the camera pipeline.
 
-It is targeted to run on STM32N657xx device on STM32N6570-DK board from STMicroelectronics.
+It is targeted to run on STM32N657xx devices on the STM32N6570-DK board from STMicroelectronics.
 
 It allows easy testing of the following use cases:
 
@@ -13,7 +13,7 @@ This application is meant to run in internal SRAM via the Load & Run method.
 
 The application is stored in external flash and then loaded in internal RAM for execution.<br>
 
-It can also be run in dev_mode debug. 
+It can also be run in development-mode debug.
 
 For information on those modes, see the "How to use" section.
 
@@ -23,7 +23,7 @@ This example takes a camera (IMX335) input and transfers it to the video encoder
 
 The camera image is also displayed on the board's LCD screen for user feedback of what is being recorded.
 
-The video encoder output stream is saved to the SD car. 
+The video encoder output stream is saved to the SD card.
 
 For information on how to get data from the SD card after the execution of the example, see the "How to use" section.
 
@@ -111,13 +111,13 @@ Graphics, VENC, Encoding,  Hardware Encoding
 
 ### <b>Hardware and Software environment</b>
 
-  - This template runs on STM32N6 devices.
+  - This application runs on STM32N6 devices.
 
-  - This template has been tested with STMicroelectronics STM32N6570-DK (MB1939)
+  - This application has been tested with STMicroelectronics STM32N6570-DK (MB1939)
     board and can be easily tailored to any other supported device
     and development board.
     
-  - This application uses USART1 to display logs, the hyperterminal configuration is as follows:
+  - This application uses USART1 to display logs. The HyperTerminal configuration is as follows:
       - BaudRate = 115200 baud
       - Word Length = 8 Bits
       - Stop Bit = 1
@@ -148,7 +148,7 @@ Then, simply click the execute button and the program will run in debug mode.
 
 #### <b> Load & Run </b>
 
-This mode enables execution without having to connect through an IDE. The application will be stored in external memory and therefore will no require any external tools once loaded onto the board.
+This mode enables execution without having to connect through an IDE. The application will be stored in external memory and therefore will not require any external tools once loaded onto the board.
 
 It is expected that a command line environment is configured with the CubeProgrammer in its PATH.
 
@@ -160,11 +160,12 @@ It is expected that a command line environment is configured with the CubeProgra
  - Press the reset button
  - The example should execute
 
-__Note__: 2 scripts are provided as example for signing and flashing IAR or CubeIDE builds 
-  VENC_SDCard_ThreadX/Tools/flash_IAR.sh
-  VENC_SDCard_ThreadX/Tools/flash_cubeIDE.sh 
+__Note__: 2 scripts are provided as examples for signing and flashing IAR or CubeIDE builds:
 
-Please adapt the scripts to your environment 
+  - VENC_SDCard_ThreadX/Tools/flash_IAR.sh
+  - VENC_SDCard_ThreadX/Tools/flash_cubeIDE.sh
+
+Please adapt the scripts to your environment.
 
 #### <b> After execution </b>
 

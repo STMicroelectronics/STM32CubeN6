@@ -127,7 +127,7 @@ VOID tx_application_define(VOID *first_unused_memory)
   {
     /* USER CODE BEGIN UX_Byte_Pool_Error */
 
-   /* USER CODE END UX_Byte_Pool_Error */
+    /* USER CODE END UX_Byte_Pool_Error */
   }
   else
   {

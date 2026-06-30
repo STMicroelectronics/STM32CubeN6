@@ -50,9 +50,9 @@
 /*                                            resulting in version 6.1.8  */
 /*  04-25-2022     Yuxin Zhou               Modified comment(s),          */
 /*                                            resulting in version 6.1.11 */
-/*  10-31-2023     Tiejun Zhou              Modified comment(s),          */
-/*                                            supported random IP id,     */
-/*                                            resulting in version 6.3.0  */
+/*  10-31-2023      Tiejun Zhou              Modified comment(s),          */
+/*                                            supported random IP id,      */
+/*                                            resulting in version 6.3.0   */
 /*                                                                        */
 /**************************************************************************/
 
@@ -2423,6 +2423,10 @@
 #endif
 
 /* USER CODE BEGIN 2 */
+
+/* Defined, NX_PACKET structure is padded for alignment purpose. The default is no padding. */
+#define NX_PACKET_HEADER_PAD
+#define NX_PACKET_HEADER_PAD_SIZE   4
 
 /* USER CODE END 2 */
 

@@ -44,9 +44,40 @@
 <section id="update-history" class="col-sm-12 col-lg-8">
 <h1>Update history</h1>
 
+<div class="collapse">
+<input type="checkbox" id="collapse-section12" checked aria-hidden="true"> <label for="collapse-section12" aria-hidden="true"><strong>V1.4.1 / 10-April-2026</strong></label>
+<div>
+<h2 id="main-changes">Main changes</h2>
+<ul>
+<li>Add SW_Security_Level.md file.</li>
+</ul>
+
+<h2 id="dependencies">Dependencies:</h2>
+<ul>
+<li>Azure RTOS ThreadX V6.1.7 or higher</li>
+</ul>
+</div>
+</div>
 
 <div class="collapse">
-<input type="checkbox" id="collapse-section10" checked aria-hidden="true"> <label for="collapse-section10" aria-hidden="true"><strong>V1.3.2 / 26-September-2025</strong></label>
+<input type="checkbox" id="collapse-section11" aria-hidden="true"> <label for="collapse-section11" aria-hidden="true"><strong>V1.4.0 / 14-November-2025</strong></label>
+<div>
+<h2 id="main-changes">Main changes</h2>
+<ul>
+<li>Update osThreadTerminate() to delete the thread after termination.</li>
+<li>Fix osTimerDelete() to prevent freeing memory with MemFree() when the timer was created using statically allocated memory.</li>
+<li>Fix potential dereferencing of null pointers by ensuring proper order of condition checks before accessing structure members.</li>
+</ul>
+
+<h2 id="dependencies">Dependencies:</h2>
+<ul>
+<li>Azure RTOS ThreadX V6.1.7 or higher</li>
+</ul>
+</div>
+</div>
+
+<div class="collapse">
+<input type="checkbox" id="collapse-section10" aria-hidden="true"> <label for="collapse-section10" aria-hidden="true"><strong>V1.3.2 / 26-September-2025</strong></label>
 <div>
 <h2 id="main-changes">Main changes</h2>
 <ul>

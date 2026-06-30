@@ -55,8 +55,14 @@ extern "C" {
 #endif /* MCUBOOT_NS_DATA_IMAGE_NUMBER == 1 */
 #define FLOW_STEP_SAU_I_EN          0x0000d2d3U      /*!< Step SAU Init enable value */
 
+#if (MCUBOOT_APP_IMAGE_NUMBER == 2)
 #define FLOW_STEP_RIF_EN_R1         0x00043d7aU      /*!< Step RIF Region 1 Init enable value */
 #define FLOW_STEP_RIF_EN_R2         0x0001cf0eU      /*!< Step RIF Region 2 Init enable value */
+#else
+#define FLOW_STEP_RIF_EN_R1         0x00000000U      /*!< No effect on control flow */
+#define FLOW_STEP_RIF_EN_R2         0x00000000U      /*!< No effect on control flow */
+#endif
+
 #if (MCUBOOT_NS_DATA_IMAGE_NUMBER == 1)
 #define FLOW_STEP_RIF_EN_R3         0x0000e3dcU      /*!< Step RIF Region 3 Init enable value */
 #else
@@ -181,8 +187,13 @@ extern "C" {
 #endif /* MCUBOOT_NS_DATA_IMAGE_NUMBER == 1 */
 #define FLOW_STEP_SAU_I_CH          0x00036e9dU      /*!< Step SAU Init check value */
 
+#if (MCUBOOT_APP_IMAGE_NUMBER == 2)
 #define FLOW_STEP_RIF_CH_R1         0x0051ebeaU      /*!< Step RIF Region 1 Init check value */
 #define FLOW_STEP_RIF_CH_R2         0x0003717dU      /*!< Step RIF Region 2 Init check value */
+#else
+#define FLOW_STEP_RIF_CH_R1         0x00000000U      /*!< No effect on control flow */
+#define FLOW_STEP_RIF_CH_R2         0x00000000U      /*!< No effect on control flow */
+#endif
 #if (MCUBOOT_NS_DATA_IMAGE_NUMBER == 1)
 #define FLOW_STEP_RIF_CH_R3         0x00037d16U      /*!< Step SAU Region 3 Init check value */
 #else
@@ -403,9 +414,8 @@ extern "C" {
 #define FLOW_CTRL_MPU_I_EN_R9       (FLOW_CTRL_MPU_I_EN_R8 ^ FLOW_STEP_MPU_I_EN_R9)
 #define FLOW_CTRL_MPU_I_EN_R10      (FLOW_CTRL_MPU_I_EN_R9 ^ FLOW_STEP_MPU_I_EN_R10)
 #define FLOW_CTRL_MPU_S_I_EN        (FLOW_CTRL_MPU_I_EN_R10 ^ FLOW_STEP_MPU_S_I_EN)
-#define FLOW_CTRL_MPU_NS_I_EN       (FLOW_CTRL_MPU_S_I_EN ^ FLOW_STEP_MPU_NS_I_EN)
 
-#define FLOW_CTRL_MCE1_EN_R1        (FLOW_CTRL_MPU_NS_I_EN ^ FLOW_STEP_MCE1_EN_R1)
+#define FLOW_CTRL_MCE1_EN_R1        (FLOW_CTRL_MPU_S_I_EN ^ FLOW_STEP_MCE1_EN_R1)
 #define FLOW_CTRL_MCE1_EN_R2        (FLOW_CTRL_MCE1_EN_R1 ^ FLOW_STEP_MCE1_EN_R2)
 #define FLOW_CTRL_MCE1_EN_R3        (FLOW_CTRL_MCE1_EN_R2 ^ FLOW_STEP_MCE1_EN_R3)
 
@@ -455,9 +465,8 @@ extern "C" {
 #define FLOW_CTRL_MPU_I_CH_R9       (FLOW_CTRL_MPU_I_CH_R8 ^ FLOW_STEP_MPU_I_CH_R9)
 #define FLOW_CTRL_MPU_I_CH_R10      (FLOW_CTRL_MPU_I_CH_R9 ^ FLOW_STEP_MPU_I_CH_R10)
 #define FLOW_CTRL_MPU_S_I_CH        (FLOW_CTRL_MPU_I_CH_R10 ^ FLOW_STEP_MPU_S_I_CH)
-#define FLOW_CTRL_MPU_NS_I_CH       (FLOW_CTRL_MPU_S_I_CH ^ FLOW_STEP_MPU_NS_I_CH)
 
-#define FLOW_CTRL_MCE1_CH_R1             (FLOW_CTRL_MPU_NS_I_CH ^ FLOW_STEP_MCE1_CH_R1)
+#define FLOW_CTRL_MCE1_CH_R1             (FLOW_CTRL_MPU_S_I_CH ^ FLOW_STEP_MCE1_CH_R1)
 #define FLOW_CTRL_MCE1_CH_R2             (FLOW_CTRL_MCE1_CH_R1 ^ FLOW_STEP_MCE1_CH_R2)
 #define FLOW_CTRL_MCE1_CH_R3             (FLOW_CTRL_MCE1_CH_R2 ^ FLOW_STEP_MCE1_CH_R3)
 
@@ -493,7 +502,7 @@ extern "C" {
 #define FLOW_CTRL_MPU_NS_A_EN_R2    (FLOW_CTRL_MPU_NS_A_EN_R1 ^ FLOW_STEP_MPU_NS_A_EN_R2)
 #define FLOW_CTRL_MPU_NS_A_EN_R3    (FLOW_CTRL_MPU_NS_A_EN_R2 ^ FLOW_STEP_MPU_NS_A_EN_R3)
 
-#define FLOW_CTRL_MCE1_AES_LOCK     (FLOW_CTRL_MPU_NS_A_EN_R3 ^ FLOW_STEP_MCE1_AES_LOCK)
+#define FLOW_CTRL_MCE1_AES_LOCK     (FLOW_CTRL_MPU_S_A_EN_R12 ^ FLOW_STEP_MCE1_AES_LOCK)
 
 #define FLOW_CTRL_OTP_NVCNT_EN      (FLOW_CTRL_MCE1_AES_LOCK ^ FLOW_STEP_OTP_NVCNT_EN)
 #define FLOW_CTRL_OTP_DA_EN         (FLOW_CTRL_OTP_NVCNT_EN ^ FLOW_STEP_OTP_DA_EN)
@@ -515,7 +524,7 @@ extern "C" {
 #define FLOW_CTRL_MPU_NS_A_CH_R2    (FLOW_CTRL_MPU_NS_A_CH_R1 ^ FLOW_STEP_MPU_NS_A_CH_R2)
 #define FLOW_CTRL_MPU_NS_A_CH_R3    (FLOW_CTRL_MPU_NS_A_CH_R2 ^ FLOW_STEP_MPU_NS_A_CH_R3)
 
-#define FLOW_CTRL_MCE1_AES_LOCK_CH  (FLOW_CTRL_MPU_NS_A_CH_R3 ^ FLOW_STEP_MCE1_AES_LOCK_CH)
+#define FLOW_CTRL_MCE1_AES_LOCK_CH  (FLOW_CTRL_MPU_S_A_CH_R12 ^ FLOW_STEP_MCE1_AES_LOCK_CH)
 
 #define FLOW_CTRL_OTP_NVCNT_CH      (FLOW_CTRL_MCE1_AES_LOCK_CH ^ FLOW_STEP_OTP_NVCNT_CH)
 #define FLOW_CTRL_OTP_DA_CH         (FLOW_CTRL_OTP_NVCNT_CH ^ FLOW_STEP_OTP_DA_CH)

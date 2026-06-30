@@ -15,7 +15,7 @@ In addition two callback functions are needed for the USBX mass storage class de
   - USBD_STORAGE_Read used to read data through DMA from the mass storage device.
   - USBD_STORAGE_Write used to write data through DMA into the mass storage device.
 
-#### <b>Expected success behavior</b>
+### <b>Expected success behavior</b>
 
 When plugged to PC host, the STM32N6570-DK should enumerate as a USB MSC device. During the enumeration phase, device must provide host with the requested
 descriptors (device descriptor, configuration descriptor, string descriptors).
@@ -23,24 +23,28 @@ Those descriptors are used by the host driver to identify the device capabilitie
 Once the STM32N6570-DK USB device successfully completed the enumeration phase, a new removable drive appears in the system window and write/read/format
 operations can be performed as with any other removable drive.
 
-#### <b>Error behaviors</b>
+### <b>Error behaviors</b>
 
-Host PC shows that USB device does not operate as designed (MSC enumeration fails, the new removable drive appears but read, write or format operations fail).
+Host PC shows that USB device does not operate as designed (MSC enumeration fails, the new removable drive appears but read, write or format operations fail) and the red LED should start blinking.
 
-#### <b>Assumptions if any</b>
+### <b>Assumptions if any</b>
 
   - USB cable should not be unplugged during enumeration and driver installation.
   - SD card should be inserted before application is started.
 
-#### <b>Known limitations</b>
+### <b>Known limitations</b>
 
 The Eject operation is not supported yet by MSC class.
 
 ### <b>Notes</b>
 
-None
+- In FSBL main(), power domains are enabled early using:
+  HAL_PWREx_EnableVddA(), HAL_PWREx_EnableVddIO2(), HAL_PWREx_EnableVddIO3(),
+  HAL_PWREx_EnableVddIO4(), HAL_PWREx_EnableVddIO5() and HAL_PWREx_EnableVddUSB().
+  This is done before HAL_Init() to ensure required analog/IO/USB supplies are available
+  before USBPD/UCPD and USB-related initialization.
 
-#### <b>ThreadX usage hints</b>
+### <b>ThreadX usage hints</b>
 
  - ThreadX uses the Systick as time base, thus it is mandatory that the HAL uses a separate time base through the TIM IPs.
  - ThreadX is configured with 100 ticks/sec by default, this should be taken into account when using delays or timeouts at application. It is always possible to reconfigure it, by updating the "TX_TIMER_TICKS_PER_SECOND" define in the "tx_user.h" file. The update should be reflected in "tx_initialize_low_level.S" file too.
@@ -80,7 +84,7 @@ None
 
     + The "tx_initialize_low_level.S" should be also modified to enable the "USE_DYNAMIC_MEMORY_ALLOCATION" flag.
 
-#### <b>USBX usage hints</b>
+### <b>USBX usage hints</b>
 
 - None
 

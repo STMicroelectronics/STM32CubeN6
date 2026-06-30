@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32_is25wp032d.h
   * @author  MCD Application Team
-  * @brief   This file includes a driver for custom support of
-  *          ISSI IS25WP032D Nor Flash memory
+  * @brief   This file contains configuration details for support of the ISSI IS25WP032D NOR flash memory,
+  *          using EMM Custom Driver
   ******************************************************************************
   * @attention
   *

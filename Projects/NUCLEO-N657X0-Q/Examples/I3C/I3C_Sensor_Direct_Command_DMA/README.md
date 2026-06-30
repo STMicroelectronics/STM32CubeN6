@@ -71,6 +71,7 @@ NUCLEO-N657X0-Q's LEDs can be used to monitor the transfer status:
  - LED2 toggle slowly when there is an error in transmission/reception process.
 
 Terminal I/O watch the list of Get Command Code sent by Controller and associated Target data with IDE in debug mode.
+
 Depending of IDE, to watch content of Terminal I/O note that:
 
  - When resorting to EWARM IAR IDE:
@@ -81,10 +82,16 @@ Depending of IDE, to watch content of Terminal I/O note that:
 
  - When resorting to STM32CubeIDE:
    Command Code is displayed on debugger as follows: Window--> Show View--> Console.
-   In Debug configuration :
-   - Window\Debugger, select the Debug probe : ST-LINK(OpenOCD)
-   - Window\Startup,add the command "monitor arm semihosting enable"
-
+   
+   In the Debug configuration, there are two possible options:
+   
+   - Option 1:
+      - Window\Debugger, select the Debug probe : ST-LINK(OpenOCD)
+      - Window\Debugger, select the Semihosting: "mon gdb_breakpoint_override hard" and "monitor arm semihosting enable"
+   - Option 2:
+      - Window\Debugger, select the Debug probe : ST-LINK(ST-LINK GDB server)
+      - Window\Startup,add the following commands: Enable terminal mode
+      
 #### <b>Notes</b>
 
   1. Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)

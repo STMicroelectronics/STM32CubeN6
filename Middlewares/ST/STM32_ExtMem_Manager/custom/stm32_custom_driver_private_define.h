@@ -73,7 +73,6 @@ extern "C" {
   */
 #define INSTRUCTION_8D          (HAL_XSPI_INSTRUCTION_8_LINES | HAL_XSPI_INSTRUCTION_DTR_ENABLE)
 
-
 /**
   * @brief Mask for all supported instruction line modes.
   */
@@ -200,12 +199,21 @@ extern "C" {
                                  ADDRESS_MASK     | HAL_XSPI_ADDRESS_DTR_ENABLE | \
                                  DATA_MASK        | HAL_XSPI_DATA_DTR_ENABLE)
 
-
 /* Definition of possible values for Types of supported memories */
 /**
   * @brief Mask for flash memory type.
   */
 #define FLASH_TYPE_MASK                          0x1000
+
+/**
+  * @brief Mask for PSRAM memory type.
+  */
+#define PSRAM_TYPE_MASK                          0x2000
+
+/**
+  * @brief Mask for HyberBus memory type.
+  */
+#define HYPERBUS_TYPE_MASK                       0x4000
 
 /**
   * @brief Value for NOR Flash memory type.
@@ -217,12 +225,15 @@ extern "C" {
   */
 #define CUSTOM_PSRAM                             0x0002
 
+/**
+  * @brief Value for HyperRam memory type.
+  */
+#define CUSTOM_HYPERRAM                          0x0004
 
 /**
   * @brief Bit mask indicating Address is present inside configuration step.
   */
 #define CFGSTEP_ADDRESS                          0x80000000U
-
 
 /**
   * @brief Bit mask indicating DataSize access during RW operations is present inside configuration step.
@@ -240,6 +251,11 @@ extern "C" {
 #define CFGSTEP_DATASIZE_16BIT                   0x20000000U
 
 /**
+  * @brief Value for 24-bit data in configuration step.
+  */
+#define CFGSTEP_DATASIZE_24BIT                   0x40000000U
+
+/**
   * @brief Bit mask used for checking type of configuration step.
   */
 #define CFGSTEP_CONFIG_TYPE_MASK                 0x0F000000U
@@ -250,7 +266,7 @@ extern "C" {
 #define CFGSTEP_INST_CONFIG                      0x08000000U
 
 /**
-  * @brief Value for Status Register access type of configuration step.
+  * @brief Value for Register access type of configuration step.
   */
 #define CFGSTEP_REG_CONFIG                       0x04000000U
 
@@ -258,6 +274,16 @@ extern "C" {
   * @brief Value for Execute Optional config during configuration step.
   */
 #define CFGSTEP_EXEC_OPT_CONFIG                  0x02000000U
+
+/**
+  * @brief Value for Execute hyperbus register config during configuration step.
+  */
+#define CUSTOM_CFGSTEP_HYPERBUS_CONFIG           0x01000000U
+
+/**
+  * @brief Value for Execute user callback type of configuration step.
+  */
+#define CFGSTEP_USER_CALLBACK_CONFIG             0x03000000U
 
 /**
   * @brief Bit mask used for checking type of Instruction configuration step.
@@ -296,26 +322,32 @@ extern "C" {
 #define CUSTOM_CFGSTEP_BASIC_INSTRUCTION         (CFGSTEP_INST_CONFIG | CFGSTEP_INST_BASIC)
 
 /**
+  * @brief Configuration step to execute a user callback.
+  */
+#define CUSTOM_CFGSTEP_USER_CALLBACK             (CFGSTEP_USER_CALLBACK_CONFIG)
+
+/**
   * @brief Configuration step for Read then Write operations on register inside configuration.
   */
-#define CUSTOM_CFGSTEP_RW_REGISTER               (CFGSTEP_REG_CONFIG | CFGSTEP_REG_R_TYPE | CFGSTEP_REG_W_TYPE)
+#define CUSTOM_CFGSTEP_RW_REGISTER               (CFGSTEP_REG_CONFIG | CFGSTEP_DATASIZE_8BIT | \
+                                                  CFGSTEP_REG_R_TYPE | CFGSTEP_REG_W_TYPE)
 
 /**
   * @brief Configuration step for Read, Write then Read (for check) operations on register inside configuration.
   */
-#define CUSTOM_CFGSTEP_RWR_REGISTER              (CFGSTEP_REG_CONFIG |\
+#define CUSTOM_CFGSTEP_RWR_REGISTER              (CFGSTEP_REG_CONFIG | CFGSTEP_DATASIZE_8BIT | \
                                                   CFGSTEP_REG_R_TYPE | CFGSTEP_REG_W_TYPE | CFGSTEP_REG_RAW_TYPE)
 
 /**
   * @brief Configuration step for Read operations on register inside configuration.
   */
-#define CUSTOM_CFGSTEP_R_REGISTER                (CFGSTEP_REG_CONFIG | CFGSTEP_REG_R_TYPE)
+#define CUSTOM_CFGSTEP_R_REGISTER                (CFGSTEP_REG_CONFIG | CFGSTEP_DATASIZE_8BIT | CFGSTEP_REG_R_TYPE)
 
 /**
   * @brief Configuration step for Read operations on register after a Write operation
   *        (for checking value) inside configuration.
   */
-#define CUSTOM_CFGSTEP_RAW_REGISTER              (CFGSTEP_REG_CONFIG | CFGSTEP_REG_RAW_TYPE)
+#define CUSTOM_CFGSTEP_RAW_REGISTER              (CFGSTEP_REG_CONFIG | CFGSTEP_DATASIZE_8BIT | CFGSTEP_REG_RAW_TYPE)
 
 /**
   * @brief Configuration step for Write operations on register inside configuration.
@@ -323,9 +355,48 @@ extern "C" {
 #define CUSTOM_CFGSTEP_W_REGISTER                (CFGSTEP_REG_CONFIG | CFGSTEP_REG_W_TYPE)
 
 /**
+  * @brief Configuration step for Read 2 bytes operations on register inside configuration.
+  */
+#define CUSTOM_CFGSTEP_RR_REGISTER               (CFGSTEP_REG_CONFIG | CFGSTEP_DATASIZE_16BIT | CFGSTEP_REG_R_TYPE)
+
+/**
   * @brief Configuration step for Write 2 bytes operations on register inside configuration.
   */
 #define CUSTOM_CFGSTEP_WW_REGISTER               (CFGSTEP_REG_CONFIG | CFGSTEP_DATASIZE_16BIT | CFGSTEP_REG_W_TYPE)
+
+/**
+  * @brief Configuration step for Read 3 bytes operations on register inside configuration.
+  */
+#define CUSTOM_CFGSTEP_RRR_REGISTER              (CFGSTEP_REG_CONFIG | CFGSTEP_DATASIZE_24BIT | CFGSTEP_REG_R_TYPE)
+
+/**
+  * @brief Configuration step for Write 3 bytes operations on register inside configuration.
+  */
+#define CUSTOM_CFGSTEP_WWW_REGISTER              (CFGSTEP_REG_CONFIG | CFGSTEP_DATASIZE_24BIT | CFGSTEP_REG_W_TYPE)
+
+/**
+  * @brief Configuration step for HyperBUS for Read, Write then Read (for check) on register inside configuration.
+  */
+#define CUSTOM_CFGSTEP_HYPERBUS_RWR_REGISTER     (CUSTOM_CFGSTEP_HYPERBUS_CONFIG | CFGSTEP_DATASIZE_8BIT | \
+                                                  CFGSTEP_REG_R_TYPE | CFGSTEP_REG_W_TYPE | CFGSTEP_REG_RAW_TYPE)
+
+/**
+  * @brief Configuration step for HyperBUS for Read then Write on register inside configuration.
+  */
+#define CUSTOM_CFGSTEP_HYPERBUS_RW_REGISTER      (CUSTOM_CFGSTEP_HYPERBUS_CONFIG | CFGSTEP_DATASIZE_8BIT | \
+                                                  CFGSTEP_REG_R_TYPE | CFGSTEP_REG_W_TYPE)
+
+/**
+  * @brief Configuration step for HyperBUS for Read on register inside configuration.
+  */
+#define CUSTOM_CFGSTEP_HYPERBUS_R_REGISTER       (CUSTOM_CFGSTEP_HYPERBUS_CONFIG | CFGSTEP_DATASIZE_8BIT | \
+                                                  CFGSTEP_REG_R_TYPE)
+
+/**
+  * @brief Configuration step for HyperBUS for Write on register inside configuration.
+  */
+#define CUSTOM_CFGSTEP_HYPERBUS_W_REGISTER       (CUSTOM_CFGSTEP_HYPERBUS_CONFIG | CFGSTEP_DATASIZE_8BIT | \
+                                                  CFGSTEP_REG_W_TYPE)
 
 /**
   * @brief Configuration step to execute Optional configuration (New Freq, AccessMode, etc.).

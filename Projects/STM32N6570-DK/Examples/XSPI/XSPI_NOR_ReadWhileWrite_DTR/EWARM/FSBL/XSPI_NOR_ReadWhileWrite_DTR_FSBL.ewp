@@ -359,17 +359,17 @@
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$/../../FSBL/Inc</state>
           <state>$PROJ_DIR$/../../../../../../../Drivers/BSP/STM32N6570-DK</state>
-          <state>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Inc</state>
-          <state>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/CMSIS/Device/ST/STM32N6xx/Include</state>
-          <state>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Inc/Legacy</state>
-          <state>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager</state>
-          <state>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager/boot</state>
-          <state>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager/sal</state>
-          <state>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp</state>
-          <state>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager/psram</state>
-          <state>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager/sdcard</state>
-          <state>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager/user</state>
-          <state>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/CMSIS/Include</state>
+          <state>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc</state>
+          <state>$PROJ_DIR$/../../../../../../../Drivers/CMSIS/Device/ST/STM32N6xx/Include</state>
+          <state>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy</state>
+          <state>$PROJ_DIR$/../../../../../../../Drivers/CMSIS/Include</state>
+          <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager</state>
+          <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager/boot</state>
+          <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager/sal</state>
+          <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp</state>
+          <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager/psram</state>
+          <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager/sdcard</state>
+          <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager/user</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1156,40 +1156,40 @@
     <group>
       <name>STM32N6xx_HAL_Driver</name>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_bsec.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_bsec.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc_ex.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc_ex.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_gpio.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_gpio.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma_ex.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma_ex.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pwr.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pwr.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pwr_ex.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pwr_ex.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_cortex.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_cortex.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_exti.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_exti.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_xspi.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_xspi.c</name>
       </file>
     </group>
   </group>
@@ -1198,31 +1198,31 @@
     <group>
       <name>STM32_ExtMem_Manager</name>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager/stm32_extmem.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager/stm32_extmem.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager/boot/stm32_boot_xip.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager/boot/stm32_boot_xip.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager/sal/stm32_sal_xspi.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager/sal/stm32_sal_xspi.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager/sal/stm32_sal_sd.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager/sal/stm32_sal_sd.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager/psram/stm32_psram_driver.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager/psram/stm32_psram_driver.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager/sdcard/stm32_sdcard_driver.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager/sdcard/stm32_sdcard_driver.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Middlewares/ST/STM32_ExtMem_Manager/user/stm32_user_driver.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_ExtMem_Manager/user/stm32_user_driver.c</name>
       </file>
     </group>
   </group>

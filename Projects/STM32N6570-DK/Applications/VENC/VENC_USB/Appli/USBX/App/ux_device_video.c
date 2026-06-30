@@ -3,7 +3,7 @@
   ******************************************************************************
   * @file    ux_device_video.c
   * @author  MCD Application Team
-  * @brief   USBX Device Video applicative source file
+  * @brief   USBX Device Video application source file
   ******************************************************************************
   * @attention
   *
@@ -23,6 +23,8 @@
 #include "venc_app.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "st_monitor_bitrate.h"
+#include "venc_h264_config.h"
 
 /* USER CODE END Includes */
 
@@ -110,6 +112,12 @@ UINT usb_sender_session_h264_send(UX_DEVICE_CLASS_VIDEO_STREAM *stream, UCHAR *f
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+static uint32_t uvc_get_advertised_fps(void)
+{
+  uint32_t fps = GetVideoFramerate();
+
+  return (fps != 0U) ? fps : UVC_CAM_FPS_FS;
+}
 
 /* USER CODE END 0 */
 
@@ -140,7 +148,7 @@ VOID USBD_VIDEO_Activate(VOID *video_instance)
 
   /* Get the streams instances */
   ux_device_class_video_stream_get(video, 0, &stream_write);
-  //VENC_APP_EncodingStart();
+  
   /* USER CODE END USBD_VIDEO_Activate */
 
   return;
@@ -162,6 +170,7 @@ VOID USBD_VIDEO_Deactivate(VOID *video_instance)
   //VENC_APP_EncodingStop();
   /* Reset the video streams */
   stream_write = UX_NULL;
+  new_frame_requested = 1;
 
   /* USER CODE END USBD_VIDEO_Deactivate */
 
@@ -171,7 +180,7 @@ VOID USBD_VIDEO_Deactivate(VOID *video_instance)
 /**
   * @brief  USBD_VIDEO_StreamChange
   *         This function is invoked to inform application that the
-  *         alternate setting are changed.
+  *         alternate setting changes.
   * @param  video_stream: Pointer to video class stream instance.
   * @param  alternate_setting: interface alternate setting.
   * @retval none
@@ -193,7 +202,12 @@ VOID USBD_VIDEO_StreamChange(UX_DEVICE_CLASS_VIDEO_STREAM *video_stream,
   /* Update State machine */
   uvc_state = UVC_PLAY_STATUS_STREAMING;
 
-  /* Write buffers until achieve threadshold */
+  new_frame_requested = 1;
+
+  VENC_APP_EncodingStart();
+
+  
+  /* Write buffers until the threshold is reached. */
   video_write_payload(video_stream);
 
   /* Start sending valid payloads in the Video class */
@@ -277,12 +291,12 @@ UINT USBD_VIDEO_StreamRequest(UX_DEVICE_CLASS_VIDEO_STREAM *video_stream,
           /* Check device speed */
           if(_ux_system_slave->ux_system_slave_speed == UX_FULL_SPEED_DEVICE)
           {
-            video_Probe_Control.dwFrameInterval = (UVC_INTERVAL(UVC_CAM_FPS_FS));
+            video_Probe_Control.dwFrameInterval = UVC_INTERVAL(uvc_get_advertised_fps());
             video_Probe_Control.dwMaxPayloadTransferSize = USBD_VIDEO_EPIN_FS_MPS;
           }
           else
           {
-            video_Probe_Control.dwFrameInterval = (UVC_INTERVAL(UVC_CAM_FPS_HS));
+            video_Probe_Control.dwFrameInterval = UVC_INTERVAL(uvc_get_advertised_fps());
             video_Probe_Control.dwMaxPayloadTransferSize = USBD_VIDEO_EPIN_HS_MPS;
           }
 
@@ -321,12 +335,12 @@ UINT USBD_VIDEO_StreamRequest(UX_DEVICE_CLASS_VIDEO_STREAM *video_stream,
           /* Check device speed */
           if(_ux_system_slave->ux_system_slave_speed == UX_FULL_SPEED_DEVICE)
           {
-            video_Commit_Control.dwFrameInterval = (UVC_INTERVAL(UVC_CAM_FPS_FS));
+            video_Commit_Control.dwFrameInterval = UVC_INTERVAL(uvc_get_advertised_fps());
             video_Commit_Control.dwMaxPayloadTransferSize = USBD_VIDEO_EPIN_FS_MPS;
           }
           else
           {
-            video_Commit_Control.dwFrameInterval = (UVC_INTERVAL(UVC_CAM_FPS_HS));
+            video_Commit_Control.dwFrameInterval = UVC_INTERVAL(uvc_get_advertised_fps());
             video_Commit_Control.dwMaxPayloadTransferSize = USBD_VIDEO_EPIN_HS_BINTERVAL;
           }
 
@@ -435,11 +449,19 @@ UINT usb_sender_session_h264_send(UX_DEVICE_CLASS_VIDEO_STREAM *stream, UCHAR *f
 
 
 static ULONG     nal_unit_size = 0;
+static ULONG     prefix_unit_size = 0;
 ULONG            nal_video_xfer;
 static UCHAR     *nal_unit_start;
+static UCHAR     *prefix_unit_start;
 ULONG            usbd_video_ep_mps = stream->ux_device_class_video_stream_endpoint->ux_slave_endpoint_descriptor.wMaxPacketSize;
 UCHAR            *buffer;
 ULONG            buffer_length;
+ULONG            payload_capacity;
+ULONG            chunk_size;
+UCHAR            *stream_start_blob;
+ULONG            stream_start_blob_size;
+UINT             end_of_frame;
+uint32_t         monitored_frame_size;
 
 static UCHAR FID_Bit = FID_NEF_FALSE;
 
@@ -447,39 +469,54 @@ static UCHAR FID_Bit = FID_NEF_FALSE;
   {
     nal_unit_size = frame_data_size;
     nal_unit_start = frame_data;
+    prefix_unit_size = 0U;
+    prefix_unit_start = UX_NULL;
+    monitored_frame_size = (uint32_t)frame_data_size;
+
+    if (VENC_APP_PeekStreamStartBlob(&stream_start_blob, &stream_start_blob_size) == 0)
+    {
+      prefix_unit_start = stream_start_blob;
+      prefix_unit_size = stream_start_blob_size;
+      monitored_frame_size += (uint32_t)stream_start_blob_size;
+    }
+
+    monitor_bitrate("video", monitored_frame_size);
   }
   /* Get payload buffer */
   ux_device_class_video_write_payload_get(stream, &buffer, &buffer_length);
 
+  payload_capacity = usbd_video_ep_mps - PAYLOAD_HEADER_SIZE;
+  nal_video_xfer = 0U;
 
-  /*case > 1024*/
-  if (nal_unit_size > (usbd_video_ep_mps - PAYLOAD_HEADER_SIZE))
+  if ((prefix_unit_size != 0U) && (payload_capacity != 0U))
   {
-    nal_video_xfer = usbd_video_ep_mps - PAYLOAD_HEADER_SIZE;
-    nal_unit_size -= nal_video_xfer;
-    /* Set the length of the header. */
-    video_frame_buffer[0] =  PAYLOAD_HEADER_SIZE;
-    video_frame_buffer[1] = FID_Bit;
-    *(uint32_t*)((video_frame_buffer) + 2) = timestamp;
-    *(uint32_t*)((video_frame_buffer) + 6) = SOURCE_CLOCK_REF;
-
-    /* Copy the packet in the buffer */
-    ux_utility_memory_copy((video_frame_buffer + PAYLOAD_HEADER_SIZE), nal_unit_start, nal_video_xfer);
-    nal_unit_start += nal_video_xfer;
-
-    /* Copy video buffer in video frame buffer */
-    /* Add the packet header */
-    ux_utility_memory_copy(buffer, video_frame_buffer, nal_video_xfer + PAYLOAD_HEADER_SIZE);
-    SCB_CleanDCache_by_Addr(buffer, nal_video_xfer + PAYLOAD_HEADER_SIZE);
-    /* Commit payload buffer */
-    ux_device_class_video_write_payload_commit(stream, nal_video_xfer + PAYLOAD_HEADER_SIZE);
+    chunk_size = UX_MIN(prefix_unit_size, payload_capacity);
+    ux_utility_memory_copy((video_frame_buffer + PAYLOAD_HEADER_SIZE), prefix_unit_start, chunk_size);
+    prefix_unit_start += chunk_size;
+    prefix_unit_size -= chunk_size;
+    nal_video_xfer += chunk_size;
+    payload_capacity -= chunk_size;
   }
-  else
+
+  if ((nal_unit_size != 0U) && (payload_capacity != 0U))
   {
-	  nal_video_xfer = nal_unit_size;
-    /* Set the length of the header. */
-    video_frame_buffer[0] =  PAYLOAD_HEADER_SIZE;
-    video_frame_buffer[1] = FID_Bit;
+    chunk_size = UX_MIN(nal_unit_size, payload_capacity);
+    ux_utility_memory_copy((video_frame_buffer + PAYLOAD_HEADER_SIZE + nal_video_xfer), nal_unit_start, chunk_size);
+    nal_unit_start += chunk_size;
+    nal_unit_size -= chunk_size;
+    nal_video_xfer += chunk_size;
+  }
+
+  end_of_frame = ((prefix_unit_size == 0U) && (nal_unit_size == 0U)) ? UX_TRUE : UX_FALSE;
+
+  /* Set the length of the header. */
+  video_frame_buffer[0] =  PAYLOAD_HEADER_SIZE;
+  video_frame_buffer[1] = FID_Bit;
+  *(uint32_t*)((video_frame_buffer) + 2) = timestamp;
+  *(uint32_t*)((video_frame_buffer) + 6) = SOURCE_CLOCK_REF;
+
+  if (end_of_frame == UX_TRUE)
+  {
     if (FID_Bit == FID_EF_FALSE)
     {
       FID_Bit = FID_EF_TRUE;
@@ -488,22 +525,24 @@ static UCHAR FID_Bit = FID_NEF_FALSE;
     {
       FID_Bit = FID_EF_FALSE;
     }
+  }
 
-    *(uint32_t*)((video_frame_buffer) + 2) = timestamp;
-    *(uint32_t*)((video_frame_buffer) + 6) = SOURCE_CLOCK_REF;
+  /* Copy video buffer in video frame buffer */
+  /* Add the packet header */
+  ux_utility_memory_copy(buffer, video_frame_buffer, nal_video_xfer + PAYLOAD_HEADER_SIZE);
+  SCB_CleanDCache_by_Addr(buffer, nal_video_xfer + PAYLOAD_HEADER_SIZE);
+  /* Commit payload buffer */
+  ux_device_class_video_write_payload_commit(stream, nal_video_xfer + PAYLOAD_HEADER_SIZE);
 
-    /* Copy the packet in the buffer */
-    ux_utility_memory_copy((video_frame_buffer + PAYLOAD_HEADER_SIZE), nal_unit_start, nal_video_xfer);
-    /* Copy video buffer in video frame buffer */
-    /* Add the packet header */
-    ux_utility_memory_copy(buffer, video_frame_buffer, nal_video_xfer + PAYLOAD_HEADER_SIZE);
-    SCB_CleanDCache_by_Addr(buffer, nal_video_xfer + PAYLOAD_HEADER_SIZE);
-    /* Commit payload buffer */
-    ux_device_class_video_write_payload_commit(stream, nal_video_xfer + PAYLOAD_HEADER_SIZE);
+  if (end_of_frame == UX_TRUE)
+  {
     new_frame_requested = 1;
     nal_unit_start = NULL;
+    prefix_unit_start = NULL;
+    VENC_APP_ClearStreamStartBlob();
+  }
 
-    }
-    /* Return success status. */
-    return(UX_SUCCESS);
+  UX_PARAMETER_NOT_USED(marker);
+  /* Return success status. */
+  return(UX_SUCCESS);
 }

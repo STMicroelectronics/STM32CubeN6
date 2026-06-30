@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Tx_SecureLEDToggle_TrustZone_NS</name>
+	<name>Tx_SecureLEDToggle_TrustZone_AppliNonSecure</name>
 	<comment></comment>
 	<projects>
-		<project>Tx_SecureLEDToggle_TrustZone_S</project>
+		<project>Tx_SecureLEDToggle_TrustZone_AppliSecure</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -23,8 +23,8 @@
 		<nature>com.st.stm32cube.ide.mcu.MCUProjectNature</nature>
 		<nature>org.eclipse.cdt.core.cnature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCUCubeIdeServicesRevAev2ProjectNature</nature>
-		<nature>com.st.stm32cube.ide.mcu.MCUManagedMakefileProjectNature</nature>
-		<nature>com.st.stm32cube.ide.mcu.MCUEndUserDisabledTrustZoneProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUNonUnderRootProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUCubeProjectNature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCUNonSecureProjectNature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCUAppNSProjectNature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCUSingleCpuProjectNature</nature>
@@ -88,6 +88,16 @@
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_cortex.c</locationURI>
 		</link>
 		<link>
+			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma_ex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma_ex.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_exti.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_exti.c</locationURI>
@@ -128,16 +138,6 @@
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_tim_ex.c</locationURI>
 		</link>
 		<link>
-			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_uart.c</locationURI>
-		</link>
-		<link>
-			<name>Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart_ex.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_uart_ex.c</locationURI>
-		</link>
-		<link>
 			<name>Middlewares/threadx/Core/tx_block_allocate.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_block_allocate.c</locationURI>
@@ -166,16 +166,6 @@
 			<name>Middlewares/threadx/Core/tx_block_pool_initialize.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_block_pool_initialize.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_block_pool_performance_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_block_pool_performance_info_get.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_block_pool_performance_system_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_block_pool_performance_system_info_get.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/threadx/Core/tx_block_pool_prioritize.c</name>
@@ -216,16 +206,6 @@
 			<name>Middlewares/threadx/Core/tx_byte_pool_initialize.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_byte_pool_initialize.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_byte_pool_performance_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_byte_pool_performance_info_get.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_byte_pool_performance_system_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_byte_pool_performance_system_info_get.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/threadx/Core/tx_byte_pool_prioritize.c</name>
@@ -273,16 +253,6 @@
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_event_flags_initialize.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/threadx/Core/tx_event_flags_performance_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_event_flags_performance_info_get.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_event_flags_performance_system_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_event_flags_performance_system_info_get.c</locationURI>
-		</link>
-		<link>
 			<name>Middlewares/threadx/Core/tx_event_flags_set.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_event_flags_set.c</locationURI>
@@ -306,11 +276,6 @@
 			<name>Middlewares/threadx/Core/tx_initialize_kernel_setup.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_initialize_kernel_setup.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_misra.S</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/ports/cortex_m55/gnu/src/tx_misra.S</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/threadx/Core/tx_mutex_cleanup.c</name>
@@ -341,16 +306,6 @@
 			<name>Middlewares/threadx/Core/tx_mutex_initialize.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_mutex_initialize.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_mutex_performance_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_mutex_performance_info_get.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_mutex_performance_system_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_mutex_performance_system_info_get.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/threadx/Core/tx_mutex_prioritize.c</name>
@@ -401,16 +356,6 @@
 			<name>Middlewares/threadx/Core/tx_queue_initialize.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_queue_initialize.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_queue_performance_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_queue_performance_info_get.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_queue_performance_system_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_queue_performance_system_info_get.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/threadx/Core/tx_queue_prioritize.c</name>
@@ -466,16 +411,6 @@
 			<name>Middlewares/threadx/Core/tx_semaphore_initialize.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_semaphore_initialize.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_semaphore_performance_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_semaphore_performance_info_get.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_semaphore_performance_system_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_semaphore_performance_system_info_get.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/threadx/Core/tx_semaphore_prioritize.c</name>
@@ -548,16 +483,6 @@
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/ports/cortex_m55/gnu/src/tx_thread_interrupt_restore.S</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/threadx/Core/tx_thread_performance_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_thread_performance_info_get.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_thread_performance_system_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_thread_performance_system_info_get.c</locationURI>
-		</link>
-		<link>
 			<name>Middlewares/threadx/Core/tx_thread_preemption_change.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_thread_preemption_change.c</locationURI>
@@ -586,11 +511,6 @@
 			<name>Middlewares/threadx/Core/tx_thread_schedule.S</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/ports/cortex_m55/gnu/src/tx_thread_schedule.S</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_thread_secure_stack.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/ports/cortex_m55/gnu/src/tx_thread_secure_stack.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/threadx/Core/tx_thread_secure_stack_allocate.S</name>
@@ -743,16 +663,6 @@
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/ports/cortex_m55/gnu/src/tx_timer_interrupt.S</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/threadx/Core/tx_timer_performance_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_timer_performance_info_get.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_timer_performance_system_info_get.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_timer_performance_system_info_get.c</locationURI>
-		</link>
-		<link>
 			<name>Middlewares/threadx/Core/tx_timer_system_activate.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_timer_system_activate.c</locationURI>
@@ -766,66 +676,6 @@
 			<name>Middlewares/threadx/Core/tx_timer_thread_entry.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_timer_thread_entry.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_trace_buffer_full_notify.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_trace_buffer_full_notify.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_trace_disable.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_trace_disable.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_trace_enable.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_trace_enable.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_trace_event_filter.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_trace_event_filter.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_trace_event_unfilter.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_trace_event_unfilter.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_trace_initialize.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_trace_initialize.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_trace_interrupt_control.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_trace_interrupt_control.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_trace_isr_enter_insert.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_trace_isr_enter_insert.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_trace_isr_exit_insert.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_trace_isr_exit_insert.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_trace_object_register.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_trace_object_register.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_trace_object_unregister.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_trace_object_unregister.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/threadx/Core/tx_trace_user_event_insert.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/tx_trace_user_event_insert.c</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/threadx/Core/txe_block_allocate.c</name>

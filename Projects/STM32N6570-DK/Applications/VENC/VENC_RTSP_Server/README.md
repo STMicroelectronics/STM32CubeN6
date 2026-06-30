@@ -3,13 +3,16 @@
 
 This application demonstrates the H.264 video encoder streaming through Azure RTOS NetX/NetXDuo on the STM32N6570-DK board.
 
-It enables testing of the following H.264 encoding use cases:
+It enables testing of the following use cases:
 
-  - Frame mode or Hardware Handshake mode (also known as Slice mode or Streaming mode)
-  - 1080p, 720p, or 480p
-
+- H.264 encoding in 1080p, 720p, or 480p, in Frame mode or Hardware Handshake mode (also known as Slice mode or Streaming mode)
+- H.264 encoding with optional uncompressed audio (PCM)
 
 The application streams encoded H.264 video with optional audio.
+
+- H.264 encoding with optional compressed audio (Opus)
+
+The application streams encoded H.264 video with optional compressed audio.
 
 Frames are transmitted through the Ethernet peripheral using the RTP (Real-time Transport Protocol) to a remote client, such as VLC media player or ffmpeg.
 
@@ -54,7 +57,7 @@ The following threads are created.
 - The board IP address is printed on HyperTerminal at 115200 baud
 
 #####  <b>Playback using ffplay</b>
-Playback with low latency can be done using ffplay ;
+Playback with low latency can be done using ffplay:
 ```sh
 ffplay -flags low_delay rtsp://[IP]
 ```
@@ -81,7 +84,7 @@ Note: This application was tested with VLC version 3.0.19  **using Live555 plugi
 
 - The application uses DHCP to acquire an IP address; thus, a DHCP server should be reachable by the board in the RTL used to test the application.
 - The application is configuring the Ethernet IP with a static predefined <i>MAC Address</i>. Ensure to change it if multiple boards are connected on the same RTL to avoid any potential network traffic issues.
-- The <i>MAC Address</i> is defined in the `main.c`
+- The <i>MAC Address</i> is defined in the `main.c` file.
 
 ```
 void MX_ETH_Init(void)
@@ -100,23 +103,25 @@ The RTSP server is minimalist and does not support multiple client connections/d
 
 #### <b>ThreadX usage hints</b>
 
- - ThreadX uses the Systick as time base, thus it is mandatory that the HAL uses a separate time base through the TIM IPs.
- - ThreadX is configured with 100 ticks/sec by default, this should be considered when using delays or timeouts at application. It can be reconfigured by updating the "TX_TIMER_TICKS_PER_SECOND" define in the "tx_user.h" file. The update should be reflected in "tx_initialize_low_level.S" file too.
- - ThreadX is disabling all interrupts during kernel start-up to avoid any unexpected behavior, therefore all system related calls (HAL, BSP) should be done either at the beginning of the application or inside the thread entry functions.
- - ThreadX offers the "tx_application_define()" function, that is automatically called by the tx_kernel_enter() API.
-   It is highly recommended to use it to create all applications ThreadX related resources (threads, semaphores, memory pools...)  but it should not in any way contain a system API call (HAL or BSP).
- - Using dynamic memory allocation requires to apply some changes to the linker file.
-   ThreadX needs to pass a pointer to the first free memory location in RAM to the tx_application_define() function using the first_unused_memory argument.
-   This requires changes in the linker files to expose this memory location.
-    + For EWARM add the following section into the .icf file:
+- ThreadX uses SysTick as its time base, thus it is mandatory that the HAL uses a separate time base through a TIM peripheral.
+- ThreadX is configured with 100 ticks/sec by default. This should be considered when using delays or timeouts in the application. It can be reconfigured by updating the "TX_TIMER_TICKS_PER_SECOND" define in the "tx_user.h" file. The update should be reflected in the "tx_initialize_low_level.S" file too.
+- ThreadX is disabling all interrupts during kernel start-up to avoid any unexpected behavior, therefore all system related calls (HAL, BSP) should be done either at the beginning of the application or inside the thread entry functions.
+- ThreadX offers the "tx_application_define()" function, that is automatically called by the tx_kernel_enter() API.
+  It is highly recommended to use it to create all application ThreadX-related resources (threads, semaphores, memory pools...), but it should not contain any system API call (HAL or BSP).
+- Using dynamic memory allocation requires applying some changes to the linker file.
+  ThreadX needs to pass a pointer to the first free memory location in RAM to the tx_application_define() function using the first_unused_memory argument.
+  This requires changes in the linker files to expose this memory location.
+  - For EWARM add the following section into the .icf file:
+
      ```
-	 place in RAM_region    { last section FREE_MEM };
+     place in RAM_region    { last section FREE_MEM };
+     ```
 
 
 #### <b>NetX Duo usage hints</b>
 
 - Depending on the application scenario, the total TX and RX descriptors may need to be increased by updating respectively  the "ETH_TX_DESC_CNT" and "ETH_RX_DESC_CNT" in the "stm32n6xx_hal_conf.h", to ensure the application correct behaviour, but this will cost extra memory to allocate.
-- The NetXDuo application needs to allocate a specific pool in a uncached section.
+- The NetXDuo application needs to allocate a specific pool in an uncached section.
 Below is an example of the declaration of the nx pool.
 
 ```
@@ -145,7 +150,7 @@ RTOS, Network, ThreadX, NetXDuo, RTP, RTSP, TCP, UDP, UART
   - This application runs on STM32N657xx devices.
   - This application has been tested with STMicroelectronics STM32N6570-DK boards Revision MB1939-N6570-A03 and can be easily tailored to any other supported device and development board.
 
-  - This application uses USART1 to display logs, the hyperterminal configuration is as follows:
+  - This application uses USART1 to display logs. The HyperTerminal configuration is as follows:
       - BaudRate = 115200 baud
       - Word Length = 8 Bits
       - Stop Bit = 1
@@ -183,12 +188,12 @@ It is expected that a command line environment is configured with the CubeProgra
  - The example should execute
 
 
-__Note__: 2 scripts are provided as example for signing and flashing IAR or CubeIDE builds :
+__Note__: 2 scripts are provided as examples for signing and flashing IAR or CubeIDE builds:
 
-  - VENC_RTSP_Server/Tools/flash_IAR.sh
-  - VENC_RTSP_Server/Tools/flash_cubeIDE.sh
+  - VENC_RTSP_Server_v1.4.0/Tools/flash_IAR.sh
+  - VENC_RTSP_Server_v1.4.0/Tools/flash_cubeIDE.sh
 
-Please adapt the scripts to your environment 
+Please adapt the scripts to your environment.
 
 #### <b> Adding a header </b>
 

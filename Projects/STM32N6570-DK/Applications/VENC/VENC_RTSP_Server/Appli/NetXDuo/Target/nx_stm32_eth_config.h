@@ -41,7 +41,10 @@
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
+#if (ETH_MTL_TX_Q_CNT > 1U) && (ETH_MTL_RX_Q_CNT > 1U) && \
+	(ETH_DMA_TX_CH_CNT > 1U) && (ETH_DMA_RX_CH_CNT > 1U)
 #define  MULTI_QUEUE_FEATURE
+#endif
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/

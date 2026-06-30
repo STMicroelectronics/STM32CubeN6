@@ -75,9 +75,13 @@
 
 /* Flash area IDs */
 #define FLASH_AREA_0_ID                 (1)
+#if (MCUBOOT_APP_IMAGE_NUMBER == 2)
 #define FLASH_AREA_1_ID                 (2)
+#endif
 #define FLASH_AREA_2_ID                 (3)
+#if (MCUBOOT_APP_IMAGE_NUMBER == 2)
 #define FLASH_AREA_3_ID                 (4)
+#endif
 #if (MCUBOOT_S_DATA_IMAGE_NUMBER == 1)
 #define FLASH_AREA_4_ID                 (5)
 #endif /* MCUBOOT_S_DATA_IMAGE_NUMBER == 1 */
@@ -104,8 +108,13 @@
 #define FLASH_AREA_BL2_SECONDARY_OFFSET (0x40000)
 
 /* BL2 partitions size */
+#if MCUBOOT_APP_IMAGE_NUMBER == 2
 #define FLASH_S_PARTITION_SIZE          (0x10000) /* 64 KB for S partition */
-#define FLASH_NS_PARTITION_SIZE         (0x20000) /* 128 KB for NS partition */
+#else
+#define FLASH_S_PARTITION_SIZE          (0x20000) /* 128 KB for S partition */
+#endif
+
+#define FLASH_NS_PARTITION_SIZE         (0x20000) /* 128 KB for NS partition, change it to 0 KB in case of full secure appli */
 #define FLASH_PARTITION_SIZE            (FLASH_S_PARTITION_SIZE + FLASH_NS_PARTITION_SIZE)
 
 #define FLASH_MAX_APP_PARTITION_SIZE    ((FLASH_S_PARTITION_SIZE >   \
@@ -128,12 +137,18 @@
                                          FLASH_S_DATA_PARTITION_SIZE : \
                                          FLASH_NS_DATA_PARTITION_SIZE)
 #define FLASH_MAX_PARTITION_SIZE        ((FLASH_MAX_APP_PARTITION_SIZE >   \
-                                         FLASH_MAX_DATA_PARTITION_SIZE) ? \
-                                         FLASH_MAX_APP_PARTITION_SIZE : \
-                                         FLASH_MAX_DATA_PARTITION_SIZE)
+                                         FLASH_MAX_DATA_PARTITION_SIZE) ?  \
+                                         ((FLASH_MAX_APP_PARTITION_SIZE >  \
+                                           FLASH_AREA_SCRATCH_SIZE) ?      \
+                                           FLASH_MAX_APP_PARTITION_SIZE :  \
+                                           FLASH_AREA_SCRATCH_SIZE) :      \
+                                         ((FLASH_MAX_DATA_PARTITION_SIZE > \
+                                           FLASH_AREA_SCRATCH_SIZE) ?      \
+                                           FLASH_MAX_DATA_PARTITION_SIZE : \
+                                           FLASH_AREA_SCRATCH_SIZE))
 
 /* BL2 flash areas */
-#define FLASH_AREA_BEGIN_OFFSET         (FLASH_AREA_BL2_SECONDARY_OFFSET + FLASH_AREA_BL2_SIZE)
+#define FLASH_AREA_BEGIN_OFFSET         (FLASH_AREA_BL2_SECONDARY_OFFSET + FLASH_AREA_BL2_SIZE + FLASH_AREA_SCRATCH_SIZE)
 #define FLASH_AREA_BEGIN_ADDRESS        (FLASH_BASE_ADDRESS + FLASH_AREA_BEGIN_OFFSET)
 #define FLASH_AREAS_DEVICE_ID           (FLASH_DEVICE_ID - FLASH_DEVICE_ID)
 

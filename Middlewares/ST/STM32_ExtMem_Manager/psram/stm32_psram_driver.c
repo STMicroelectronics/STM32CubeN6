@@ -141,11 +141,12 @@ EXTMEM_DRIVER_PSRAM_StatusTypeDef EXTMEM_DRIVER_PSRAM_Init(void *Peripheral, EXT
 
   switch (Config)
   {
+#if defined (HAL_XSPI_DATA_16_LINES)
     case EXTMEM_LINK_CONFIG_16LINES:
       linkvalue = PHY_LINK_RAM16;
       (void)SAL_XSPI_MemoryConfig(&PsramObject->psram_private.SALObject, PARAM_PHY_LINK, &linkvalue);
       break;
-
+#endif /* HAL_XSPI_DATA_16_LINES */
     case EXTMEM_LINK_CONFIG_8LINES:
       linkvalue = PHY_LINK_RAM8;
       (void)SAL_XSPI_MemoryConfig(&PsramObject->psram_private.SALObject, PARAM_PHY_LINK, &linkvalue);
@@ -240,6 +241,8 @@ EXTMEM_DRIVER_PSRAM_StatusTypeDef PSRAM_ExecuteCommand(EXTMEM_DRIVER_PSRAM_Objec
 {
   EXTMEM_DRIVER_PSRAM_StatusTypeDef retr = EXTMEM_DRIVER_PSRAM_OK;
   uint8_t regval[2];
+  const uint16_t mask16  = PsramObject->psram_public.config[Index].WriteMask;
+  const uint16_t value16 = PsramObject->psram_public.config[Index].WriteValue;
 
   if (PsramObject->psram_public.ReadREGSize > 2u)
   {
@@ -247,18 +250,64 @@ EXTMEM_DRIVER_PSRAM_StatusTypeDef PSRAM_ExecuteCommand(EXTMEM_DRIVER_PSRAM_Objec
     goto error;
   }
 
-  if (HAL_OK != SAL_XSPI_Read(&PsramObject->psram_private.SALObject,
-                              PsramObject->psram_public.ReadREG,
-                              PsramObject->psram_public.config[Index].REGAddress,
-                              regval, PsramObject->psram_public.ReadREGSize))
+  /* Optimization:
+   * - If the mask fully overwrites the register, the read-back value has no effect.
+   * - For 8-bit register access (ReadREGSize==1), a 0x00FF legacy mask becomes 0xFF after cast.
+   */
+  if ((PsramObject->psram_public.ReadREGSize == 1u) && (((uint8_t)mask16) == 0xFFu))
   {
-    retr = EXTMEM_DRIVER_PSRAM_ERROR_READREG;
-    goto error;
+    regval[0] = (uint8_t)value16;
   }
+  else if ((PsramObject->psram_public.ReadREGSize == 2u) && (mask16 == 0xFFFFu))
+  {
+    /* Wire order: MSB first. */
+    regval[0] = (uint8_t)((value16 >> 8) & 0x00FFu);
+    regval[1] = (uint8_t)(value16 & 0x00FFu);
+  }
+  else
+  {
+    if (HAL_OK != SAL_XSPI_Read(&PsramObject->psram_private.SALObject,
+                                PsramObject->psram_public.ReadREG,
+                                PsramObject->psram_public.config[Index].REGAddress,
+                                regval, PsramObject->psram_public.ReadREGSize))
+    {
+      retr = EXTMEM_DRIVER_PSRAM_ERROR_READREG;
+      goto error;
+    }
 
-  MODIFY_REG(regval[0],
-             PsramObject->psram_public.config[Index].WriteMask,
-             PsramObject->psram_public.config[Index].WriteValue);
+    if (PsramObject->psram_public.ReadREGSize == 1u)
+    {
+      /* 8-bit register: apply low 8-bit mask/value on the single returned byte. */
+      MODIFY_REG(regval[0], (uint8_t)mask16, (uint8_t)value16);
+    }
+    else
+    {
+      /* Register access over 2 bytes:
+       * - Legacy configs used 8-bit mask/value even when ReadREGSize==2 (protocol requires 2 bytes on the bus).
+       * - New configs can use full 16-bit mask/value to update both bytes.
+       */
+
+      /* Backward compatibility:
+       * If the upper byte of BOTH mask and value is 0x00, treat the provided low 8 bits as targeting
+       * the first transmitted byte (regval[0]) only; regval[1] stays as-read.
+       */
+      if (((mask16 & 0xFF00u) == 0u) && ((value16 & 0xFF00u) == 0u))
+      {
+        MODIFY_REG(regval[0], (uint8_t)mask16, (uint8_t)value16);
+      }
+      else
+      {
+        /* 16-bit mode (wire order): MSB updates regval[0], LSB updates regval[1]. */
+        const uint8_t mask0  = (uint8_t)((mask16 >> 8) & 0x00FFu);
+        const uint8_t value0 = (uint8_t)((value16 >> 8) & 0x00FFu);
+        const uint8_t mask1  = (uint8_t)(mask16 & 0x00FFu);
+        const uint8_t value1 = (uint8_t)(value16 & 0x00FFu);
+
+        MODIFY_REG(regval[0], mask0, value0);
+        MODIFY_REG(regval[1], mask1, value1);
+      }
+    }
+  }
 
   if (HAL_OK != SAL_XSPI_Write(&PsramObject->psram_private.SALObject,
                                PsramObject->psram_public.WriteREG,

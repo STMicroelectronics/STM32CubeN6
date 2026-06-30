@@ -22,12 +22,13 @@
 #ifndef APP_AZURE_RTOS_H
 #define APP_AZURE_RTOS_H
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
 
 #include "app_threadx.h"
+#include "stm32n6xx_hal.h"
 #include "app_azure_rtos_config.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -51,6 +52,7 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
+
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
@@ -63,5 +65,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
 #endif /* APP_AZURE_RTOS_H */

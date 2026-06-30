@@ -119,6 +119,8 @@ typedef struct UX_DCD_STM32_ED_STRUCT
     UCHAR           ux_dcd_stm32_ed_index;
     UCHAR           ux_dcd_stm32_ed_direction;
     UCHAR           reserved;
+    ULONG           ux_stm32_ed_interval_mask;
+    ULONG           ux_stm32_ed_interval_position;
 } UX_DCD_STM32_ED;
 
 
@@ -145,9 +147,16 @@ ULONG ep_dir = ep_addr & 0x80u;
 #endif /* defined(UX_DEVICE_BIDIRECTIONAL_ENDPOINT_SUPPORT) */
 ULONG ep_num = ep_addr & 0x7Fu;
 
+    if ((dcd_stm32 == UX_NULL) || (dcd_stm32 -> pcd_handle == UX_NULL))
+    {
+        return(UX_NULL);
+    }
+
     if (ep_num >= UX_DCD_STM32_MAX_ED ||
         ep_num >= dcd_stm32->pcd_handle->Init.dev_endpoints)
+    {
         return(UX_NULL);
+    }
 
 #if defined(UX_DEVICE_BIDIRECTIONAL_ENDPOINT_SUPPORT)
     if (ep_dir)
@@ -170,6 +179,11 @@ UINT    _ux_dcd_stm32_function(UX_SLAVE_DCD *dcd, UINT function, VOID *parameter
 UINT    _ux_dcd_stm32_initialize_complete(VOID);
 VOID    _ux_dcd_stm32_interrupt_handler(VOID);
 UINT    _ux_dcd_stm32_transfer_abort(UX_DCD_STM32 *dcd_stm32, UX_SLAVE_TRANSFER *transfer_request);
+#if defined(USBD_HAL_ISOINCOMPLETE_CALLBACK)
+VOID    _ux_dcd_stm32_iso_endpoint_state_reset(UCHAR ep_addr);
+VOID    _ux_dcd_stm32_iso_submit_pending_set(UCHAR ep_addr);
+UCHAR   _ux_dcd_stm32_iso_slot_locked_get(UCHAR ep_addr);
+#endif /* defined(USBD_HAL_ISOINCOMPLETE_CALLBACK) */
 
 #if !defined(UX_DEVICE_STANDALONE)
 UINT    _ux_dcd_stm32_transfer_request(UX_DCD_STM32 *dcd_stm32, UX_SLAVE_TRANSFER *transfer_request);

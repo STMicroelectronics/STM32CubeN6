@@ -1,3 +1,4 @@
+
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -22,7 +23,7 @@
 #ifndef APP_AZURE_RTOS_CONFIG_H
 #define APP_AZURE_RTOS_CONFIG_H
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -40,9 +41,9 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 /* Using static memory allocation via threadX Byte memory pools */
 
-#define USE_STATIC_ALLOCATION                1
+#define USE_STATIC_ALLOCATION                    1
 
-#define TX_APP_MEM_POOL_SIZE                 (2 * 1024)
+#define TX_APP_MEM_POOL_SIZE                     2  * 1024
 
 /* USER CODE BEGIN EC */
 
@@ -66,5 +67,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
 #endif /* APP_AZURE_RTOS_CONFIG_H */

@@ -41,7 +41,13 @@ In CDC_ACM application, two requests are implemented:
 USBPD Consumer :
 
   This application initialize the type C port 1 in sink mode with only one PDO at 5V.
-<b>Notes</b>
+
+#### <b>Notes</b>
+
+- In FSBL main(), power domains are enabled early using:
+  HAL_PWREx_EnableVddA(), HAL_PWREx_EnableVddIO2(), HAL_PWREx_EnableVddIO3(),
+  HAL_PWREx_EnableVddIO4(), and HAL_PWREx_EnableVddIO5().
+  This helps ensure required analog/IO supplies are available before peripheral initialization.
 
 - Receiving data over UART is handled by interrupt while transmitting is handled by DMA allowing hence the application to receive data at the same time it is transmitting another data (full-duplex feature).
 - The support of the VCP interface is managed through the ST Virtual COM Port driver available for download from www.st.com.

@@ -50,9 +50,9 @@
 /*                                            resulting in version 6.1.8  */
 /*  04-25-2022     Yuxin Zhou               Modified comment(s),          */
 /*                                            resulting in version 6.1.11 */
-/*  10-31-2023     Tiejun Zhou              Modified comment(s),          */
-/*                                            supported random IP id,     */
-/*                                            resulting in version 6.3.0  */
+/*  10-31-2023      Tiejun Zhou              Modified comment(s),          */
+/*                                            supported random IP id,      */
+/*                                            resulting in version 6.3.0   */
 /*                                                                        */
 /**************************************************************************/
 
@@ -953,33 +953,33 @@
    sending an ARP probe. The default value is one second
    (1 * NX_IP_PERIODIC_RATE). */
 /*
-#define NX_DHCP_ARP_PROBE_WAIT                  (1 * NX_IP_PERIODIC_RATE)
+#define NX_DHCP_ARP_PROBE_WAIT  				(1 * NX_IP_PERIODIC_RATE)
 */
 
 /* Defines the minimum variation in the interval between sending ARP probes.
    The value is defaulted to 1 second. */
 /*
-#define NX_DHCP_ARP_PROBE_MIN                   (1 * NX_IP_PERIODIC_RATE)
+#define NX_DHCP_ARP_PROBE_MIN           		(1 * NX_IP_PERIODIC_RATE)
 */
 
 /* Defines the maximum variation in the interval between sending ARP probes.
    The value is defaulted to 2 seconds. */
 /*
-#define NX_DHCP_ARP_PROBE_MAX                   (2 * NX_IP_PERIODIC_RATE)
+#define NX_DHCP_ARP_PROBE_MAX           		(2 * NX_IP_PERIODIC_RATE)
 */
 
 /* Defines the number of ARP probes sent for determining if the IP address
    assigned by the DHCP server is already in use. The value is defaulted to
    3 probes. */
 /*
-#define NX_DHCP_ARP_PROBE_NUM                   3
+#define NX_DHCP_ARP_PROBE_NUM           		3
 */
 
 /* Defines the length of time the DHCP Client waits to restart DHCP if the IP
    address assigned to the DHCP Client is already in use. The value is defaulted
    to 10 seconds. */
 /*
-#define NX_DHCP_RESTART_WAIT                    (10 * NX_IP_PERIODIC_RATE)
+#define NX_DHCP_RESTART_WAIT            		(10 * NX_IP_PERIODIC_RATE)
 */
 
 /* Specifies the maximum number of interface records to save to the DHCP Client
@@ -987,7 +987,7 @@
    running on a specific interface. The default value is set as physical
    interfaces count (NX_MAX_PHYSICAL_INTERFACES). */
 /*
-#define NX_DHCP_CLIENT_MAX_RECORDS              (NX_MAX_PHYSICAL_INTERFACES)
+#define NX_DHCP_CLIENT_MAX_RECORDS      		(NX_MAX_PHYSICAL_INTERFACES)
 */
 
 /* Defined, this enables the DHCP Client to send maximum DHCP message size
@@ -1006,12 +1006,12 @@
 /* Priority of the DHCP thread. By default, this value specifies that the DHCP
    thread runs at priority 3. */
 /*
-#define NX_DHCP_THREAD_PRIORITY                 3
+#define NX_DHCP_THREAD_PRIORITY         		3
 */
 
 /* Size of the DHCP thread stack. By default, the size is 4096 bytes. */
 /*
-#define NX_DHCP_THREAD_STACK_SIZE               (4096)
+#define NX_DHCP_THREAD_STACK_SIZE       		(4096)
 */
 
 /* Interval in seconds when the DHCP Client timer expiration function executes.
@@ -1019,12 +1019,12 @@
    should be retransmitted or DHCP Client state changed. By default, this
    value is 1 second. */
 /*
-#define NX_DHCP_TIME_INTERVAL                   (1 * NX_IP_PERIODIC_RATE)
+#define NX_DHCP_TIME_INTERVAL          			(1 * NX_IP_PERIODIC_RATE)
 */
 
 /* Size of DHCP options buffer. By default, this value is 312 bytes. */
 /*
-#define NX_DHCP_OPTIONS_BUFFER_SIZE             312
+#define NX_DHCP_OPTIONS_BUFFER_SIZE     		312
 */
 
 /* Specifies the size in bytes of the DHCP Client packet payload.
@@ -1032,28 +1032,28 @@
    The physical header size in a wireline network is usually the Ethernet frame
    size. */
 /*
-#define NX_DHCP_PACKET_PAYLOAD                  (NX_DHCP_MINIMUM_IP_DATAGRAM + NX_PHYSICAL_HEADER)
+#define NX_DHCP_PACKET_PAYLOAD          		(NX_DHCP_MINIMUM_IP_DATAGRAM + NX_PHYSICAL_HEADER)
 */
 
 /* Specifies the size of the DHCP Client packet pool. The default value is
   (5 *NX_DHCP_PACKET_PAYLOAD) which will provide four packets plus room for
   internal packet pool overhead. */
 /*
-#define NX_DHCP_PACKET_POOL_SIZE                (5 * NX_DHCP_PACKET_PAYLOAD)
+#define NX_DHCP_PACKET_POOL_SIZE        		(5 * NX_DHCP_PACKET_PAYLOAD)
 */
 
 /* Specifies the minimum wait option for receiving a DHCP Server reply to
    client message before retransmitting the message. The default value is the
    RFC 2131 recommended 4 seconds. */
 /*
-#define NX_DHCP_MIN_RETRANS_TIMEOUT             (4 * NX_IP_PERIODIC_RATE)
+#define NX_DHCP_MIN_RETRANS_TIMEOUT     		(4 * NX_IP_PERIODIC_RATE)
 */
 
 /* Specifies the maximum wait option for receiving a DHCP Server reply to
    client message before retransmitting the message. The default value is
    64 seconds. */
 /*
-#define NX_DHCP_MAX_RETRANS_TIMEOUT             (64 * NX_IP_PERIODIC_RATE)
+#define NX_DHCP_MAX_RETRANS_TIMEOUT     		(64 * NX_IP_PERIODIC_RATE)
 */
 
 /* Specifies minimum wait option for receiving a DHCP Server message and sending
@@ -1062,7 +1062,7 @@
    Rebind expiration times from the DHCP server message before defaulting to the
    minimum renew timeout. */
 /*
-#define NX_DHCP_MIN_RENEW_TIMEOUT               (60 * NX_IP_PERIODIC_RATE)
+#define NX_DHCP_MIN_RENEW_TIMEOUT      			(60 * NX_IP_PERIODIC_RATE)
 */
 
 /*****************************************************************************/
@@ -1098,7 +1098,7 @@
    check on IP address lease time remaining and handle lease that have
    timed out. */
 /*
-#define NX_DHCP_SLOW_PERIODIC_TIME_INTERVAL     1000
+#define NX_DHCP_SLOW_PERIODIC_TIME_INTERVAL		1000
 */
 
 /* This is IP Address lease time in seconds assigned to the DHCP Client, and
@@ -1118,14 +1118,14 @@
 /* This is size of the DHCP Server array for holding Client records.
    The default value is 50. */
 /*
-#define NX_DHCP_CLIENT_RECORD_TABLE_SIZE        50
+#define NX_DHCP_CLIENT_RECORD_TABLE_SIZE      	50
 */
 
 /* This is size of the array in the DHCP Client instance for holding the all
    the requested options in the parameter request list in the current session.
    The default value is 12. */
 /*
-#define NX_DHCP_CLIENT_OPTIONS_MAX              12
+#define NX_DHCP_CLIENT_OPTIONS_MAX             	12
 */
 
 /* This is size of the buffer for holding the Server host name.
@@ -1325,20 +1325,20 @@
    address is invalid.
    The default value is 2 NX_DHCPV6_DEFAULT_PREFERRED_TIME. */
 /*
-#define NX_DHCPV6_DEFAULT_VALID_TIME            (2 * NX_DHCPV6_DEFAULT_PREFERRED_TIME)
+#define NX_DHCPV6_DEFAULT_VALID_TIME      		(2 * NX_DHCPV6_DEFAULT_PREFERRED_TIME)
 */
 
 /* Defines the maximum size of the Server message in status option message field.
    The default value is 100 bytes. */
 /*
-#define NX_DHCPV6_STATUS_MESSAGE_MAX            100
+#define NX_DHCPV6_STATUS_MESSAGE_MAX           	100
 */
 
 /* Defines the size of the Server's IP lease table (e.g. the max number of IPv6
    address available to lease that can be stored).
    By default, this value is 100. */
 /*
-#define NX_DHCPV6_MAX_LEASES                    100
+#define NX_DHCPV6_MAX_LEASES                   	100
 */
 
 /* Defines the size of the Server's Client record table (e.g. max number of
@@ -1411,7 +1411,7 @@
 /* Type of service required for the DNS UDP requests. By default, this value
    is defined as NX_IP_NORMAL for normal IP packet service. */
 /*
-#define NX_DNS_TYPE_OF_SERVICE                  NX_IP_NORMAL
+#define NX_DNS_TYPE_OF_SERVICE          		NX_IP_NORMAL
 */
 
 /* Specifies the maximum number of routers a packet can pass before it is
@@ -1423,7 +1423,7 @@
 /* Sets the socket property to allow or disallow fragmentation of outgoing
    packets. The default value is NX_DONT_FRAGMENT. */
 /*
-#define NX_DNS_FRAGMENT_OPTION                  NX_DONT_FRAGMENT
+#define NX_DNS_FRAGMENT_OPTION          		NX_DONT_FRAGMENT
 */
 
 /* Sets the maximum number of packets to store on the socket receive queue.
@@ -2370,7 +2370,7 @@
    reaches this number, no more packets can be sent until one or more enqueued
    packets are released. */
 /*
-#define NX_WEB_HTTP_SERVER_TRANSMIT_QUEUE_DEPTH     20
+#define NX_WEB_HTTP_SERVER_TRANSMIT_QUEUE_DEPTH 	20
 */
 
 /* This value is used to set the next retransmission timeout. The current

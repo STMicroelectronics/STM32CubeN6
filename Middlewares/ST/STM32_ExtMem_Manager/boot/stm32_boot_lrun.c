@@ -65,7 +65,12 @@ BOOTStatus_TypeDef BOOT_Application(void)
   retr = MapMemory();
   if (BOOT_OK == retr)
   {
+#ifndef EXTMEM_DEBUG_NO_LOAD_FROM_EXT_FLASH
     retr = CopyApplication();
+#else
+#warning "Application loading from external Flash has been disabled (SRAM expected to be loaded by the debugger)"
+#endif /* EXTMEM_DEBUG_NO_LOAD_FROM_EXT_FLASH */
+
     if (BOOT_OK == retr)
     {
       /* Jump on the application */

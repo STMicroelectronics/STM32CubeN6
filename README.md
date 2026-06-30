@@ -1,6 +1,6 @@
 # STM32CubeN6 MCU Firmware Package
 
-![latest tag](https://img.shields.io/github/v/tag/STMicroelectronics/STM32CubeN6.svg?color=brightgreen)
+![tag](https://img.shields.io/badge/tag-v1.4.0-brightgreen.svg)
 
 > [!IMPORTANT]
 > This repository has been created using the `git submodule` command. Please refer to the ["How to use"](README.md#how-to-use) section for more details.

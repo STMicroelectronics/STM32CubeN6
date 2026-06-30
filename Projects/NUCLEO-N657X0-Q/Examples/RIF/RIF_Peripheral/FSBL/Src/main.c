@@ -261,7 +261,7 @@ void SystemClock_Config(void)
   __HAL_RCC_RIFSC_CLK_ENABLE();
 
   /*IAC configuration*/
-  HAL_RIF_IAC_EnableIT(138);
+  HAL_RIF_IAC_EnableIT(RIF_AWARE_PERIPH_INDEX_IAC);
 
   /* IAC interrupt Init */
   HAL_NVIC_SetPriority(IAC_IRQn, 0x0, 0x0);
@@ -354,6 +354,7 @@ void HAL_RIF_ILA_Callback(uint32_t PeriphId)
 
 /**
   * @brief  This function is executed in case of error occurrence.
+  * @param  None
   * @retval None
   */
 void Error_Handler(void)

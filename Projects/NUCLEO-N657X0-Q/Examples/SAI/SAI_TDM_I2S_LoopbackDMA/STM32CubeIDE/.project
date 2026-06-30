@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>SAI_TDM_I2S_LoopbackDMA</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+		<nature>com.st.stm32cube.ide.mcu.MCUProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCURootProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUCubeIdeServicesRevAev2ProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUNonUnderRootProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUCubeProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCURootPythonProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUFsblEnabledProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUSingleCpuProjectNature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>SAI_TDM_I2S_LoopbackDMA.ioc</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/SAI_TDM_I2S_LoopbackDMA.ioc</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>

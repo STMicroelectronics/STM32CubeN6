@@ -21,11 +21,19 @@
   @endverbatim
 
 
+### 09-April-2026 ###
+=========================
+  + Fix incompatible pointer type
+     in \source\h264\H264CabacContext.h
+
+### 30-March-2026 ###
+=========================
+  + Add SW_Security_Level.md file
+
 ### 17-December-2024 ###
 =========================
   + Prevent infinite loop in case of encoding timeout
      in \source\h264\H264CodeFrame.c
-
 
 ### 22-October-2024 ###
 =========================

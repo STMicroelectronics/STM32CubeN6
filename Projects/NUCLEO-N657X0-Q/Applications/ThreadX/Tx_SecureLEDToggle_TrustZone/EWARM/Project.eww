@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspace>
-    <project>
-        <path>$WS_DIR$\FSBL\FSBL.ewp</path>
-    </project>
-    <project>
-        <path>$WS_DIR$\AppliSecure\Tx_SecureLEDToggle_TrustZone_S.ewp</path>
-    </project>
-    <project>
-        <path>$WS_DIR$\AppliNonSecure\Tx_SecureLEDToggle_TrustZone_NS.ewp</path>
-    </project>
-    <batchBuild />
+  <project>
+    <path>$WS_DIR$\AppliNonSecure\Tx_SecureLEDToggle_TrustZone_AppliNonSecure.ewp</path>
+  </project><project>
+    <path>$WS_DIR$\FSBL\Tx_SecureLEDToggle_TrustZone_FSBL.ewp</path>
+  </project><project>
+    <path>$WS_DIR$\AppliSecure\Tx_SecureLEDToggle_TrustZone_AppliSecure.ewp</path>
+  </project>
+  <batchBuild />
 </workspace>

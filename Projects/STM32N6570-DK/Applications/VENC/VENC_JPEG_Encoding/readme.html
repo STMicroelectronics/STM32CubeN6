@@ -20,10 +20,10 @@
 <div class="row">
 <div class="col-sm-12 col-lg-8">
 <h2 id="venc_jpeg_encoding-description"><b>VENC_JPEG_Encoding Description</b></h2>
-<p>This project demonstrates the use of the STM32N6 video encoder peripheral for JPEG encoding.<br>It is targeted to run on STM32N657xx device on STM32N6570-DK board from STMicroelectronics.</p>
-<p>This application is meant to run in internal SRAM. It is provided for illustrating purposes and can only be executed in boot in development mode.<br></p>
+<p>This project demonstrates the use of the STM32N6 video encoder peripheral for JPEG encoding.<br>It is targeted to run on STM32N657xx devices on the STM32N6570-DK board from STMicroelectronics.</p>
+<p>This application is meant to run in internal SRAM. It is provided for illustration purposes and can only be executed in development mode.<br></p>
 <h3 id="example-behavior"><b> Example behavior </b></h3>
-<p>This application demonstrates the use of the STM32N6 for encoding JPEG using the VENC peripheral. Images and streams must be placed in non-cached memory aligned to 16 bytes. The application takes an image in RGB565 format using the flip row and advanced modes to generate a 16-bit BMP. The full BMP is converted to C code. After encoding, the application saves the JPEG file in the current folder using standard I/O FILE functions. At the end the green or red lighting signals a success or error.</p>
+<p>This application demonstrates the use of the STM32N6 for encoding JPEG using the VENC peripheral. Images and streams must be placed in non-cached memory aligned to 16 bytes. The application takes an image in RGB565 format using the flip row and advanced modes to generate a 16-bit BMP. The full BMP is converted to C code. After encoding, the application saves the JPEG file in the current folder using standard I/O FILE functions. At the end, the green or red LED indicates success or error.</p>
 <h4 id="error-handling"><b>Error Handling</b><br></h4>
 <p>Upon successful execution of the example, the green LED blinks with a 1-second period. In case of error, the red LED blinks with a 1-second period.</p>
 <h4 id="notes"><b>Notes</b></h4>
@@ -35,11 +35,11 @@
 <p>Graphics, VENC, Encoding, JPEG, Hardware Encoding</p>
 <h3 id="directory-contents"><b>Directory contents</b></h3>
 <h4 id="project"><b>Project</b></h4>
-<pre><code>- VENC_JPEG_Encoding/FSBL/Inc/ewl_conf.h                Video Encoder Wrapper Layer header file
+<pre><code>- VENC_JPEG_Encoding/FSBL/Inc/ewl_conf.h                 Video Encoder Wrapper Layer header file
 - VENC_JPEG_Encoding/FSBL/Inc/main.h                    Header for main.c module
-- VENC_JPEG_Encoding/FSBL/Incstm32n6xx_hal_conf.h       HAL Configuration file
+- VENC_JPEG_Encoding/FSBL/Inc/stm32n6xx_hal_conf.h      HAL configuration file
 - VENC_JPEG_Encoding/FSBL/Inc/stm32n6xx_it.h            Interrupt handlers header file
-- VENC_JPEG_Encoding/FSBL/stm32n6570_discovery_conf.h   BSP configuration file
+- VENC_JPEG_Encoding/FSBL/Inc/stm32n6570_discovery_conf.h BSP configuration file
 - VENC_JPEG_Encoding/FSBL/Src/main.c                    Main program
 - VENC_JPEG_Encoding/FSBL/Src/imageEncode.c             Code to encode the image
 - VENC_JPEG_Encoding/FSBL/Src/stm32n6xx_hal_msp.c       HAL MSP module
@@ -49,14 +49,14 @@
 - VENC_JPEG_Encoding/FSBL/Src/system_stm32n6xx_fsbl.c   STM32N6xx system source file    </code></pre>
 <h3 id="hardware-and-software-environment"><b>Hardware and Software environment</b></h3>
 <ul>
-<li><p>This template runs on STM32N6 devices.</p></li>
-<li><p>This template has been tested with STMicroelectronics STM32N6570-DK (MB1939) board and can be easily tailored to any other supported device and development board.</p></li>
+<li><p>This application runs on STM32N6 devices.</p></li>
+<li><p>This application has been tested with STMicroelectronics STM32N6570-DK (MB1939) board and can be easily tailored to any other supported device and development board.</p></li>
 <li><p>On STM32N6570-DK board, the BOOT1 mechanical slide switch must be set to position 1-3.</p></li>
 </ul>
 <p><strong>WARNING</strong></p>
 <ul>
 <li><p>The example can be run only in development mode.</p></li>
-<li><strong>EWARM</strong> : To monitor a variable in the live watch window, you must proceed as follow :
+<li><strong>EWARM</strong> : To monitor a variable in the live watch window, you must proceed as follows:
 <ul>
 <li>Start a debugging session.</li>
 <li>Open the View &gt; Images.</li>

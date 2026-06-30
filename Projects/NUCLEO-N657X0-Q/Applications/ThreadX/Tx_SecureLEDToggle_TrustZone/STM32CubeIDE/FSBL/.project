@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>FSBL</name>
+	<name>Tx_SecureLEDToggle_TrustZone_FSBL</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -22,8 +22,8 @@
 		<nature>com.st.stm32cube.ide.mcu.MCUProjectNature</nature>
 		<nature>org.eclipse.cdt.core.cnature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCUCubeIdeServicesRevAev2ProjectNature</nature>
-		<nature>com.st.stm32cube.ide.mcu.MCUManagedMakefileProjectNature</nature>
-		<nature>com.st.stm32cube.ide.mcu.MCUEndUserDisabledTrustZoneProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUNonUnderRootProjectNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUCubeProjectNature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCUSecureProjectNature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCUFSBLProjectNature</nature>
 		<nature>com.st.stm32cube.ide.mcu.MCUSingleCpuProjectNature</nature>
@@ -37,9 +37,9 @@
 			<locationURI>PARENT-2-PROJECT_LOC/README.md</locationURI>
 		</link>
 		<link>
-			<name>Application/User/extmem.c</name>
+			<name>Application/User/extmem_manager.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/FSBL/Src/extmem.c</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/FSBL/Src/extmem_manager.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/main.c</name>
@@ -122,34 +122,49 @@
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_xspi.c</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/STM32_ExtMem_Manager/stm32_boot_lrun.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_ExtMem_Manager/boot/stm32_boot_lrun.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/STM32_ExtMem_Manager/stm32_extmem.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_ExtMem_Manager/stm32_extmem.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/STM32_ExtMem_Manager/NOR_SFDP/stm32_sfdp_data.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_ExtMem_Manager/NOR_SFDP/stm32_sfdp_driver.c</name>
-			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c</locationURI>
-		</link>
-		<link>
-			<name>Middlewares/STM32_ExtMem_Manager/PSRAM/stm32_psram_driver.c</name>
+			<name>Middlewares/STM32_ExtMem_Manager/stm32_psram_driver.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_ExtMem_Manager/psram/stm32_psram_driver.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/STM32_ExtMem_Manager/SAL/stm32_sal_xspi.c</name>
+			<name>Middlewares/STM32_ExtMem_Manager/stm32_sal_sd.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_ExtMem_Manager/sal/stm32_sal_sd.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_ExtMem_Manager/stm32_sal_xspi.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_ExtMem_Manager/sal/stm32_sal_xspi.c</locationURI>
 		</link>
 		<link>
-			<name>Middlewares/STM32_ExtMem_Manager/boot/stm32_boot_lrun.c</name>
+			<name>Middlewares/STM32_ExtMem_Manager/stm32_sdcard_driver.c</name>
 			<type>1</type>
-			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_ExtMem_Manager/boot/stm32_boot_lrun.c</locationURI>
+			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_ExtMem_Manager/sdcard/stm32_sdcard_driver.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_ExtMem_Manager/stm32_sfdp_data.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_ExtMem_Manager/stm32_sfdp_driver.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/STM32_ExtMem_Manager/stm32_user_driver.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/STM32_ExtMem_Manager/user/stm32_user_driver.c</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

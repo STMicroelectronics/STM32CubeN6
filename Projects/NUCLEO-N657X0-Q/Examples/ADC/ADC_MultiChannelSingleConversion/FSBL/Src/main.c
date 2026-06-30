@@ -469,6 +469,7 @@ static void MX_BSEC_Init(void)
   /* USER CODE BEGIN BSEC_Init 0 */
 
   /* USER CODE END BSEC_Init 0 */
+  __HAL_RCC_BSEC_CLK_ENABLE();
 
   /* USER CODE BEGIN BSEC_Init 1 */
   /* Enable BSEC & SYSCFG clocks to ensure BSEC data accesses */
@@ -639,6 +640,7 @@ void MPU_Config(void)
 
 /**
   * @brief  This function is executed in case of error occurrence.
+  * @param  None
   * @retval None
   */
 void Error_Handler(void)

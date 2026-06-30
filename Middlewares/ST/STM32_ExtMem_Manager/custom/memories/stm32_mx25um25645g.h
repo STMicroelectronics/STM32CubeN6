@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32_mx25um25645g.h
   * @author  MCD Application Team
-  * @brief   This file includes a driver for custom support of
-  *          Macronix MX25UM25645G Nor Flash memory
+  * @brief   This file contains configuration details for support of the Macronix MX25UM25645G NOR flash memory,
+  *          using EMM Custom Driver
   ******************************************************************************
   * @attention
   *

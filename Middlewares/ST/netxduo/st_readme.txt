@@ -7,6 +7,14 @@
   ******************************************************************************
   */
 
+### V6.4.0 / (15-04-2026) ###
+=============================
+- common/drivers/ethernet/nx_stm32_eth_driver.c : correction in FilterConfig.BroadcastFilter default setting (DISABLE).
+
+### V6.4.0 (23-03-2026) ###
+===========================
+- add SW_Security_Level.md file
+
 ### V6.4.0 (19-06-2025) ###
 ============================
 - Remove Cypress WHD WiFi driver

@@ -570,6 +570,11 @@
               <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/src/txe_thread_secure_stack_free.c</FilePath>
             </File>
             <File>
+              <FileName>txe_thread_secure_stack_allocate.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/src/txe_thread_secure_stack_allocate.c</FilePath>
+            </File>
+            <File>
               <FileName>tx_thread_context_restore.S</FileName>
               <FileType>2</FileType>
               <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/src/tx_thread_context_restore.S</FilePath>

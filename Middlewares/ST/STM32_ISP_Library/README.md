@@ -1,6 +1,6 @@
 # STM32 ISP Library
 
-![latest tag](https://img.shields.io/github/v/tag/STMicroelectronics/stm32-mw-isp.svg)
+![latest tag](https://img.shields.io/badge/tag-1.2.1-blue)
 
 The ISP Library middleware (running on the target) hosts 2A algorithms
 (Auto Exposure and Auto White Balance) and mechanisms to control the
@@ -18,11 +18,7 @@ ISP_MW_TUNING_TOOL_SUPPORT must be enabled.
 - evision: 2A algorithms that are delivered as binary
 
 ## Enhancements, new features
-- Update gamma feature to unique gamma
-- Update isp_param_conf examples
-- Update evision libraries
-- Fix STM32 ISP IQTune communication protocol for MacOS
-- Fix warnings in the evision libraries
+- Minor update for security level
 
 ## Known Issues and Limitations
 - None

@@ -26,7 +26,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
-extern SD_HandleTypeDef hsd2;
+
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -55,7 +55,7 @@ extern SD_HandleTypeDef hsd2;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-
+extern SD_HandleTypeDef hsd2;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -213,9 +213,20 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32n6xx.s).                    */
 /******************************************************************************/
 
-/* USER CODE BEGIN 1 */
+/**
+  * @brief This function handles SDMMC2 global interrupt.
+  */
 void SDMMC2_IRQHandler(void)
 {
+  /* USER CODE BEGIN SDMMC2_IRQn 0 */
+
+  /* USER CODE END SDMMC2_IRQn 0 */
   HAL_SD_IRQHandler(&hsd2);
+  /* USER CODE BEGIN SDMMC2_IRQn 1 */
+
+  /* USER CODE END SDMMC2_IRQn 1 */
 }
+
+/* USER CODE BEGIN 1 */
+
 /* USER CODE END 1 */

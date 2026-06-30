@@ -459,6 +459,7 @@ static void TransferError(DMA2D_HandleTypeDef *hdma2d)
 
 /**
   * @brief  This function is executed in case of error occurrence.
+  * @param  None
   * @retval None
   */
 void Error_Handler(void)

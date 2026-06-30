@@ -52,11 +52,245 @@
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history">Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section4" checked aria-hidden="true"> <label for="collapse-section4" checked aria-hidden="true"><strong>V1.3.0 / 29-October-2025</strong></label>
+<input type="checkbox" id="collapse-section5" checked aria-hidden="true"> <label for="collapse-section5" checked aria-hidden="true"><strong>V1.4.0 / 03-June-2026</strong></label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
-<h3 id="third-maintenance-release-of-stm32cuben6-projects-supporting-stm32n6xx-devices-mounted-on-stm32n6570-dk-and-nucleo-n657x0-q-boards">Third maintenance release of STM32CubeN6 projects supporting <strong>STM32N6xx</strong> devices mounted on STM32N6570-DK and NUCLEO-N657X0-Q boards</h3>
+<h3 id="fourth-maintenance-release-of-stm32cuben6-projects-supporting-stm32n6xx-devices-mounted-on-stm32n6570-dk-and-nucleo-n657x0-q-boards">Fourth maintenance release of STM32CubeN6 projects supporting <strong>STM32N6xx</strong> devices mounted on STM32N6570-DK and NUCLEO-N657X0-Q boards</h3>
 <h2 id="contents">Contents</h2>
+<ul>
+<li><p><strong>General changes</strong></p></li>
+<li><strong>NUCLEO-N657X0-Q</strong>
+<ul>
+<li>Add SAI_TDM_I2S_LoopbackDMA example.</li>
+<li>Fix double SDMMC initialization in FileX applications.</li>
+<li>Fix HAL_RIF_IAC_EnableIT() parameter set in RIF_Peripheral example.</li>
+<li>Fix bit timing configuration in FDCAN_Loopback example.</li>
+<li>Remove MX_ICACHE_Init() function from PKA_ECCscalarMultiplication example.</li>
+<li>Add ioc files for the following projects:
+<ul>
+<li>Tx_SecureLEDToggle_TrustZone</li>
+<li>Nx_Iperf</li>
+<li>Nx_SNTP_Client</li>
+<li>Nx_TCP_Echo_Server</li>
+<li>Nx_UDP_Echo_Client</li>
+<li>Nx_UDP_Echo_Server</li>
+</ul></li>
+</ul></li>
+<li><strong>STM32N6570-DK</strong>
+<ul>
+<li>Add SDMMC2 interrupt within HAL_SD_MspInit() and HAL_SD_MspDeInit() in SD_ReadWrite_DMA example.</li>
+<li>Remove useless delay from XSPI_PSRAM_MemoryMapped example.</li>
+<li>Remove MDK-ARM project under VENC_JPEG_Encoding application due to save_file() function limitation.</li>
+<li>Fix LCD horizontal mirroring in DCMIPP applications.</li>
+<li>Add OEMuROT_Appli application (without isolation).</li>
+<li>Add OEMuROT_Appli template (without isolation).</li>
+<li>Replace the Ux_Device_Audio_2.0 and Ux_Device_Audio_2.0_Standalone applications with the Ux_Device_Audio2.0_PlayBack and Ux_Device_Audio2.0_PlayBack_Standalone applications to add the Feedback endpoint feature.</li>
+<li>Add ioc files for the following projects:
+<ul>
+<li>Nx_MQTT_Client</li>
+<li>Ux_Host_MSC</li>
+<li>Ux_Host_DualClass</li>
+<li>Ux_Host_Audio_2.0</li>
+<li>Ux_Device_MSC</li>
+<li>Ux_Device_CDC_ECM</li>
+<li>Ux_Device_Audio_2.0_Standalone</li>
+<li>Ux_Device_Audio2.0_PlayBack</li>
+<li>Ux_Device_Audio2.0_PlayBack_Standalone</li>
+</ul></li>
+</ul></li>
+<li><strong>STM32N6_CUSTOM_HW</strong>
+<ul>
+<li>Fix SDRAM initialization in SystemInit_ExtMemCtl to prevent skipping SDRAM command wait phases.</li>
+</ul></li>
+</ul>
+<p><br />
+The exhaustive list of projects is provided in this table (<a href="STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Board</th>
+<th style="text-align: left;">Project category</th>
+<th style="text-align: left;">Path</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">STM32N6570-DK</td>
+<td style="text-align: left;">HAL Templates</td>
+<td style="text-align: left;">Projects\STM32N6570-DK\Templates</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32N6570-DK</td>
+<td style="text-align: left;">LL Templates</td>
+<td style="text-align: left;">Projects\STM32N6570-DK\Templates_LL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32N6570-DK</td>
+<td style="text-align: left;">Board Templates</td>
+<td style="text-align: left;">Projects\STM32N6570-DK\Templates_Board</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32N6570-DK</td>
+<td style="text-align: left;">Examples</td>
+<td style="text-align: left;">Projects\STM32N6570-DK\Examples</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32N6570-DK</td>
+<td style="text-align: left;">ROT_Provisioning</td>
+<td style="text-align: left;">Projects\STM32N6570-DK\ROT_Provisioning</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32N6570-DK</td>
+<td style="text-align: left;">Applications</td>
+<td style="text-align: left;">Projects\STM32N6570-DK\Applications</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-N657X0-Q</td>
+<td style="text-align: left;">HAL Templates</td>
+<td style="text-align: left;">Projects\NUCLEO-N657X0-Q\Templates</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-N657X0-Q</td>
+<td style="text-align: left;">LL Templates</td>
+<td style="text-align: left;">Projects\NUCLEO-N657X0-Q\Templates_LL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-N657X0-Q</td>
+<td style="text-align: left;">Examples</td>
+<td style="text-align: left;">Projects\NUCLEO-N657X0-Q\Examples</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NUCLEO-N657X0-Q</td>
+<td style="text-align: left;">LL Examples</td>
+<td style="text-align: left;">Projects\NUCLEO-N657X0-Q\Examples_LL</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NUCLEO-N657X0-Q</td>
+<td style="text-align: left;">Applications</td>
+<td style="text-align: left;">Projects\NUCLEO-N657X0-Q\Applications</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">STM32N6_CUSTOM_HW</td>
+<td style="text-align: left;">Examples</td>
+<td style="text-align: left;">Projects\STM32N6_CUSTOM_HW\Examples</td>
+</tr>
+</tbody>
+</table>
+<p><br />
+</p>
+<h2 id="supported-devices-and-boards">Supported Devices and Boards</h2>
+<ul>
+<li>STM32N657xx devices</li>
+<li>STM32N6570-DK Discovery kit (MB1939C)</li>
+<li>NUCLEO-N657X0-Q kit (MB1940C)</li>
+</ul>
+<p><br />
+</p>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li>STM32CubeMX V6.18.0</li>
+<li>STM32CubeProgrammer V2.18 and higher
+<ul>
+<li>The addition of an header to the example binary (as explained in the readme files) is done with STM32CubeProgrammer version at least equal to V2.18</li>
+<li><strong>Warning: If using CubeProgrammer v2.21 version or more recent, add -align option in the command line provided in each project readme file.</strong></li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+<h2 id="development-toolchains-and-compilers">Development Toolchains and Compilers</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Toolchain + ST-Link</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: left;">Patch</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">IAR Embedded Workbench for ARM (EWARM)</td>
+<td style="text-align: left;">V9.40.1</td>
+<td style="text-align: left;"><a href="../Utilities/PC_Software/EWARMv9_STM32N6xx_V1.0.0.zip">Patch EWARM</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RealView Microcontroller Development Kit (MDK-ARM)</td>
+<td style="text-align: left;">V5.39</td>
+<td style="text-align: left;"><a href="../Utilities\PC_Software\Keil.STM32N6xx_DFP.1.0.0.zip">Patch MDK-ARM</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">STM32CubeIDE</td>
+<td style="text-align: left;">V2.1.1 (gcc13)</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><br />
+</p>
+<ul>
+<li>MDK-ARM 5.43 is recommended to connect via the ULINK probe</li>
+<li>To successfully use <strong>__DBG_ITM</strong> define on MDK-ARM, use MDK-ARM V5.43 version with a Core Clock set at 75MHz</li>
+<li>SemiHosting on STM32CubeIDE requires
+<ul>
+<li>to use STM32CubeIDE v2.0.0.25A9</li>
+<li>to add <strong>mon gdb_breakpoint_override hard</strong> in <em>Debug Configuration &gt; Startup &gt; Initialization Commands</em></li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+<h2 id="notes">Notes</h2>
+<p><strong>BootROM in development mode / BootROM in boot from external Flash mode</strong></p>
+<ul>
+<li>To set the bootROM in development mode for debug or for binary download in internal SRAM or external Flash,
+<ul>
+<li>BOOT1 switch position should be 1-3 on STM32N6570-DK board, BOOT0 switch position doesn’t matter,</li>
+<li>BOOT1 switch position should be 2-3 on NUCLEO-N657X0-Q board, BOOT0 switch position doesn’t matter.</li>
+</ul></li>
+<li>To set the bootROM in boot from external Flash mode,
+<ul>
+<li>BOOT0 and BOOT1 switches positions should be 1-2 on STM32N6570-DK board,</li>
+<li>BOOT0 and BOOT1 switches positions should be 1-2 on NUCLEO-N657X0-Q board.</li>
+</ul></li>
+<li>OTP bits HSLV_VDDIO2 and HSLV_VDDIO3 must imperatively be set if STM32N6570-DK board external memories are used.</li>
+<li>OTP bit HSLV_VDDIO3 must imperatively be set if NUCLEO-N657X0-Q board external memory is used.
+<ul>
+<li>User may resort to example <em>Projects\STM32N6570-DK\Examples\BSEC\BSEC_OTP_Config</em> to set OTP bits.</li>
+</ul></li>
+</ul>
+<p><strong>Clocks speed</strong></p>
+<ul>
+<li>Projects are provided with a configuration defined for nominal voltage mode and are setting the CPU clock at 600 MHz and the System clock at 400 MHz.</li>
+<li>An example of overdrive voltage configuration, <span style="color:green"><strong>setting the CPU clock at 800 MHz</strong></span> and the System clock at 400 MHz can be found in the project <em>Projects\STM32N6570-DK\Templates\Template</em>.</li>
+</ul>
+<p><br />
+</p>
+<h2 id="known-limitations">Known Limitations</h2>
+<ul>
+<li><p>The NetXDuo <em>Nx_Iperf</em> application running on the STM32N6570-DK board, which embeds a Gigabit Ethernet PHY, does not achieve the expected maximum network throughput. The highest data rates achieved reach around 250 Mb.</p></li>
+<li><p>The NetXDuo <em>Nx_Iperf</em> application occasionally gives low bandwidth during TCP transmit test. This instability will be addressed in future releases.</p></li>
+<li><p>A Hardfault_handler() occurs with USBX applications in CubeIDE Debug mode. This issue is resolved by increasing the optimization level to -O3 for the file stm32n6xx_hal_rcc_ex.c.</p></li>
+<li><p>The VENC applications generate a large number of compilation warnings coming from the third-party Video Encoding middleware.</p></li>
+<li><p>Some projects are not available on MDK-ARM or CubeIDE.</p></li>
+<li><p>Some projects are not generated with STM32CubeMX tool. Please refer to (<a href="STM32CubeProjectsList.html">STM32CubeProjectsList.html</a>).</p></li>
+<li><p>Examples PWR_STANDBY_TrustZone and CORTEX_InterruptSwitch_TrustZone generate warnings related to LOAD segment with RWX permissions.</p></li>
+<li>VENC may generate spurious repeated interrupts in frame mode due to the always-active DCMIPP–VENC hardware handshake, impacting application performance:
+<ul>
+<li>A workaround is available in the <a href="https://www.st.com/resource/en/errata_sheet/es0620-stm32n6xxxx-device-errata-stmicroelectronics.pdf">errata sheet</a>.</li>
+</ul></li>
+</ul>
+<p><br />
+</p>
+<h2 id="backward-compatibility">Backward Compatibility</h2>
+<ul>
+<li>None</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" checked aria-hidden="true"><strong>V1.3.0 / 29-October-2025</strong></label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<h3 id="third-maintenance-release-of-stm32cuben6-projects-supporting-stm32n6xx-devices-mounted-on-stm32n6570-dk-and-nucleo-n657x0-q-boards">Third maintenance release of STM32CubeN6 projects supporting <strong>STM32N6xx</strong> devices mounted on STM32N6570-DK and NUCLEO-N657X0-Q boards</h3>
+<h2 id="contents-1">Contents</h2>
 <ul>
 <li><strong>General changes</strong>
 <ul>
@@ -210,7 +444,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </table>
 <p><br />
 </p>
-<h2 id="supported-devices-and-boards">Supported Devices and Boards</h2>
+<h2 id="supported-devices-and-boards-1">Supported Devices and Boards</h2>
 <ul>
 <li>STM32N657xx devices</li>
 <li>STM32N6570-DK Discovery kit (MB1939C)</li>
@@ -218,7 +452,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="dependencies">Dependencies</h2>
+<h2 id="dependencies-1">Dependencies</h2>
 <ul>
 <li>STM32CubeMX V6.16.0</li>
 <li>STM32CubeProgrammer V2.18 and higher
@@ -229,7 +463,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="development-toolchains-and-compilers">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-1">Development Toolchains and Compilers</h2>
 <table>
 <thead>
 <tr class="header">
@@ -269,7 +503,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="notes">Notes</h2>
+<h2 id="notes-1">Notes</h2>
 <p><strong>BootROM in development mode / BootROM in boot from external Flash mode</strong></p>
 <ul>
 <li>To set the bootROM in development mode for debug or for binary download in internal SRAM or external Flash,
@@ -295,7 +529,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="known-limitations">Known Limitations</h2>
+<h2 id="known-limitations-1">Known Limitations</h2>
 <ul>
 <li><p>The NetXDuo <em>Nx_Iperf</em> application running on the STM32N6570-DK board, which embeds a Gigabit Ethernet PHY, does not achieve the expected maximum network throughput. The highest data rates achieved reach around 250 Mb.</p></li>
 <li><p>The NetXDuo <em>Nx_Iperf</em> application occasionally gives low bandwidth during TCP transmit test. This instability will be addressed in future releases.</p></li>
@@ -305,7 +539,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="backward-compatibility">Backward Compatibility</h2>
+<h2 id="backward-compatibility-1">Backward Compatibility</h2>
 <ul>
 <li>None</li>
 </ul>
@@ -314,9 +548,9 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" checked aria-hidden="true"><strong>V1.2.0 / 04-June-2025</strong></label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-2">Main Changes</h2>
 <h3 id="second-maintenance-release-of-stm32cuben6-projects-supporting-stm32n6xx-devices-mounted-on-stm32n6570-dk-and-nucleo-n657x0-q-boards">Second maintenance release of STM32CubeN6 projects supporting <strong>STM32N6xx</strong> devices mounted on STM32N6570-DK and NUCLEO-N657X0-Q boards</h3>
-<h2 id="contents-1">Contents</h2>
+<h2 id="contents-2">Contents</h2>
 <ul>
 <li>Projects
 <ul>
@@ -430,7 +664,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </table>
 <p><br />
 </p>
-<h2 id="supported-devices-and-boards-1">Supported Devices and Boards</h2>
+<h2 id="supported-devices-and-boards-2">Supported Devices and Boards</h2>
 <ul>
 <li>STM32N657xx devices</li>
 <li>STM32N6570-DK Discovery kit (MB1939C)</li>
@@ -438,7 +672,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="dependencies-1">Dependencies</h2>
+<h2 id="dependencies-2">Dependencies</h2>
 <ul>
 <li>STM32CubeMX V6.15.0
 <ul>
@@ -451,7 +685,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="development-toolchains-and-compilers-1">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-2">Development Toolchains and Compilers</h2>
 <table>
 <thead>
 <tr class="header">
@@ -480,7 +714,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </table>
 <p><br />
 </p>
-<h2 id="notes-1">Notes</h2>
+<h2 id="notes-2">Notes</h2>
 <p><strong>BootROM in development mode / BootROM in boot from external Flash mode</strong></p>
 <ul>
 <li>To set the bootROM in development mode for debug or for binary download in internal SRAM or external Flash,
@@ -506,7 +740,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="known-limitations-1">Known Limitations</h2>
+<h2 id="known-limitations-2">Known Limitations</h2>
 <ul>
 <li><p>The <em>Ux_Host_Audio_2.0</em> application fails to play audio clips when USB DMA is enabled.</p></li>
 <li><p>The <em>USBPD_SRC_UX_Host_MSC</em> application is not functional when the optimization level is set to “none” with EWARM.</p></li>
@@ -518,7 +752,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="backward-compatibility-1">Backward Compatibility</h2>
+<h2 id="backward-compatibility-2">Backward Compatibility</h2>
 <ul>
 <li>None</li>
 </ul>
@@ -527,9 +761,9 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" checked aria-hidden="true"><strong>V1.1.0 / 05-February-2025</strong></label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-3">Main Changes</h2>
 <h3 id="first-maintenance-release-of-stm32cuben6-projects-supporting-stm32n6xx-devices-mounted-on-stm32n6570-dk-and-nucleo-n657x0-q-boards">First maintenance release of STM32CubeN6 projects supporting <strong>STM32N6xx</strong> devices mounted on STM32N6570-DK and NUCLEO-N657X0-Q boards</h3>
-<h2 id="contents-2">Contents</h2>
+<h2 id="contents-3">Contents</h2>
 <ul>
 <li>Add HASH HW acceleration in OEMuRoT_Boot projects for non-HW crypto devices</li>
 <li>Change external flash mapping to allow the use of the second FSBL in OEMuROT_Boot application</li>
@@ -641,7 +875,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </table>
 <p><br />
 </p>
-<h2 id="supported-devices-and-boards-2">Supported Devices and Boards</h2>
+<h2 id="supported-devices-and-boards-3">Supported Devices and Boards</h2>
 <ul>
 <li>STM32N657xx devices</li>
 <li>STM32N6570-DK Discovery kit (MB1939C)</li>
@@ -649,7 +883,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="dependencies-2">Dependencies</h2>
+<h2 id="dependencies-3">Dependencies</h2>
 <ul>
 <li>STM32CubeMX V6.13.0
 <ul>
@@ -662,7 +896,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="development-toolchains-and-compilers-2">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-3">Development Toolchains and Compilers</h2>
 <table>
 <thead>
 <tr class="header">
@@ -691,7 +925,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </table>
 <p><br />
 </p>
-<h2 id="notes-2">Notes</h2>
+<h2 id="notes-3">Notes</h2>
 <p><strong>BootROM in development mode / BootROM in boot from external Flash mode</strong></p>
 <ul>
 <li>To set the bootROM in development mode for debug or for binary download in internal SRAM or external Flash,
@@ -717,7 +951,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="known-limitations-2">Known Limitations</h2>
+<h2 id="known-limitations-3">Known Limitations</h2>
 <ul>
 <li><p>The <em>Ux_Host_Audio_2.0</em> application fails to play audio clips when USB DMA is enabled.</p></li>
 <li><p>The <em>USBPD_SRC_UX_Host_MSC</em> application is not functional when the optimization level is set to “none” with EWARM.</p></li>
@@ -729,7 +963,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="backward-compatibility-2">Backward Compatibility</h2>
+<h2 id="backward-compatibility-3">Backward Compatibility</h2>
 <ul>
 <li>None</li>
 </ul>
@@ -740,7 +974,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 <div>
 <h2 id="first-release">First Release</h2>
 <h3 id="first-official-release-of-stm32cuben6-firmware-package-supporting-stm32n6xx-devices">First official release of <strong>STM32CubeN6</strong> firmware package supporting <strong>STM32N6xx</strong> devices</h3>
-<h2 id="contents-3">Contents</h2>
+<h2 id="contents-4">Contents</h2>
 <ul>
 <li>First official release of STM32CubeN6 projects supporting <strong>STM32N6xx</strong> devices mounted on STM32N6570-DK and NUCLEO-N657X0-Q boards.</li>
 </ul>
@@ -819,7 +1053,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </table>
 <p><br />
 </p>
-<h2 id="supported-devices-and-boards-3">Supported Devices and Boards</h2>
+<h2 id="supported-devices-and-boards-4">Supported Devices and Boards</h2>
 <ul>
 <li>STM32N657xx devices</li>
 <li>STM32N6570-DK Discovery kit (MB1939C)</li>
@@ -827,7 +1061,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="dependencies-3">Dependencies</h2>
+<h2 id="dependencies-4">Dependencies</h2>
 <ul>
 <li>STM32CubeMX V6.13.0
 <ul>
@@ -840,7 +1074,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="development-toolchains-and-compilers-3">Development Toolchains and Compilers</h2>
+<h2 id="development-toolchains-and-compilers-4">Development Toolchains and Compilers</h2>
 <table>
 <thead>
 <tr class="header">
@@ -869,7 +1103,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </table>
 <p><br />
 </p>
-<h2 id="notes-3">Notes</h2>
+<h2 id="notes-4">Notes</h2>
 <p><strong>BootROM in development mode / BootROM in boot from external Flash mode</strong></p>
 <ul>
 <li>To set the bootROM in development mode for debug or for binary download in internal SRAM or external Flash,
@@ -895,7 +1129,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="known-limitations-3">Known Limitations</h2>
+<h2 id="known-limitations-4">Known Limitations</h2>
 <ul>
 <li><p>The <em>Ux_Host_Audio_2.0</em> application fails to play audio clips when USB DMA is enabled.</p></li>
 <li><p>The <em>USBPD_SRC_UX_Host_MSC</em> application is not functional when the optimization level is set to “none” with EWARM.</p></li>
@@ -906,7 +1140,7 @@ The exhaustive list of projects is provided in this table (<a href="STM32CubePro
 </ul>
 <p><br />
 </p>
-<h2 id="backward-compatibility-3">Backward Compatibility</h2>
+<h2 id="backward-compatibility-4">Backward Compatibility</h2>
 <ul>
 <li>None</li>
 </ul>

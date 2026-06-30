@@ -36,7 +36,7 @@
                 </option>
                 <option>
                     <name>MacFile</name>
-                    <state>$PROJ_DIR$\..\..\..\..\..\..\..\Utilities\PC_Software\setup.mac</state>
+                    <state>$PROJ_DIR$\..\Appli\reloadRam.mac</state>
                 </option>
                 <option>
                     <name>MemOverride</name>
@@ -120,7 +120,7 @@
                 </option>
                 <option>
                     <name>OCImagesPath1</name>
-                    <state>C:\git\n6\STM32Cube_FW_N6_Ext\Projects\STM32N6570-DK\Applications\VENC\VENC_RTSP_Server_Ext\EWARM\Appli\VENC_RTSP_Debug\Exe\Project.out</state>
+                    <state>$PROJ_DIR$\..\Appli\VENC_RTSP_Debug\Exe\Project.out</state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck2</name>

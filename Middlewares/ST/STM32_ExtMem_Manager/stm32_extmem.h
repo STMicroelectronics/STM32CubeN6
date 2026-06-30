@@ -40,7 +40,7 @@ extern "C" {
 /**
   * @brief Middleware version number
   */
-#define EXTMEM_VERSION 0x00010500 /* Version v1.5.0 */
+#define EXTMEM_VERSION 0x00010600 /* Version v1.6.0 */
 
 /**
   * @brief Types of supported memories

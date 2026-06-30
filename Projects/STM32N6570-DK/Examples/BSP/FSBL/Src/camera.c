@@ -3,7 +3,7 @@
   * @file    camera.c
   * @author  MCD Application Team
   * @brief   This example code shows how to use the camera features of the
-  *          stm32h7b3i_eval_camera driver
+  *          stm32n6570_discovery_camera driver
   ******************************************************************************
   * @attention
   *

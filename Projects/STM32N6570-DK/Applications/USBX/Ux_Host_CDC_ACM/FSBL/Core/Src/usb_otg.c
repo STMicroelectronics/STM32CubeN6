@@ -69,15 +69,15 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hcdHandle)
   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
   if(hcdHandle->Instance==USB1_OTG_HS)
   {
-    /* USER CODE BEGIN USB1_OTG_HS_MspInit 0 */
+  /* USER CODE BEGIN USB1_OTG_HS_MspInit 0 */
 
-    /* USER CODE END USB1_OTG_HS_MspInit 0 */
+  /* USER CODE END USB1_OTG_HS_MspInit 0 */
 
-    /** Initializes the peripherals clock
-    */
+  /** Initializes the peripherals clock
+  */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USBOTGHS1;
     PeriphClkInitStruct.UsbPhy1ClockSelection = RCC_USBPHY1CLKSOURCE_HSE_DIV2;
-    PeriphClkInitStruct.UsbOtgHs1ClockSelection = RCC_USBOTGHS1CLKSOURCE_OTGPHY1;
+    PeriphClkInitStruct.UsbOtgHs1ClockSelection = RCC_USBOTGHS1CLKSOURCE_HSE_DIRECT;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
     {
       Error_Handler();
@@ -92,7 +92,7 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hcdHandle)
     /* USB1_OTG_HS interrupt Init */
     HAL_NVIC_SetPriority(USB1_OTG_HS_IRQn, 7, 0);
     HAL_NVIC_EnableIRQ(USB1_OTG_HS_IRQn);
-    /* USER CODE BEGIN USB1_OTG_HS_MspInit 1 */
+  /* USER CODE BEGIN USB1_OTG_HS_MspInit 1 */
     /* Reset USB peripherals and configure the HSE clock */
     RESET_USB_MACRO();
     /* Required few clock cycles before accessing USB PHY Controller Registers */
@@ -107,7 +107,7 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hcdHandle)
     HAL_Delay(1);
     __HAL_RCC_USB1_OTG_HS_RELEASE_RESET();
 
-    /* USER CODE END USB1_OTG_HS_MspInit 1 */
+  /* USER CODE END USB1_OTG_HS_MspInit 1 */
   }
 }
 
@@ -116,19 +116,19 @@ void HAL_HCD_MspDeInit(HCD_HandleTypeDef* hcdHandle)
 
   if(hcdHandle->Instance==USB1_OTG_HS)
   {
-    /* USER CODE BEGIN USB1_OTG_HS_MspDeInit 0 */
+  /* USER CODE BEGIN USB1_OTG_HS_MspDeInit 0 */
 
-    /* USER CODE END USB1_OTG_HS_MspDeInit 0 */
+  /* USER CODE END USB1_OTG_HS_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_USB1_OTG_HS_CLK_DISABLE();
     __HAL_RCC_USB1_OTG_HS_PHY_CLK_DISABLE();
 
     /* Disable VDDUSB */
-    HAL_PWREx_DisableVddUSB();
+      HAL_PWREx_DisableVddUSB();
 
     /* USB1_OTG_HS interrupt Deinit */
     HAL_NVIC_DisableIRQ(USB1_OTG_HS_IRQn);
-    /* USER CODE BEGIN USB1_OTG_HS_MspDeInit 1 */
+  /* USER CODE BEGIN USB1_OTG_HS_MspDeInit 1 */
 
   /* USER CODE END USB1_OTG_HS_MspDeInit 1 */
   }
@@ -137,3 +137,4 @@ void HAL_HCD_MspDeInit(HCD_HandleTypeDef* hcdHandle)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
+

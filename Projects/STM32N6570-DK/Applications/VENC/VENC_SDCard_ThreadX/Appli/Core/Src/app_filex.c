@@ -123,7 +123,7 @@ UINT VENC_FileX_Init(void)
   /* Open the SD disk driver */
   sd_status =  fx_media_open(&sdio_disk, FX_SD_VOLUME_NAME, fx_stm32_sd_driver, (VOID *)FX_NULL, (VOID *) fx_sd_media_memory, sizeof(fx_sd_media_memory));
 
-  /* Check the media open sd_status */
+  /* Check the media open status. */
   if (sd_status != FX_SUCCESS)
   {
     /* USER CODE BEGIN SD open error */
@@ -141,7 +141,7 @@ UINT VENC_FileX_Init(void)
   }
   else
   {
-    /* Indicate that SD card is not inserted from start */
+    /* Indicate that the SD card is not inserted at startup. */
     BSP_LED_On(LED_RED);
   }
 
@@ -169,7 +169,7 @@ UINT VENC_FileX_Init(void)
 
         if(SD_IsDetected(FX_STM32_SD_INSTANCE) == HAL_OK)
       {
-        /* We have a valid SD insertion event, start processing.. */
+        /* A valid SD insertion event was detected; proceed with initialization. */
         /* Update last known status */
         last_status = CARD_STATUS_CONNECTED;
         BSP_LED_Off(LED_RED);
@@ -185,11 +185,11 @@ UINT VENC_FileX_Init(void)
     }
   }
 
-  /* Create a file called STM32.TXT in the root directory.  */
+  /* Reopen the media if it was previously closed. */
   if (media_status == MEDIA_CLOSED)
   {
     sd_status =  fx_media_open(&sdio_disk, FX_SD_VOLUME_NAME, fx_stm32_sd_driver, (VOID *)FX_NULL, (VOID *) fx_sd_media_memory, sizeof(fx_sd_media_memory));
-    /* Check the media open sd_status */
+    /* Check the media open status. */
     if (sd_status != FX_SUCCESS)
      {
     /* Error opening file, call error handler.  */
@@ -225,7 +225,7 @@ UINT VENC_FileX_Open(CHAR * filename)
     return sd_status;
   }
   
-  /* Open the test file.  */
+  /* Open the requested file. */
   sd_status =  fx_file_open(&sdio_disk, &fx_file, filename, FX_OPEN_FOR_WRITE);
   
   /* Check the file open status.  */
@@ -248,7 +248,7 @@ UINT VENC_FileX_write(CHAR * data, LONG size)
 
 UINT VENC_FileX_close(void)
 {
-  /* Close the test file.  */
+  /* Close the current file. */
   UINT status =  fx_file_close(&fx_file);
   /* Check the file close status.  */
   if (status != FX_SUCCESS)

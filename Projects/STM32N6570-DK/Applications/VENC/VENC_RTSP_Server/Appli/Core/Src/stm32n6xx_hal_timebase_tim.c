@@ -79,16 +79,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
     status = HAL_TIM_Base_Start_IT(&htim6);
     if (status == HAL_OK)
     {
-      if (TickPriority < (1UL << __NVIC_PRIO_BITS))
-      {
-        /* Enable the TIM6 global Interrupt */
-        HAL_NVIC_SetPriority(TIM6_IRQn, TickPriority, 0U);
-        uwTickPrio = TickPriority;
-      }
-      else
-      {
-        status = HAL_ERROR;
-      }
+      HAL_NVIC_SetPriority(TIM6_IRQn, 0, 0U);
     }
   }
 

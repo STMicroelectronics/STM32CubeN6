@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang=""><head>
+
+
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes"><title>README</title>
+  
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../../../_htmresc/mini-st_2020.css"></head><body>
+<h2 id="oemurot_appli-template-description"><b>OEMuROT_Appli Template
+description</b></h2>
+<p>This project provides a OEMuROT boot path application example.</p>
+<p>This project template is based on the STM32Cube HAL API. It highlights the ROT specificies:</p>
+
+<ul>
+<li>Specific memory regions, defines automatically updated in the linker
+file.</li>
+<li>Postbuild script (postbuild.bat (.sh)) called from the project
+files.</li>
+</ul>
+<p>At the beginning of the main program, the HAL_Init() function is
+called to reset all the peripherals and initialize the systick used as
+1ms HAL timebase.</p>
+<p>The SystemClock_Config() function is used to configure the system
+clock (SYSCLK).</p>
+<p>The system clock frequency is the one configured by OEMuROT.</p>
+<h3 id="keywords"><b>Keywords</b></h3>
+<p>Reference, Template, OEMuROT, Root Of Trust</p>
+<h3 id="directory-contents"><b>Directory contents</b></h3>
+<h4 id="sub-project-oemurot_appli"><b>Sub-project OEMuROT_Appli</b></h4>
+<table>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Templates_ROT/AppliSecure/Inc/main.h</td>
+<td>Header file for main.c</td>
+</tr>
+<tr>
+<td>Templates_ROT/AppliSecure/Inc/stm32n6xx_hal_conf.h</td>
+<td>HAL configuration file</td>
+</tr>
+<tr>
+<td>Templates_ROT/AppliSecure/Inc/stm32n6xx_it.h</td>
+<td>Header file for stm32n6xx_it.h</td>
+</tr>
+<tr>
+<td>Templates_ROT/AppliSecure/Src/main.c</td>
+<td>Secure Main program</td>
+</tr>
+<tr>
+<td>Templates_ROT/AppliSecure/Src/secure_nsc.c</td>
+<td>Secure nonsecure callable functions</td>
+</tr>
+<tr>
+<td>Templates_ROT/AppliSecure/Src/stm32n6xx_it.c</td>
+<td>Secure Interrupt handlers</td>
+</tr>
+<tr>
+<td>Templates_ROT/AppliSecure/Src/system_stm32n6xx_s.c</td>
+<td>Secure STM32n6xx system clock configuration file</td>
+</tr>
+<tr>
+<td>Templates_ROT/Secure_nsclib/secure_nsc.h</td>
+<td>Header file for nonsecure callable functions</td>
+</tr>
+<tr>
+<td>Templates_ROT/AppliNonSecure/Inc/main.h</td>
+<td>Header file for main.c</td>
+</tr>
+<tr>
+<td>Templates_ROT/AppliNonSecure/Inc/stm32n6xx_hal_conf.h</td>
+<td>HAL configuration file</td>
+</tr>
+<tr>
+<td>Templates_ROT/AppliNonSecure/Inc/stm32n6xx_it.h</td>
+<td>Header file for stm32n6xx_it.c</td>
+</tr>
+<tr>
+<td>Templates_ROT/AppliNonSecure/Inc/stm32n6570_discovery_conf.h</td>
+<td>Header file for stm32n6570_discovery_conf.c</td>
+</tr>
+<tr>
+<td>Templates_ROT/AppliNonSecure/Src/main.c</td>
+<td>Non secure Main application file</td>
+</tr>
+<tr>
+<td>Templates_ROT/AppliNonSecure/Src/stm32n6xx_hal_msp.c</td>
+<td>Non secure HAL MSP file</td>
+</tr>
+<tr>
+<td>Templates_ROT/AppliNonSecure/Src/stm32n6xx_it.c</td>
+<td>Non secure Interrupt handlers</td>
+</tr>
+<tr>
+<td>Templates_ROT/AppliNonSecure/Src/system_stm32n6xx.c</td>
+<td>Non secure System init file</td>
+</tr>
+<tr>
+<td>Templates_ROT/EWARM/startup_stm32n6xx.s</td>
+<td>Startup file</td>
+</tr>
+<tr>
+<td>Templates_ROT/Binary</td>
+<td>Application firmware image (application binary + MCUBoot header and
+metadata)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hardware-and-software-environment"><b>Hardware and Software
+environment</b></h3>
+<ul>
+<li><p>This example runs on STM32N657xx devices.</p></li>
+<li><p>This example has been tested with STMicroelectronics
+STM32N6570-DK (MB1939) board and can be easily tailored for STM32N6xx
+devices by following these steps (more details in the wiki article <a href="https://wiki.st.com/stm32mcu/wiki/Security:How_to_create_ROT_examples_for_STM32N6"><b>How
+to create ROT examples for STM32N6</b></a>).</p></li>
+</ul>
+<h3 id="how-to-use-it"><b>How to use it ?</b></h3>
+<p><u>Before compiling the project, you should first start the
+provisioning process</u>. During the provisioning process, the linker
+files will be automatically updated.</p>
+<p>Before starting the provisioning process, select the application
+project to use (application example or template), through
+oemurot_boot_path_project variable in ROT_Provisioning/env.bat or
+env.sh. Then start provisioning process by running provisioning.bat
+(.sh) from ROT_Provisioning/OEMuROT, and follow its instructions. Refer
+to ROT_Provisioning/OEMuROT readme for more information on the
+provisioning process.</p>
+<p>For more details, refer to STM32N6 Wiki articles:</p>
+<ul>
+<li><a href="https://wiki.st.com/stm32mcu/wiki/Security:OEMuRoT_for_STM32N6">OEMuRoT
+for STM32N6</a>.</li>
+<li><a href="https://wiki.st.com/stm32mcu/wiki/Security:How_to_start_with_OEMuRoT_on_STM32N6_MCUs">How
+to start with OEMuRoT on STM32N6 MCUs</a>.</li>
+</ul>
+<h4 id="notes"><b>Notes:</b></h4>
+<p>Be aware that a default MPU configuration is already applied by
+OEMuRoT when jumping in your application. To ensure the security of the
+device, the MPU is configured to allow only the user application code
+area to be executed, minimizing the risk of unauthorized code execution.
+It is the user application responsibility to reconfigure the MPU to fit
+with its security needs.</p>
+</body></html>

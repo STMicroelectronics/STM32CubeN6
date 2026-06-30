@@ -21,6 +21,7 @@
 #include "usb_otg.h"
 
 /* USER CODE BEGIN 0 */
+#include <string.h>
 #if defined ( __ICCARM__ ) /* IAR Compiler */
 #pragma location = ".UsbHpcdSection"
 #else /* GNU and AC6 Compiler */
@@ -40,7 +41,7 @@ void MX_USB1_OTG_HS_PCD_Init(void)
   /* USER CODE END USB1_OTG_HS_Init 0 */
 
   /* USER CODE BEGIN USB1_OTG_HS_Init 1 */
-
+  memset(&hpcd_USB_OTG_HS1, 0x0, sizeof(PCD_HandleTypeDef));
   /* USER CODE END USB1_OTG_HS_Init 1 */
   hpcd_USB_OTG_HS1.Instance = USB1_OTG_HS;
   hpcd_USB_OTG_HS1.Init.dev_endpoints = 9;
@@ -57,6 +58,21 @@ void MX_USB1_OTG_HS_PCD_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USB1_OTG_HS_Init 2 */
+
+  /* Set Rx FIFO */
+  HAL_PCDEx_SetRxFiFo(&hpcd_USB_OTG_HS1, 0x200);
+
+  /* Set Tx FIFO 0 */
+  HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_HS1, 0, 0x10);
+
+  /* Set Tx FIFO 2 */
+  HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_HS1, 1, 0x10);
+
+  /* Set Tx FIFO 3 */
+  HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_HS1, 2, 0x80);
+
+  /* Set Tx FIFO 4 */
+  HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_HS1, 3, 0x20);
 
   /* USER CODE END USB1_OTG_HS_Init 2 */
 
@@ -75,6 +91,7 @@ void HAL_PCD_MspInit(PCD_HandleTypeDef* pcdHandle)
   /** Initializes the peripherals clock
   */
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USBOTGHS1;
+    PeriphClkInitStruct.UsbPhy1ClockSelection = RCC_USBPHY1CLKSOURCE_HSE_DIV2;
     PeriphClkInitStruct.UsbOtgHs1ClockSelection = RCC_USBOTGHS1CLKSOURCE_HSE_DIRECT;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
     {
@@ -133,6 +150,9 @@ void HAL_PCD_MspDeInit(PCD_HandleTypeDef* pcdHandle)
     HAL_NVIC_DisableIRQ(USB1_OTG_HS_IRQn);
   /* USER CODE BEGIN USB1_OTG_HS_MspDeInit 1 */
 
+    /* Enable VDDUSB */
+    HAL_PWREx_EnableVddUSB();
+
   /* USER CODE END USB1_OTG_HS_MspDeInit 1 */
   }
 }
@@ -140,3 +160,4 @@ void HAL_PCD_MspDeInit(PCD_HandleTypeDef* pcdHandle)
 /* USER CODE BEGIN 1 */
 
 /* USER CODE END 1 */
+

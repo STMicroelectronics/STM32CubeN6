@@ -48,6 +48,7 @@ typedef enum
 TIM_identifier;
 
 #define TIM_MAX_TIME 10000u /*time in us, means 10 ms */
+#define TIMX_CLK_FREQ (SystemCoreClock/2)
 /* Exported types ------------------------------------------------------------*/
 /* External variables --------------------------------------------------------*/
 /* Exported macros -----------------------------------------------------------*/

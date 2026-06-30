@@ -13,7 +13,7 @@
 ;*                      priority is Privileged, and the Stack is set to Main.
 ;********************************************************************************
 ;*
-;* Copyright (c) 2023 STMicroelectronics.
+;* Copyright (c) 2024 STMicroelectronics.
 ;* All rights reserved.
 ;*
 ;* This software is licensed under terms that can be found in the LICENSE file

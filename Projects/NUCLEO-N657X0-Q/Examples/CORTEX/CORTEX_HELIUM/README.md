@@ -12,7 +12,26 @@ This operation is done twice : once using a regular loop compiled into standard 
 
 The program displays in the terminal the amount of cycles elapsed for each method.
 
-For CubeIDE, the logs are written to UART using 115200 baud, 8 data bits, 1 stop bits and no parity.
+Depending of IDE, to watch content of Terminal I/O note that:
+
+ - When resorting to EWARM IAR IDE:
+   Command Code is displayed on debugger as follows: View --> Terminal I/O
+
+ - When resorting to MDK-ARM KEIL IDE:
+   Command Code is displayed on debugger as follows: View --> Serial Viewer --> Debug (printf) Viewer
+
+ - When resorting to STM32CubeIDE:
+   Command Code is displayed on debugger as follows: Window--> Show View--> Console.
+   In the Debug configuration, there are two possible options:
+   
+   - Option 1:
+      - Window\Debugger, select the Debug probe : ST-LINK(OpenOCD)
+      - Window\Debugger, select the Semihosting: "mon gdb_breakpoint_override hard" and "monitor arm semihosting enable"
+   - Option 2:
+      - Window\Debugger, select the Debug probe : ST-LINK(ST-LINK GDB server)
+      - Window\Startup,add the following commands: Enable terminal mode  
+
+For CubeIDE, the logs can also be written to UART using 115200 baud, 8 data bits, 1 stop bits and no parity.
 
 #### <b>Notes</b>
 

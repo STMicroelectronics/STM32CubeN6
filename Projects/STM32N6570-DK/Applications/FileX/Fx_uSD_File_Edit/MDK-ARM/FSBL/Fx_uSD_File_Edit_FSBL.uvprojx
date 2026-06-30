@@ -17,7 +17,7 @@
           <Device>STM32N657X0HxQ</Device>
           <Vendor>STMicroelectronics</Vendor>
           <PackID>Keil.STM32N6xx_DFP.1.0.0</PackID>
-          <PackURL>http://www.keil.com/pack</PackURL>
+          <PackURL>https://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x341C0000-0x341FFFFF) IROM(0x34180400-0x341BFFFF) CLOCK(8000000) FPU3(DFPU) CPUTYPE("Cortex-M55") ELITTLE TZ DSP</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>

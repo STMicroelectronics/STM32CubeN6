@@ -4,7 +4,7 @@
   * @file    Examples_LL/RCC/RCC_UseHSI_PLLasSystemClock/Src/main.c
   * @author  MCD Application Team
   * @brief   This example describes how to change dynamically SYSCLK through
-  *          the STM32H7RSxx RCC LL API.
+  *          the STM32N6xx RCC LL API.
   ******************************************************************************
   * @attention
   *
@@ -595,6 +595,7 @@ void UserButton_Callback(void)
 
 /**
   * @brief  This function is executed in case of error occurrence.
+  * @param  None
   * @retval None
   */
 void Error_Handler(void)
@@ -607,8 +608,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

@@ -20,7 +20,11 @@
 #define UTILS
 
 #define ALIGN_32 __attribute__((aligned (32)))
+#if defined(__ARMCC_VERSION)
+#define IN_PSRAM __attribute__((section(".bss.NoInit"))) __attribute__((zero_init))
+#else
 #define IN_PSRAM __attribute__((section (".psram_bss")))
+#endif
 #define IN_RAM   __attribute__((section(".bss")))
 #define IN_UNCACHED_RAM  __attribute__((section(".noncacheable")))
 

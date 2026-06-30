@@ -113,11 +113,10 @@ UINT MX_NetXDuo_Init(VOID *memory_ptr)
 {
   UINT ret = NX_SUCCESS;
   TX_BYTE_POOL *byte_pool = (TX_BYTE_POOL*)memory_ptr;
-  CHAR *pointer;
+   CHAR *pointer;
 
   /* USER CODE BEGIN MX_NetXDuo_MEM_POOL */
   /* USER CODE END MX_NetXDuo_MEM_POOL */
-
   /* USER CODE BEGIN 0 */
   printf("Nx_Webserver application started..\n");
   /* USER CODE END 0 */
@@ -141,13 +140,13 @@ UINT MX_NetXDuo_Init(VOID *memory_ptr)
     return NX_POOL_ERROR;
   }
 
-  /* Allocate the memory for Ip_Instance */
+    /* Allocate the memory for Ip_Instance */
   if (tx_byte_allocate(byte_pool, (VOID **) &pointer, Nx_IP_INSTANCE_THREAD_SIZE, TX_NO_WAIT) != TX_SUCCESS)
   {
     return TX_POOL_ERROR;
   }
 
-  /* Create the main NX_IP instance */
+   /* Create the main NX_IP instance */
   ret = nx_ip_create(&NetXDuoEthIpInstance, "NetX Ip instance", NX_APP_DEFAULT_IP_ADDRESS, NX_APP_DEFAULT_NET_MASK, &NxAppPool, nx_stm32_eth_driver,
                      pointer, Nx_IP_INSTANCE_THREAD_SIZE, NX_APP_INSTANCE_PRIORITY);
 
@@ -156,7 +155,7 @@ UINT MX_NetXDuo_Init(VOID *memory_ptr)
     return NX_NOT_SUCCESSFUL;
   }
 
-  /* Allocate the memory for ARP */
+    /* Allocate the memory for ARP */
   if (tx_byte_allocate(byte_pool, (VOID **) &pointer, DEFAULT_ARP_CACHE_SIZE, TX_NO_WAIT) != TX_SUCCESS)
   {
     return TX_POOL_ERROR;
@@ -243,12 +242,7 @@ UINT MX_NetXDuo_Init(VOID *memory_ptr)
   }
 
   /* set DHCP notification callback  */
-  ret = tx_semaphore_create(&DHCPSemaphore, "DHCP Semaphore", 0);
-
-  if (ret != NX_SUCCESS)
-  {
-    return NX_DHCP_ERROR;
-  }
+  tx_semaphore_create(&DHCPSemaphore, "DHCP Semaphore", 0);
 
   /* USER CODE BEGIN MX_NetXDuo_Init */
   /* Allocate the server packet pool. */
@@ -346,11 +340,11 @@ UINT MX_NetXDuo_Init(VOID *memory_ptr)
 }
 
 /**
-  * @brief  ip address change callback.
-  * @param ip_instance: NX_IP instance
-  * @param ptr: user data
-  * @retval none
-  */
+* @brief  ip address change callback.
+* @param ip_instance: NX_IP instance
+* @param ptr: user data
+* @retval none
+*/
 static VOID ip_address_change_notify_callback(NX_IP *ip_instance, VOID *ptr)
 {
   /* USER CODE BEGIN ip_address_change_notify_callback */
@@ -369,10 +363,10 @@ static VOID ip_address_change_notify_callback(NX_IP *ip_instance, VOID *ptr)
 }
 
 /**
-  * @brief  Main thread entry.
-  * @param thread_input: ULONG user argument used by the thread entry
-  * @retval none
-  */
+* @brief  Main thread entry.
+* @param thread_input: ULONG user argument used by the thread entry
+* @retval none
+*/
 static VOID nx_app_thread_entry (ULONG thread_input)
 {
   /* USER CODE BEGIN Nx_App_Thread_Entry 0 */
@@ -407,8 +401,7 @@ static VOID nx_app_thread_entry (ULONG thread_input)
 
     /* USER CODE END DHCP client start error */
   }
-
-  printf("Looking for DHCP server ..\n");
+   printf("Looking for DHCP server ..\n");
   /* wait until an IP address is ready */
   if(tx_semaphore_get(&DHCPSemaphore, TX_WAIT_FOREVER) != TX_SUCCESS)
   {

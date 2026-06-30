@@ -125,7 +125,7 @@ SSL_OPT_APPS += test/query_compile_time_config test/udp_proxy
 ssl-opt: $(patsubst %,%$(EXEXT),$(SSL_OPT_APPS))
 .PHONY: ssl-opt
 
-fuzz: ${MBEDTLS_TEST_OBJS}
+fuzz: ${MBEDLIBS} ${MBEDTLS_TEST_OBJS}
 	$(MAKE) -C fuzz
 
 ${MBEDTLS_TEST_OBJS}:

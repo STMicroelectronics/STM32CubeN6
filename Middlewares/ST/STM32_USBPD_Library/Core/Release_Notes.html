@@ -55,7 +55,7 @@ state machine</li>
 STM32Cube HAL driver and offers all the APIs required to develop an USB
 PD application.</p>
 <p>The USB-PD library is developed following the Universal Serial Bus
-Power Delivery Specification Revision 3.1, V1.7 (January 2023) and
+Power Delivery Specification Revision 3.2, V1.1 (October 2024) and
 Universal Serial Bus type-C Cable and Connector Specification, Revision
 2.0 (August, 2019). It has passed successfully the official
 certification.</p>
@@ -75,7 +75,137 @@ Page</a>: USB Power Delivery overview</li>
 <section id="update-history" class="col-sm-12 col-lg-8">
 <h1>Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section39" checked aria-hidden="true">
+<input type="checkbox" id="collapse-section41" checked aria-hidden="true">
+<label for="collapse-section41" aria-hidden="true">V5.4.1 /
+08-May-2026</label>
+<div>
+<h2 id="main-changes">Main Changes</h2>
+<table>
+<thead>
+<tr>
+<th>Headline</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SW_Security_Level.md file added </td>
+</tr>
+<tr>
+<td>ECN : Wait in EPR_Request implemented</td>
+</tr>
+</tbody>
+</table>
+  <p><strong>Fixed bugs list</strong></p>
+  <table>
+  <thead>
+  <tr>
+  <th>Headline</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td>Call 'Inform Identity' upon reception of a NAK/BUSY response added</td>
+  </tr>
+  <tr>
+  <td>Missing notification of 'not supported message' reception to the policy engine binary added</td>
+  </tr>
+  </tbody>
+</table>
+<h2 id="known-limitations">Known limitations</h2>
+<p>NA</p>
+<h2 id="backward-compatibility">Backward compatibility</h2>
+<p>NA</p>
+<h2 id="dependencies">Dependencies</h2>
+<p>NA</p>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section40" aria-hidden="true">
+  <label for="collapse-section40" aria-hidden="true">V5.4.0 /
+  23-Jan-2026</label>
+  <div>
+  <h2 id="main-changes-1">Main Changes</h2>
+  <h3
+id="official-support-of-universal-serial-bus-power-delivery-specification-revision-3.2"><strong>Official
+support of Universal Serial Bus Power Delivery Specification Revision
+3.2</strong></h3>
+  <h2 id="contents">Contents</h2>
+  <p><strong>New Features Supported</strong></p>
+  <table>
+  <thead>
+  <tr>
+  <th>Headline</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td> AVS in SPR mode</td>
+  </tr>
+  <tr>
+    <td>Dynamic Power Sources (DPS) </td>
+    </tr>
+  <tr>
+  <td> Deprecate AMS interruptibility</td>
+  </tr>
+  <tr>
+  <td> PR_Swap in EPR mode is disallowed</td>
+  </tr>
+  <tr>
+  <td>Deprecate GotoMin and GiveBack Features</td>
+  </tr>
+  <tr>
+  <td>Removing the usage of Ping message</td>
+  </tr>
+  </tbody>
+  </table>
+  <p><strong>Fixed bugs list</strong></p>
+  <table>
+  <thead>
+  <tr>
+  <th>Headline</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td>PE_SRC_WAIT_NEW_CAPABILITIES state freeze fixed</td>
+  </tr>
+  <tr>
+  <td>tPSSourceOff value updated</td>
+  </tr>
+  <tr>
+    <td>Adapt the goodCRC message header to select the proper specification revision</td>
+    </tr>  
+  </tbody>
+  </table>
+  <h2 id="known-limitations-1">Known limitations</h2>
+  <table>
+    <thead>
+    <tr>
+    <th>Headline</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td>ECN : Wait in EPR_Request not implemented</td>
+    </tr>
+    </tbody>
+    </table>
+  <h2 id="development-toolchains-and-compilers">Development Toolchains and
+  Compilers</h2>
+  <ul>
+  <li>IAR Embedded Workbench for ARM (EWARM) toolchain V9.30.1</li>
+  <li>Keil Microcontroller Development Kit (MDK-ARM) toolchain V5.38</li>
+  <li>STM32CubeIDE V1.11.0</li>
+  </ul>
+  <h2 id="supported-devices-and-boards">Supported Devices and boards</h2>
+  <h2 id="backward-compatibility-1">Backward compatibility</h2>
+  <p>NA</p>
+  <h2 id="dependencies-1">Dependencies</h2>
+  <p>NA</p>
+  </div>
+  </div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section39" aria-hidden="true">
 <label for="collapse-section39" aria-hidden="true">V5.3.1 /
 25-Sep-2025</label>
 <div>

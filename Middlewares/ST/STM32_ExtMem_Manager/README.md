@@ -36,7 +36,7 @@ Below table provides a summary of available **External Memory Manager** APIs per
 | EXTMEM_DeInit            | Yes              | Yes          |Yes           | Yes           | Yes (User Implementation) |
 | EXTMEM_Read              | Yes              | -            |Yes           | Yes           | Yes (User Implementation) |
 | EXTMEM_Write             | Yes              | -            |Yes           | Yes           | Yes (User Implementation) |
-| EXTMEM_WriteInMappedMode | Yes              | -            |-             | -             | -                         |
+| EXTMEM_WriteInMappedMode | Yes              | -            |-             | Yes           | -                         |
 | EXTMEM_EraseSector       | Yes              | -            |Yes           | Yes           | Yes (User Implementation) |
 | EXTMEM_EraseAll          | Yes              | -            |Yes           | Yes           | Yes (User Implementation) |
 | EXTMEM_GetInfo           | Yes              | -            |Yes           | Yes           | Yes (User Implementation) |

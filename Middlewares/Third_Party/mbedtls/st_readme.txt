@@ -20,6 +20,53 @@
   @Note Mbed-TLS release
    For additional information on the Mbed-TLS release, consult the changelog file.
 
+### 03-June-2026 ###
+========================
+   +Move to Mbed-TLS V3.6.6
+   +Add back ST patches, previously supported
+   +Add condition for mbedtls_psa_drbg_context struct private or not private element, in psa_crypto_random_impl.h
+   +Fix Pe546 warning in pk.c
+   +Add SW_Security_Level.md
+### 10-April-2026 ###
+========================
+    + Fix IAR Pe546 warnings
+    + Fix pk.c build error, on application PKCS1v1.5
+    + Fix CCM ALT Selftest
+    + Allow data buffering for GCM ALT Selftest
+### 24-February-2026 ###
+========================
+    + Add MBEDTLS_HAL_CCM_MULTIPART_ALT flag to support CCM multipart hardware accelerated,
+      this feature requires MBEDTLS_CCM_ALT and MBEDTLS_HAL_CCM_ALT flags.
+### 17-December-2025 ###
+========================
+    + Move to Mbed-TLS V3.6.5
+    + Add ST patches listed below:
+      Remove dual license, STMicroelectronics provides the Mbed TLS middleware under only the Apache-2.0 license
+      Fixe IDE warnings
+        Add MBEDTLS_RSA_C in psa_crypto_driver_wrappers.h file.
+        Add MBEDTLS_MD_C in md.c and config_adjust_psa_from_legacy.h files.
+        Add AT_LEAST_ONE_BUILTIN_KDF, PSA_WANT_ALG_GCM, PSA_WANT_ALG_CCM, PSA_WANT_ALG_CHACHA20_POLY1305 to psa_crypto.c file
+        Add MBEDTLS_PK_HAVE_ECC_KEYS to pk.c file.
+        EWARM warnings Pe546 and Pe550
+      Enable constant time API to be used by RSA ALT in constant_time files.
+      Add double signature check, with single signature computation in ecdsa.c file.
+      Improve self-test for nist_kw and gcm.
+      Add STM32 Key Wrap Engine opaque driver to Mbed TLS and improve Jinja driver templates.
+      Add ITS ALT support in psa_crypto_storage.c file.
+      Replace include psa/error by mbedtls/error in psa_crypto_se.c and psa_crypto_storage.c files.
+      Export rsa_rsassa_pkcs1_v15_encode and mgf_mask functions to be used by Key Wrap driver.
+      Add HUK feature to allow cipher operation using the hardware unique key on STM32 in cipher.c and psa_crypto.c
+      Add CODE_OF_CONDUCT.md
+      Renamed README.md to MBEDTLS_README.md and remove the dual license term
+      update st_readme.txt
+      Set MBEDTLS_PRIVATE for pk in mbedtls_pk_get_ec_group_id in pk_internal.h
+      Solve warning in pk.c : 'key_bits' may be used uninitialized.
+      Replace the Mbed TLS security file with the ST security file (PSIRT)
+      ccm update to support multipart. Modify the API mbedtls_ccm_finish() to add two parameters. Impacted files ccm.h, ccm.c and psa_crypto_aead.c.
+        WARNING: Compability break for an application that directly calls the legacy mbedTLS API : mbedtls_ccm_finish().
+      Replace the Mbed TLS contribution file with the ST contribution file (CONTRIBUTING.md)
+      Add ST README.md
+
 ### 1-July-2025 ###
 ========================
     + Move to Mbed-TLS V3.6.4

@@ -136,6 +136,7 @@ extern "C" {
 /* #define USBPDCORE_NOPD */
 #define USBPDCORE_EPR
 #define USBPDCORE_PPS
+#define USBPDCORE_SPR_AVS
 #define USBPDCORE_UNCHUNCKED_MODE
 #define USBPDCORE_USBDATA
 #define USBPDCORE_DATA_SWAP
@@ -159,11 +160,11 @@ extern "C" {
 #define USBPDCORE_SECURITY_MSG
 #define USBPDCORE_FWUPD
 #define USBPDCORE_COUNTRY_MSG
-#define USBPDCORE_PING_SUPPORT
+/* #define USBPDCORE_PING_SUPPORT */
 #define USBPDCORE_BIST
 #define USBPDCORE_ERROR_RECOVERY
 /* #define USBPDCORE_PECABLE */
-#define USBPDCORE_GOTOMIN
+/* #define USBPDCORE_GOTOMIN */
 /* #define USBPDCORE_TCPM_SUPPORT */
 /* -------------------------------------- */
 
@@ -172,6 +173,7 @@ extern "C" {
 /* #define USBPDCORE_NOPD */
 /* #define USBPDCORE_EPR */
 #define USBPDCORE_PPS
+#define USBPDCORE_SPR_AVS
 #define USBPDCORE_UNCHUNCKED_MODE
 /* #define USBPDCORE_USBDATA */
 #define USBPDCORE_DATA_SWAP
@@ -195,11 +197,11 @@ extern "C" {
 #define USBPDCORE_SECURITY_MSG
 #define USBPDCORE_FWUPD
 #define USBPDCORE_COUNTRY_MSG
-#define USBPDCORE_PING_SUPPORT
+/* #define USBPDCORE_PING_SUPPORT */
 #define USBPDCORE_BIST
 #define USBPDCORE_ERROR_RECOVERY
 /* #define USBPDCORE_PECABLE */
-#define USBPDCORE_GOTOMIN
+/* #define USBPDCORE_GOTOMIN */
 /* #define USBPDCORE_TCPM_SUPPORT */
 /* -------------------------------------- */
 
@@ -235,7 +237,7 @@ extern "C" {
 #define USBPDCORE_BIST
 #define USBPDCORE_ERROR_RECOVERY
 /* #define USBPDCORE_PECABLE */
-#define USBPDCORE_GOTOMIN
+/* #define USBPDCORE_GOTOMIN */
 /* #define USBPDCORE_TCPM_SUPPORT */
 /* -------------------------------------- */
 
@@ -271,7 +273,7 @@ extern "C" {
 #define USBPDCORE_BIST
 #define USBPDCORE_ERROR_RECOVERY
 /* #define USBPDCORE_PECABLE */
-#define USBPDCORE_GOTOMIN
+/* #define USBPDCORE_GOTOMIN */
 /* #define USBPDCORE_TCPM_SUPPORT */
 /* -------------------------------------- */
 
@@ -307,7 +309,7 @@ extern "C" {
 #define USBPDCORE_BIST
 #define USBPDCORE_ERROR_RECOVERY
 /* #define USBPDCORE_PECABLE */
-#define USBPDCORE_GOTOMIN
+/* #define USBPDCORE_GOTOMIN */
 /* #define USBPDCORE_TCPM_SUPPORT */
 /* -------------------------------------- */
 
@@ -339,11 +341,11 @@ extern "C" {
 #define USBPDCORE_SECURITY_MSG
 #define USBPDCORE_FWUPD
 #define USBPDCORE_COUNTRY_MSG
-#define USBPDCORE_PING_SUPPORT
+/* #define USBPDCORE_PING_SUPPORT */
 #define USBPDCORE_BIST
 #define USBPDCORE_ERROR_RECOVERY
 /* #define USBPDCORE_PECABLE */
-#define USBPDCORE_GOTOMIN
+/* #define USBPDCORE_GOTOMIN */
 #define USBPDCORE_TCPM_SUPPORT
 /* -------------------------------------- */
 
@@ -441,11 +443,11 @@ extern "C" {
 #define BIST_CARRIER_MODE_MS    (50U)   /*!< Time in ms of the BIST signal*/
 #define USBPD_PDO_SIZE_IN_BYTES (4U)    /*!< Nb of size used for PDO coding */
 
-/* USBPD version and revision */ 
+/* USBPD version and revision */
 #define USBPD_REV_MAJOR      (3U)       /*!< USBPD Specification revision major */
-#define USBPD_REV_MINOR      (1U)       /*!< USBPD Specification revision minor */
+#define USBPD_REV_MINOR      (2U)       /*!< USBPD Specification revision minor */
 #define USBPD_VERSION_MAJOR  (1U)       /*!< USBPD Specification version major  */
-#define USBPD_VERSION_MINOR  (7U)       /*!< USBPD Specification version minor  */
+#define USBPD_VERSION_MINOR  (1U)       /*!< USBPD Specification version minor  */
 
 /*
   @brief Maximum size of the RX buffer allocated in the stack to receive a PD frame
@@ -645,7 +647,38 @@ extern "C" {
 #define USBPD_PDO_SNK_APDO_MAX_CURRENT_Msk           (0x7FU << USBPD_PDO_SNK_APDO_MAX_CURRENT_Pos)             /*!< APDO Max Current in 50 mA increments bits mask : 0x0000007F */
 #endif /* USBPDCORE_PPS */
 
-/* Source AVSPDO type PDO elements */
+#if defined(USBPDCORE_SPR_AVS)
+/* Source SPR AVSPDO type PDO elements */
+#define USBPD_PDO_SRC_AVSPDO_SPR_Pos                  (28U)                                                     /*!< Ajustable Voltage Supply bit position            */
+#define USBPD_PDO_SRC_AVSPDO_SPR_Msk                  (0x3U << USBPD_PDO_SRC_AVSPDO_EPR_Pos)                    /*!< Ajustable Voltage Supply bit mask : 0x300000000  */
+#define USBPD_PDO_SRC_AVSPDO_SPR                      (2U   << USBPD_PDO_SRC_AVSPDO_EPR_Pos)                    /*!< Ajustable Voltage Supply field value 10b         */
+
+#define USBPD_PDO_SRC_AVSPDO_SPR_PEAKCURRENT_Pos      (26U)                                                                  /*!< Peak Current info bits position            */
+#define USBPD_PDO_SRC_AVSPDO_SPR_PEAKCURRENT_Msk      (0x3U << USBPD_PDO_SRC_AVSPDO_SPR_PEAKCURRENT_Pos)                     /*!< Peak Current info bits mask : 0x00300000   */
+#define USBPD_PDO_SRC_AVSPDO_SPR_PEAKCURRENT_EQUAL    (USBPD_CORE_PDO_PEAKEQUAL << USBPD_PDO_SRC_AVSPDO_SPR_PEAKCURRENT_Pos) /*!< Peak Current info : Equal to Ioc           */
+#define USBPD_PDO_SRC_AVSPDO_SPR_PEAKCURRENT_OVER1    (USBPD_CORE_PDO_PEAKOVER1 << USBPD_PDO_SRC_AVSPDO_SPR_PEAKCURRENT_Pos) /*!< Peak Current info : Overload Cap 1         */
+#define USBPD_PDO_SRC_AVSPDO_SPR_PEAKCURRENT_OVER2    (USBPD_CORE_PDO_PEAKOVER2 << USBPD_PDO_SRC_AVSPDO_SPR_PEAKCURRENT_Pos) /*!< Peak Current info : Overload Cap 2         */
+#define USBPD_PDO_SRC_AVSPDO_SPR_PEAKCURRENT_OVER3    (USBPD_CORE_PDO_PEAKOVER3 << USBPD_PDO_SRC_AVSPDO_SPR_PEAKCURRENT_Pos) /*!< Peak Current info : Overload Cap 3         */
+
+#define USBPD_PDO_SRC_AVSPDO_SPR_MAX_CURRENT_15V_Pos  (10U)                                                     /*!< Max current in 10 mA units bits position           */
+#define USBPD_PDO_SRC_AVSPDO_SPR_MAX_CURRENT_15V_Msk  (0x3FFU << USBPD_PDO_SRC_AVSPDO_SPR_MAX_CURRENT_15V_Pos)  /*!< Max current in 10 mA units bits mask : 0x000003FF  */
+
+#define USBPD_PDO_SRC_AVSPDO_SPR_MAX_CURRENT_20V_Pos  (0U)                                                      /*!< Max current in 10 mA units bits position           */
+#define USBPD_PDO_SRC_AVSPDO_SPR_MAX_CURRENT_20V_Msk  (0x3FFU << USBPD_PDO_SRC_AVSPDO_SPR_MAX_CURRENT_20V_Pos)  /*!< Max current in 10 mA units bits mask : 0x000003FF  */
+
+/* Sink SPR AVSPDO type PDO elements */
+#define USBPD_PDO_SNK_AVSPDO_SPR_Pos                  (28U)                                                     /*!< Ajustable Voltage Supply bit position            */
+#define USBPD_PDO_SNK_AVSPDO_SPR_Msk                  (0x3U << USBPD_PDO_SNK_AVSPDO_SPR_Pos)                    /*!< Ajustable Voltage Supply bit mask : 0x300000000  */
+#define USBPD_PDO_SNK_AVSPDO_SPR                      (2U   << USBPD_PDO_SNK_AVSPDO_SPR_Pos)                    /*!< Ajustable Voltage Supply field value 10b         */
+
+#define USBPD_PDO_SNK_AVSPDO_SPR_MAX_CURRENT_15V_Pos  (10U)                                                     /*!< Max current in 10 mA units bits position           */
+#define USBPD_PDO_SNK_AVSPDO_SPR_MAX_CURRENT_15V_Msk  (0x3FFU << USBPD_PDO_SNK_AVSPDO_SPR_MAX_CURRENT_15V_Pos)  /*!< Max current in 10 mA units bits mask : 0x000003FF  */
+
+#define USBPD_PDO_SNK_AVSPDO_SPR_MAX_CURRENT_20V_Pos  (0U)                                                      /*!< Max current in 10 mA units bits position           */
+#define USBPD_PDO_SNK_AVSPDO_SPR_MAX_CURRENT_20V_Msk  (0x3FFU << USBPD_PDO_SNK_AVSPDO_SPR_MAX_CURRENT_20V_Pos)  /*!< Max current in 10 mA units bits mask : 0x000003FF  */
+#endif /* USBPDCORE_SPR_AVS */
+
+/* Source EPR AVSPDO type PDO elements */
 #define USBPD_PDO_SRC_AVSPDO_EPR_Pos                  (28U)                                                     /*!< Ajustable Voltage Supply bit position            */
 #define USBPD_PDO_SRC_AVSPDO_EPR_Msk                  (0x3U << USBPD_PDO_SRC_AVSPDO_EPR_Pos)                    /*!< Ajustable Voltage Supply bit mask : 0x300000000  */
 #define USBPD_PDO_SRC_AVSPDO_EPR                      (1U   << USBPD_PDO_SRC_AVSPDO_EPR_Pos)                    /*!< Ajustable Voltage Supply field value 01b         */
@@ -720,6 +753,7 @@ extern "C" {
 #define USBPD_ADO_EXT_TYPE_ALERT_PWR_BUTTON_PRESS   2U /*!< Power button press (UFP only) */
 #define USBPD_ADO_EXT_TYPE_ALERT_PWR_BUTTON_RELEASE 3U /*!< Power button release (UFP only) */
 #define USBPD_ADO_EXT_TYPE_ALERT_CTRL_INITIATED     4U /*!< Controller initiated wake e.g. Wake on Lan (UFP only) */
+#define USBPD_ADO_EXT_TYPE_ALERT_SRC_REDUCE_SRC_CAP 5U /*!< Source is about to reduce Source Capabilities (Source only) */
 /**
   * @}
   */
@@ -890,6 +924,7 @@ extern "C" {
 #define USBPD_SKEDB_SINKMODES_MAINS               (1U << 2U) /*!< 1: Mains powered                  */
 #define USBPD_SKEDB_SINKMODES_BATPOW              (1U << 3U) /*!< 1: Battery powered                */
 #define USBPD_SKEDB_SINKMODES_BATUNL              (1U << 4U) /*!< 1: Battery essentially unlimited  */
+#define USBPD_SKEDB_SINKMODES_AVS                 (1U << 5U) /*!< 1: AVS supported                  */
 /**
   * @}
   */
@@ -1074,7 +1109,7 @@ typedef enum
 
   /* Message reply */
   USBPD_ACCEPT,
-  USBPD_GOTOMIN,
+  /* USBPD_GOTOMIN,*/
   USBPD_REJECT,
   USBPD_WAIT,
   USBPD_NAK,
@@ -1136,6 +1171,19 @@ typedef enum
   USBPD_SPR_MODE = 0x00u,  /*!< SPR : standard power role */
   USBPD_EPR_MODE = 0x01u   /*!< EPR : extended power role */
 } USBPD_PowerMode_TypeDef;
+/**
+  * @}
+  */
+
+/** @defgroup USBPD_SPR_APDO_TypeDef USB PD SPR APDO type structure definition
+  * @brief  USB PD SPR APDO type structure definition
+  * @{
+  */
+typedef enum
+{
+  USBPD_SPR_APDO_PPS = 0x00u,  /*!< SPR PPS APDO */
+  USBPD_SPR_APDO_AVS = 0x01u   /*!< SPR AVS APDO */
+} USBPD_SPR_APDO_TypeDef;
 /**
   * @}
   */
@@ -1443,7 +1491,7 @@ typedef enum
 #define USBPD_CORE_PDO_TYPE_FIXED       0x00u            /*!< Fixed Supply PDO                             */
 #define USBPD_CORE_PDO_TYPE_BATTERY     0x01u            /*!< Battery Supply PDO                           */
 #define USBPD_CORE_PDO_TYPE_VARIABLE    0x02u            /*!< Variable Supply (non-battery) PDO            */
-#if defined(USBPDCORE_PPS)
+#if defined(USBPDCORE_PPS) || defined(USBPDCORE_SPR_AVS)
 #define USBPD_CORE_PDO_TYPE_APDO        0x03u            /*!< Augmented Power Data Object (APDO)           */
 #if defined(USBPDCORE_EPR)
 #define USBPD_CORE_PDO_TYPE_AVSPDO      0x03u            /*!< EPR Adjustable Voltage Supply Power Data object (APDO)  */
@@ -1455,6 +1503,18 @@ typedef uint32_t USBPD_CORE_PDO_Type_TypeDef;
   * @}
   */
 
+/** @defgroup USBPD_CORE_APDO_Type_TypeDef APDO type definition
+  * @brief  APDO type values in PDO definition
+  * @{
+  */
+#define USBPD_CORE_APDO_TYPE_PPS        0x00u            /*!< APDO sub-type = SPR Programmable Power Supply */
+#define USBPD_CORE_APDO_TYPE_EPR_AVS    0x01u            /*!< APDO sub-type = EPR Adjustable Voltage Supply */
+#define USBPD_CORE_APDO_TYPE_SPR_AVS    0x02u            /*!< APDO sub-type = SPR Adjustable Voltage Supply */
+
+typedef uint32_t USBPD_CORE_APDO_Type_TypeDef;
+/**
+  * @}
+  */
 /** @defgroup USBPD_CORE_POWER_Type_TypeDef USB-PD power state
   * @brief  USB Power state
   * @{
@@ -1721,6 +1781,7 @@ typedef enum
   USBPD_NOTIFY_EPR_SRCCAP_RECEIVED         = 119U,
   USBPD_NOTIFY_TAMETIMEOUT                 = 120U,
   USBPD_NOTIFY_TAMESTOP                    = 121U,
+  USBPD_NOTIFY_DEBUG_ACCESSORY_ATTACHED    = 122U,
   USBPD_NOTIFY_ALL                         = USBPD_NOTIFY_TAMESTOP + 1U,
 } USBPD_NotifyEventValue_TypeDef;
 /**
@@ -2272,6 +2333,21 @@ typedef enum
 #endif /* USBPDCORE_EPR */
 
 /**
+  * @brief Debug Accessory Modes defines
+  * @{
+  */
+#define DAM_NOT_CONNECTED  0x00
+#define DAM_TS_SINK        0x01
+#define DAM_DTS_SINK       0x02
+#define DAM_TS_SOURCE      0x03
+#define DAM_DTS_SOURCE     0x04
+#define DAM_TS_DRP         0x05
+#define DAM_DTS_DRP        0x06
+/**
+  * @}
+  */
+
+/**
   * @}
   */
 
@@ -2299,6 +2375,32 @@ typedef struct
   uint32_t PPS_APDO               : 2u;  /*!< 11b - Augmented Power Data Object (APDO) */
 } USBPD_ProgrammablePowerSupplyAPDO_TypeDef;
 #endif /* USBPDCORE_PPS */
+
+#if defined(USBPDCORE_SPR_AVS)
+/**
+  * @brief  USB PD Adjustable Voltage Supply APDO Structure definition
+  *
+  */
+typedef struct
+{
+  uint32_t MaxCurrent20vIn10mAunits  : 10u; /*!< Maximum Current 20v in 10mA increments   */
+  uint32_t MaxCurrent15vIn10mAunits  : 10u; /*!< Maximum Current 15v in 10mA increments   */
+  uint32_t Reserved1                 : 6u;  /*!< Reserved  - Shall be set to zero         */
+  uint32_t PeakCurrent               : 2u;  /*!< Peak current                             */
+  uint32_t SPRAdjustableVoltage      : 2u;  /*!< 10b - SPR Adjustable Voltage Supply      */
+  uint32_t AVS_APDO                  : 2u;  /*!< 11b - Augmented Power Data Object (APDO) */
+} USBPD_SRCAdjustableVoltageSupplyAPDO_TypeDef;
+
+typedef struct
+{
+  uint32_t MaxCurrent20vIn10mAunits  : 10u; /*!< Maximum Current 20v in 10mA increments   */
+  uint32_t MaxCurrent15vIn10mAunits  : 10u; /*!< Maximum Current 15v in 10mA increments   */
+  uint32_t Reserved1                 : 8u;  /*!< Reserved  - Shall be set to zero         */
+  uint32_t SPRAdjustableVoltage      : 2u;  /*!< 10b - SPR Adjustable Voltage Supply      */
+  uint32_t AVS_APDO                  : 2u;  /*!< 11b - Augmented Power Data Object (APDO) */
+} USBPD_SNKAdjustableVoltageSupplyAPDO_TypeDef;
+#endif /* USBPDCORE_SPR_AVS */
+
 #if defined(USBPDCORE_EPR)
 /**
   * @brief  USB PD Programmable Adjust Voltage Supply PDO Structure definition (same for SRC and SNK)
@@ -2461,6 +2563,12 @@ typedef union
 #ifdef USBPDCORE_PPS
   USBPD_ProgrammablePowerSupplyAPDO_TypeDef     SRCSNKAPDO;    /*!< Programmable Power Supply APDO - Source / Sink */
 #endif /* USBPDCORE_PPS */
+
+#ifdef USBPDCORE_SPR_AVS
+  USBPD_SRCAdjustableVoltageSupplyAPDO_TypeDef  SPRSRCAVSAPDO; /*!< SPR Adjustable Voltage Supply AVSPDO - Source */
+  USBPD_SNKAdjustableVoltageSupplyAPDO_TypeDef  SPRSNKAVSAPDO; /*!< SPR Adjustable Voltage Supply AVSPDO - Sink */
+#endif /* USBPDCORE_SPR_AVS */
+
 #if defined(USBPDCORE_EPR)
   USBPD_SRCProgrammablePowerSupplyAVSPDO_TypeDef   SRCAVSPDO;  /*!< Adjustable Voltage Supply AVSPDO - Source */
   USBPD_SNKProgrammablePowerSupplyAVSPDO_TypeDef   SNKAVSPDO;  /*!< Adjustable Voltage Supply AVSPDO - Sink   */
@@ -2474,7 +2582,7 @@ typedef union
   */
 typedef struct
 {
-  uint32_t MaxOperatingCurrent10mAunits : 10u; /*!< Corresponding to min if GiveBackFlag = 1 */
+  uint32_t MaxOperatingCurrent10mAunits : 10u;
   uint32_t OperatingCurrentIn10mAunits  : 10u;
   uint32_t Reserved20_21                : 2u;
   uint32_t EPR_Capable                  : 1u;  /*!< EPR Mode Capable                                         */
@@ -2482,7 +2590,7 @@ typedef struct
   uint32_t NoUSBSuspend                 : 1u;
   uint32_t USBCommunicationsCapable     : 1u;
   uint32_t CapabilityMismatch           : 1u;
-  uint32_t GiveBackFlag                 : 1u;
+  uint32_t Reserved27                   : 1u;
   uint32_t ObjectPosition               : 4u;
 } USBPD_SNKFixedVariableRDO_TypeDef;
 
@@ -2500,7 +2608,7 @@ typedef struct
   uint32_t NoUSBSuspend                  : 1u;
   uint32_t USBCommunicationsCapable      : 1u;
   uint32_t CapabilityMismatch            : 1u;
-  uint32_t GiveBackFlag                  : 1u;
+  uint32_t Reserved27                    : 1u;
   uint32_t ObjectPosition                : 4u;
 } USBPD_SNKBatteryRDO_TypeDef;
 
@@ -3109,7 +3217,7 @@ typedef union
 } USBPD_RevisionDO_TypeDef;
 
 /**
-  * @brief  USBPD source info Data Object Structure definition
+  * @brief  USBPD source info Data Object 1 Structure definition
   *
   */
 typedef union
@@ -3124,9 +3232,25 @@ typedef union
     uint32_t PortType          : 1u; /*!< 0 = Managed Capability Port, 1 = Guaranteed Capability Port */
   }
   b;
-} USBPD_SourceInfoDO_TypeDef;
+} USBPD_SourceInfoDO1_TypeDef;
 
-
+/**
+  * @brief  USBPD source info Data Object 2 Structure definition
+  *
+  */
+typedef union
+{
+  uint32_t d32;
+  struct
+  {
+    uint32_t PortGuaranteedPDP : 9u;  /*!< Maximum Power the port is guarnateed to always be able to provide in 0.5W steps */
+    uint32_t PortMaximumPDP    : 9u;  /*!< Maximum Power the port will provide in 0.5W steps                               */
+    uint32_t                   : 12u; /*!< Reserved                                                                        */
+    uint32_t DPSPort           : 1u;  /*!< 0 = Non DPS Port, 1 = DPS Port (Port Type in B31 shall be set to 0)             */
+    uint32_t PortType          : 1u;  /*!< 0 = Managed Capability Port, 1 = Guaranteed Capability Port                     */
+  }
+  b;
+} USBPD_SourceInfoDO2_TypeDef;
 
 /**
   * @brief  USBPD Battery Status Data Object Structure definition
@@ -3506,6 +3630,7 @@ typedef struct
   uint32_t PE_AttemptsDiscovSOP             : 1u; /*!< Can send a Discover Identity */
   uint32_t CAD_TryFeature                   : 2u; /*!< Not yet implemented                                                              */
   uint32_t CAD_AccesorySupport              : 1u; /*!< Not yet implemented                                                              */
+  uint32_t CAD_DebugAccesorySupport         : 3u; /*!< TS Sink supported                                                                */
   uint32_t CAD_RoleToggle                   : 1u; /*!< If enabled allows the detection state machine switch Rp/Rd means toggle the presented role between source and sink */
   CAD_RP_Source_Current_Adv_Typedef CAD_DefaultResistor  : 2u; /*!< Default RP resistor based on @ref CAD_RP_Source_Current_Adv_Typedef */
   uint32_t CAD_SNKToggleTime                : 8u; /*!< Sink toggle time in ms                                                           */
@@ -3564,6 +3689,13 @@ typedef struct
 #else
   uint32_t                            Reserved5:        3u;  /*!< Reserved bits                                            */
 #endif /* USBPDCORE_EPR */
+  uint32_t                            DebugAccessory:   2u;  /*!< Debug Accessory Mode                                     */
+#if defined(USBPDCORE_SPR_AVS)
+  USBPD_SPR_APDO_TypeDef              SPR_APDO:         1u;  /*!< SPR APDO Type                                            */
+#else
+  uint32_t                            Reserved6:        1u;  /*!< Reserved bits                                            */
+#endif /* USBPDCORE_SPR_AVS */
+  uint32_t                            SkipSNKWaitCapTimer:   1u;  /*!< Skip tTypeCSinkWaitCap timer                        */
 } USBPD_ParamsTypeDef;
 
 #if defined(USBPDCORE_USBDATA)

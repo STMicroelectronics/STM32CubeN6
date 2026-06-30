@@ -81,7 +81,7 @@ void HAL_MspInit(void)
 void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
 {
   GPIO_InitTypeDef GPIO_Init;
-  GPIO_DelayTypeDef delay_conf;
+
   /* Prevent unused argument(s) compilation warning */
   UNUSED(heth);
   /* USER CODE BEGIN ETH_MspInit 0 */
@@ -98,18 +98,26 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
   __HAL_RCC_GPIOG_CLK_ENABLE();
 
     /**ETH GPIO Configuration
-    PF7      ------> ETH_REF_CLK
-    PF4      ------> ETH_MDIO
-    PG11     ------> ETH_MDC
-    PF10     ------> ETH_CRS_DV
-    PF14     ------> ETH_RXD0
-    PF15     ------> ETH_RXD1
-    PF11     ------> ETH_TX_EN
-    PF12     ------> ETH_TXD0
-    PF13     ------> ETH_TXD1
+    PD1      ------> ETH1_MDC
+    PD12     ------> ETH1_MDIO
+    PD3      ------> ETH1_PHY_INTN
+    PF10     ------> ETH1_RGMII_RX_CTL
+    PF7      ------> ETH1_RGMII_RX_CLK
+    PF5      ------> ETH1_CLK
+    PF15     ------> ETH1_RGMII_RXD1
+    PF14     ------> ETH1_RGMII_RXD0
+    PF8      ------> ETH1_RGMII_RXD2
+    PF2      ------> ETH1_RGMII_CLK125
+    PF9      ------> ETH1_RGMII_RXD3
+    PG4      ------> ETH1_RGMII_TXD3
+    PF11     ------> ETH1_RGMII_TX_CTL
+    PG3      ------> ETH1_RGMII_TXD2
+    PF13     ------> ETH1_RGMII_TXD1
+    PF0      ------> ETH1_RGMII_GTX_CLK
+    PF12     ------> ETH1_RGMII_TXD0
     */
 
-  /* PD1,3,12 AF*/
+  /* Configure PD1/PD3/PD12 as ETH1 AF11. */
   GPIO_Init.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   GPIO_Init.Mode = GPIO_MODE_AF_PP;
   GPIO_Init.Pull = GPIO_NOPULL;
@@ -117,21 +125,17 @@ void HAL_ETH_MspInit(ETH_HandleTypeDef *heth)
   GPIO_Init.Pin = GPIO_PIN_1 | GPIO_PIN_3 | GPIO_PIN_12;
   HAL_GPIO_Init(GPIOD, &GPIO_Init);
 
-  // Configure PF2,7~15 AF
+  /* Configure PF2/PF5/PF7-PF15 as ETH1 AF11. */
   GPIO_Init.Pin = GPIO_PIN_2  | GPIO_PIN_7  | GPIO_PIN_5  |
                   GPIO_PIN_8  | GPIO_PIN_9  | GPIO_PIN_10 | GPIO_PIN_11 |
                   GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
   HAL_GPIO_Init(GPIOF, &GPIO_Init);
 
-  delay_conf.Delay = GPIO_DELAY_PS_500;
-  delay_conf.Path = GPIO_PATH_IN;
-  HAL_GPIO_SetDelay(GPIOF, GPIO_PIN_7, &delay_conf);
-
-  // Configure PG3,4 AF
+  /* Configure PG3/PG4 as ETH1 AF11. */
   GPIO_Init.Pin = GPIO_PIN_3 | GPIO_PIN_4;
   HAL_GPIO_Init(GPIOG, &GPIO_Init);
 
-  // Configure PF0 AF
+  /* Configure PF0 as ETH1 AF12. */
   GPIO_Init.Speed = GPIO_SPEED_FREQ_MEDIUM;
   GPIO_Init.Pin =  GPIO_PIN_0;
   GPIO_Init.Alternate = GPIO_AF12_ETH1;
@@ -164,21 +168,33 @@ void HAL_ETH_MspDeInit(ETH_HandleTypeDef* heth)
   __HAL_RCC_ETH1RX_CLK_DISABLE();
 
     /**ETH GPIO Configuration
-    PF7      ------> ETH_REF_CLK
-    PF4      ------> ETH_MDIO
-    PG11     ------> ETH_MDC
-    PF10     ------> ETH_CRS_DV
-    PF14     ------> ETH_RXD0
-    PF15     ------> ETH_RXD1
-    PF11     ------> ETH_TX_EN
-    PF12     ------> ETH_TXD0
-    PF13     ------> ETH_TXD1
+    PD1      ------> ETH1_MDC
+    PD12     ------> ETH1_MDIO
+    PD3      ------> ETH1_PHY_INTN
+    PF10     ------> ETH1_RGMII_RX_CTL
+    PF7      ------> ETH1_RGMII_RX_CLK
+    PF5      ------> ETH1_CLK
+    PF15     ------> ETH1_RGMII_RXD1
+    PF14     ------> ETH1_RGMII_RXD0
+    PF8      ------> ETH1_RGMII_RXD2
+    PF2      ------> ETH1_RGMII_CLK125
+    PF9      ------> ETH1_RGMII_RXD3
+    PG4      ------> ETH1_RGMII_TXD3
+    PF11     ------> ETH1_RGMII_TX_CTL
+    PG3      ------> ETH1_RGMII_TXD2
+    PF13     ------> ETH1_RGMII_TXD1
+    PF0      ------> ETH1_RGMII_GTX_CLK
+    PF12     ------> ETH1_RGMII_TXD0
     */
-    HAL_GPIO_DeInit(GPIOF,  GPIO_PIN_4|GPIO_PIN_7|GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12|GPIO_PIN_13|GPIO_PIN_14|GPIO_PIN_15);
+    HAL_GPIO_DeInit(GPIOD, GPIO_PIN_1 | GPIO_PIN_3 | GPIO_PIN_12);
 
-    HAL_GPIO_DeInit(GPIOG, GPIO_PIN_11);
+    HAL_GPIO_DeInit(GPIOF, GPIO_PIN_0  | GPIO_PIN_2  | GPIO_PIN_5  | GPIO_PIN_7 |
+                           GPIO_PIN_8  | GPIO_PIN_9  | GPIO_PIN_10 | GPIO_PIN_11 |
+                           GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15);
 
-    /* ETH interrupt DeInit */
+    HAL_GPIO_DeInit(GPIOG, GPIO_PIN_3 | GPIO_PIN_4);
+
+    /* ETH1 interrupt DeInit */
     HAL_NVIC_DisableIRQ(ETH1_IRQn);
   /* USER CODE BEGIN ETH_MspDeInit 1 */
 

@@ -2,6 +2,7 @@
 @ECHO OFF
 :: Getting the CubeProgammer_cli path 
 call ../env.bat
+call "%~dp0img_config.bat"
 
 :: Enable delayed expansion
 setlocal EnableDelayedExpansion
@@ -9,7 +10,7 @@ setlocal EnableDelayedExpansion
 set "projectdir=%~dp0"
 
 set s_data_image_number=0x1
-set ns_data_image_number=0x1
+set ns_data_image_number=0x0
 
 set s_data_init_xml="%projectdir%Images\OEMuROT_S_Data_Init_Image.xml"
 set ns_data_init_xml="%projectdir%Images\OEMuROT_NS_Data_Init_Image.xml"
@@ -75,10 +76,15 @@ echo        Press any key to continue...
 echo.
 if [%1] neq [AUTO] pause >nul
 
-echo    * Application firmware image generation (MCUboot format)
-echo        Open the OEMuROT_Appli project with preferred toolchain and rebuild all files.
-echo        Build must be done in this order Secure ^> NonSecure in case of trust zone application.
-echo        .\%oemurot_appli_path_project%\Binary\rot_tz_xx_app_enc_sign.bin is generated at this step
+if "%app_full_secure%" == "1" (
+  echo    * Application firmware image generation (MCUboot format^)
+  echo        Open the OEMuROT_Appli project with preferred toolchain and rebuild all files.
+  echo        .\%oemurot_appli_path_project%\Binary\rot_tz_xx_app_enc_sign.bin is generated at this step
+) else (
+  echo    * Application firmware image generation (MCUboot format^)
+  echo        Open the OEMuROT_Appli_Isolation project with preferred toolchain and rebuild all files.
+  echo        Build must be done in this order Secure ^> NonSecure in case of trust zone application.
+)
 echo        Press any key to continue...
 echo.
 if [%1] neq [AUTO] pause >nul
@@ -97,6 +103,7 @@ if !errorlevel! neq 0 goto :step_error
 if !errorlevel! neq 0 goto :step_error
 )
 
+if "%app_full_secure%" == "1" (goto :no_ns_data)
 if "%ns_data_image_number%" == "0x1" (
 echo    * Data non secure image generation
 echo        Select OEMuRoT_NS_Data_Image.xml(Default path is .\ROT_Provisioning\OEMuROT\Images\OEMuROT_NS_Data_Image.xml^)
@@ -110,6 +117,7 @@ if !errorlevel! neq 0 goto :step_error
 "%stm32tpccli%" -pb "%ns_data_xml%" >> %provisioning_log%
 if !errorlevel! neq 0 goto :step_error
 )
+:no_ns_data
 
 :: ================================================== Flash programming ===================================================
 :provisioning

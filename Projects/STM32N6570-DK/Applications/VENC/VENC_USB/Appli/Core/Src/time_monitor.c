@@ -14,7 +14,6 @@
  *
  *******************************************************************************
  */
-#include <inttypes.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -43,6 +42,16 @@ static volatile uint32_t lastCycleCount = 0U;
 static uint32_t initDone = 0U;
 static uint32_t system_clock_frequency = 0U;
 
+static unsigned int display_u64(uint64_t value)
+{
+    if (value > (uint64_t)UINT32_MAX)
+    {
+        return UINT32_MAX;
+    }
+
+    return (unsigned int)value;
+}
+
 /**
  * @brief  Initialize the DWT cycle counter and capture system clock frequency.
  *
@@ -54,21 +63,21 @@ void initCycleCounter(void)
     {
         /* Capture CPU clock frequency (Hz) */
         system_clock_frequency = HAL_RCC_GetCpuClockFreq();
-        printf("Monitoring: CPU: %lu MHz\n", (unsigned long)(system_clock_frequency / 1000000UL));
-  
+        printf("Monitoring: CPU: %u MHz\n", (unsigned int)(system_clock_frequency / 1000000UL));
+
         /* Enable trace and DWT if not already enabled */
         if (!(CoreDebug->DEMCR & CoreDebug_DEMCR_TRCENA_Msk))
-  {
-        CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-    }
+        {
+            CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+        }
 
         /* Reset and enable cycle counter */
         DWT->CYCCNT = 0U;
-    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
-    
+        DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+
         lastCycleCount = DWT->CYCCNT;
         initDone = 1U;
-  }
+    }
 }
 
 /**
@@ -118,6 +127,11 @@ void printStats(void)
 {
     uint64_t elapsed_ms = 0ULL;
     uint64_t avg_ms = 0ULL;
+    unsigned int max_delta_ms;
+    unsigned int min_delta_ms;
+    unsigned int avg_delta_ms;
+    unsigned int elapsed_ms_u32;
+    unsigned int num_calls;
 
     if (stats.startTime != 0ULL)
     {
@@ -127,19 +141,25 @@ void printStats(void)
     if (stats.numCalls != 0ULL)
     {
         avg_ms = stats.totalDeltaTime / stats.numCalls;
-}
+    }
+
+    max_delta_ms = display_u64(stats.maxDeltaTime);
+    min_delta_ms = display_u64((stats.minDeltaTime == UINT64_MAX) ? 0ULL : stats.minDeltaTime);
+    avg_delta_ms = display_u64(avg_ms);
+    elapsed_ms_u32 = display_u64(elapsed_ms);
+    num_calls = display_u64(stats.numCalls);
 
     printf("======================================\n");
-    printf("Max Delta Time          : %10" PRIu64 " ms\n", stats.maxDeltaTime);
-    printf("Min Delta Time          : %10" PRIu64 " ms\n", (stats.minDeltaTime == UINT64_MAX) ? 0ULL : stats.minDeltaTime);
-    printf("Average Delta Time      : %10" PRIu64 " ms\n", avg_ms);
-    printf("Total Time              : %10" PRIu64 " ms\n", elapsed_ms);
-    printf("Number of Calls         : %10" PRIu64 "   \n", stats.numCalls);
+    printf("Max Delta Time          : %10u ms\n", max_delta_ms);
+    printf("Min Delta Time          : %10u ms\n", min_delta_ms);
+    printf("Average Delta Time      : %10u ms\n", avg_delta_ms);
+    printf("Total Time              : %10u ms\n", elapsed_ms_u32);
+    printf("Number of Calls         : %10u   \n", num_calls);
 
     if (elapsed_ms > 0ULL)
     {
         uint64_t calls_per_sec = (1000ULL * stats.numCalls) / elapsed_ms;
-        printf("Number of Calls/Seconds : %10" PRIu64 "   \n", calls_per_sec);
+        printf("Number of Calls/Seconds : %10u   \n", display_u64(calls_per_sec));
     }
     else
     {
@@ -176,6 +196,7 @@ void timeMonitor(void)
     {
         stats.minDeltaTime = deltaTime;
     }
+
     stats.totalDeltaTime += deltaTime;
     stats.numCalls++;
 
@@ -222,7 +243,7 @@ void timeMonitorStop(void)
 
     if (deltaTime > stats.maxDeltaTime)
     {
-        printf("Max Delta Time          : %10" PRIu64 " ms\n", deltaTime);
+        printf("Max Delta Time          : %10u ms\n", display_u64(deltaTime));
         stats.maxDeltaTime = deltaTime;
     }
 }

@@ -1,9 +1,9 @@
 ## <b>VENC_SDCard Description</b>
 
-This project demonstrates the use of the STM32N6 video encoder and the camera pipeline.<br>It is targeted to run on STM32N657xx device on STM32N6570-DK board from STMicroelectronics.
+This project demonstrates the use of the STM32N6 video encoder and the camera pipeline.<br>It is targeted to run on STM32N657xx devices on the STM32N6570-DK board from STMicroelectronics.
 
 This application is meant to run in internal SRAM via the Load & Run method. The application is stored in external flash and then loaded in internal RAM for execution.<br>
-It can also be run in dev_mode debug. For information on those modes, see the "How to use" section.
+It can also be run in development-mode debug. For information on those modes, see the "How to use" section.
 
 ### <b> Example behaviour </b>
 
@@ -51,36 +51,36 @@ Graphics, VENC, Encoding,  Hardware Encoding
 
 #### <b>Sub-project FSBL</b>
 
-    - VENC_LRUN_Example/FSBL/Inc/main.h                    Header for main.c module
-    - VENC_LRUN_Example/FSBL/Inc/extmem.h                  Header for extmem.c module
-    - VENC_LRUN_Example/FSBL/Inc/partition_stm32n657xx.h   SAU partition configuration
-    - VENC_LRUN_Example/FSBL/Incstm32n6xx_hal_conf.h       HAL Configuration file
-    - VENC_LRUN_Example/FSBL/Inc/stm32n6xx_it.h            Interrupt handlers header file
-    - VENC_LRUN_Example/FSBL/stm32_extmem_conf.h           External memory manager Configuration file
-    - VENC_LRUN_Example/FSBL/Src/main.c                    Main program
-    - VENC_LRUN_Example/FSBL/Src/extmem.c                  code to initialize external memory
-    - VENC_LRUN_Example/FSBL/Src/stm32n6xx_hal_msp.c       HAL MSP module
-    - VENC_LRUN_Example/FSBL/Src/stm32n6xx_it.c            Interrupt handlers
-    - VENC_LRUN_Example/FSBL/Src/system_stm32n6xx_fsbl.c   STM32N6xx system source file
+    - VENC_SDCard/FSBL/Inc/main.h                    Header for main.c module
+    - VENC_SDCard/FSBL/Inc/extmem.h                  Header for extmem.c module
+    - VENC_SDCard/FSBL/Inc/partition_stm32n657xx.h   SAU partition configuration
+    - VENC_SDCard/FSBL/Inc/stm32n6xx_hal_conf.h      HAL configuration file
+    - VENC_SDCard/FSBL/Inc/stm32n6xx_it.h            Interrupt handlers header file
+    - VENC_SDCard/FSBL/stm32_extmem_conf.h           External memory manager configuration file
+    - VENC_SDCard/FSBL/Src/main.c                    Main program
+    - VENC_SDCard/FSBL/Src/extmem.c                  Code to initialize external memory
+    - VENC_SDCard/FSBL/Src/stm32n6xx_hal_msp.c       HAL MSP module
+    - VENC_SDCard/FSBL/Src/stm32n6xx_it.c            Interrupt handlers
+    - VENC_SDCard/FSBL/Src/system_stm32n6xx_fsbl.c   STM32N6xx system source file
 
 #### <b>Sub-project Appli</b>
-    - VENC_LRUN_Example/Appli/Inc/main.h                       Header for main.c module
-    - VENC_LRUN_Example/Appli/Inc/stm32n6xx_hal_conf.h         HAL Configuration file
-    - VENC_LRUN_Example/Appli/Inc/stm32n6xx_it.h               Interrupt handlers header file
-    - VENC_LRUN_Example/Appli/Inc/partition_stm32n657xx.h      SAU partition configuration
-    - VENC_LRUN_Example/Appli/Inc/stm32_assert.h               Assert function definition
-    - VENC_LRUN_Example/Appli/Inc/ewl_conf.h                   EWL configuration file
-    - VENC_LRUN_Example/Appli/Inc/stm32n6570_discovery_conf.h  BSP configuration file
-    - VENC_LRUN_Example/Appli/Src/main.c                       Main program
-    - VENC_LRUN_Example/Appli/Src/hal_timebase_tim.c           HAL timer timebase source file
-    - VENC_LRUN_Example/Appli/Src/stm32n6xx_it.c               Interrupt handlers
-    - VENC_LRUN_Example/Appli/Src/system_stm32n6xx.c           STM32N6xx system source file
+    - VENC_SDCard/Appli/Inc/main.h                       Header for main.c module
+    - VENC_SDCard/Appli/Inc/stm32n6xx_hal_conf.h         HAL configuration file
+    - VENC_SDCard/Appli/Inc/stm32n6xx_it.h               Interrupt handlers header file
+    - VENC_SDCard/Appli/Inc/partition_stm32n657xx.h      SAU partition configuration
+    - VENC_SDCard/Appli/Inc/stm32_assert.h               Assert function definition
+    - VENC_SDCard/Appli/Inc/ewl_conf.h                   EWL configuration file
+    - VENC_SDCard/Appli/Inc/stm32n6570_discovery_conf.h  BSP configuration file
+    - VENC_SDCard/Appli/Src/main.c                       Main program
+    - VENC_SDCard/Appli/Src/hal_timebase_tim.c           HAL timer timebase source file
+    - VENC_SDCard/Appli/Src/stm32n6xx_it.c               Interrupt handlers
+    - VENC_SDCard/Appli/Src/system_stm32n6xx.c           STM32N6xx system source file
 
 ### <b>Hardware and Software environment</b>
 
-  - This template runs on STM32N6 devices.
+  - This application runs on STM32N6 devices.
 
-  - This template has been tested with STMicroelectronics STM32N6570-DK (MB1939)
+  - This application has been tested with STMicroelectronics STM32N6570-DK (MB1939)
     board and can be easily tailored to any other supported device
     and development board.
 
@@ -92,11 +92,11 @@ Graphics, VENC, Encoding,  Hardware Encoding
 
 **WARNING**
 
-When OTP fuses are set, they can not be reset.
+When OTP fuses are set, they cannot be reset.
 The NO_OTP_FUSE option is selected by default using the Preprocessor definition in the IDE. XSPI speed will however be limited to 50MHz.
 To use the full XSPI speed, delete the NO_OTP_FUSE definition.
 
-  - **EWARM** : To monitor a variable in the live watch window, you must proceed as follow :
+  - **EWARM** : To monitor a variable in the live watch window, you must proceed as follows:
     - Start a debugging session.
     - Open the View > Images.
     - Double-click to deselect the second instance of project.out.
@@ -116,7 +116,7 @@ Then, simply click the execute button and the program will run in debug mode.
 
 #### <b> Load & Run </b>
 
-This mode enables execution without having to connect through an IDE. The application will be stored in external memory and therefore will no require any external tools once loaded onto the board.
+This mode enables execution without having to connect through an IDE. The application will be stored in external memory and therefore will not require any external tools once loaded onto the board.
 
 It is expected that a command line environment is configured with the CubeProgrammer in its PATH.
 
@@ -129,12 +129,12 @@ It is expected that a command line environment is configured with the CubeProgra
  - Press the reset button
  - The example should execute
 
-Note : when using CubeIDE, make sure to use the Debug configuration for development mode and the Release configuration for boot from flash.
+Note: when using CubeIDE, make sure to use the Debug configuration for development mode and the Release configuration for boot from flash.
 
 #### <b> After execution </b>
 
 After the red and green LED have turned off, 600 frames of video have been encoded. To play them back, the stream needs to be extracted from the SD card.
-After plugging the SD card into a computer, its contents can be read using the `dd` command in git bash. Example : `dd of=dump.bin if=[path to sd e.g. /dev/sdd1] ibs=512 obs=512 count=25000` to dump 66000 blocks of 512 bytes from an sd.
+After plugging the SD card into a computer, its contents can be read using the `dd` command in Git Bash. Example: `dd of=dump.bin if=[path to sd e.g. /dev/sdd1] ibs=512 obs=512 count=25000` to dump 25000 blocks of 512 bytes from an SD card.
 
 To read back encoded video, it can be converted from raw bytestream to mp4 using a tool called [ffmpeg](https://trac.ffmpeg.org/) with the following command : `ffmpeg -f h264 -framerate 30 -i [extracted file] -c copy [output file]`
 

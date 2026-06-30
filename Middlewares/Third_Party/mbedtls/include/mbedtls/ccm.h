@@ -29,6 +29,7 @@
  */
 /*
  *  Copyright The Mbed TLS Contributors
+ *  Portions Copyright (C) STMicroelectronics, All Rights Reserved
  *  SPDX-License-Identifier: Apache-2.0
  */
 
@@ -474,7 +475,49 @@ int mbedtls_ccm_update(mbedtls_ccm_context *ctx,
                        const unsigned char *input, size_t input_len,
                        unsigned char *output, size_t output_size,
                        size_t *output_len);
-
+#if defined(MBEDTLS_CCM_ALT) && defined(MBEDTLS_HAL_CCM_ALT) && defined (MBEDTLS_HAL_CCM_MULTIPART_ALT)
+ /**
+ * \brief           This function finishes the CCM operation and generates
+ *                  the authentication tag.
+ *
+ *                  It wraps up the CCM stream, and generates the
+ *                  tag. The tag can have a maximum length of 16 Bytes.
+ *
+ * \param ctx       The CCM context. This must have been started with
+ *                  mbedtls_ccm_starts() and the lengths of the message and
+ *                  additional data must have been declared with
+ *                  mbedtls_ccm_set_lengths().
+ * \param tag       The buffer for holding the tag. If \p tag_len is greater
+ *                  than zero, this must be a writable buffer of at least \p
+ *                  tag_len Bytes.
+ * \param tag_len   The length of the tag. Must match the tag length passed to
+ *                  mbedtls_ccm_set_lengths() function.
+ *
+ * \param output    The buffer for the final output.
+ *                  If \p output_size is nonzero, this must be a writable
+ *                  buffer of at least \p output_size bytes.
+ * \param output_size  The size of the \p output buffer in bytes.
+ *                  This must be large enough for the output that
+ *                  mbedtls_ccm_update() has not produced. In particular:
+ *                  - If mbedtls_ccm_update() produces immediate output,
+ *                    or if the total input size is a multiple of \c 16,
+ *                    then mbedtls_ccm_finish() never produces any output,
+ *                    so \p output_size can be \c 0.
+ *                  - \p output_size never needs to be more than \c 15.
+ * \param output_length On success, \p *output_length contains the actual
+ *                      length of the output written in \p output.
+ *                      On failure, the content of \p *output_length is
+ *                      unspecified.
+ *
+ * \return          \c 0 on success.
+ * \return          #MBEDTLS_ERR_CCM_BAD_INPUT on failure:
+ *                  invalid value of \p tag_len,
+ *                  or \p output_size too small.
+ */
+int mbedtls_ccm_finish(mbedtls_ccm_context *ctx,
+                       unsigned char *output, size_t output_size, size_t *ciphertext_length,
+                       unsigned char *tag, size_t tag_len);
+#else /* MBEDTLS_CCM_ALT && MBEDTLS_HAL_CCM_ALT && MBEDTLS_HAL_CCM_MULTIPART_ALT */
 /**
  * \brief           This function finishes the CCM operation and generates
  *                  the authentication tag.
@@ -508,7 +551,7 @@ int mbedtls_ccm_update(mbedtls_ccm_context *ctx,
  */
 int mbedtls_ccm_finish(mbedtls_ccm_context *ctx,
                        unsigned char *tag, size_t tag_len);
-
+#endif /* MBEDTLS_CCM_ALT && MBEDTLS_HAL_CCM_ALT && MBEDTLS_HAL_CCM_MULTIPART_ALT */
 #if defined(MBEDTLS_SELF_TEST) && defined(MBEDTLS_CCM_GCM_CAN_AES)
 /**
  * \brief          The CCM checkup routine.

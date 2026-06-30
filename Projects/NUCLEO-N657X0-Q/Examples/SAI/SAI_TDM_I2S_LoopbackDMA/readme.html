@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SAI Audio Loopback DMA Example</title>
+  <style>
+    :root {
+      --fore-color: #03234b;
+      --secondary-fore-color: #03234b;
+      --back-color: #ffffff;
+      --secondary-back-color: #f4f8fc;
+      --blockquote-color: #e6007e;
+      --pre-color: #e6007e;
+      --border-color: #3cb4e6;
+      --heading-border-color: #3cb4e6;
+      --link-color: #3cb4e6;
+      --visited-color: #8c0078;
+      --warning-bg: #fff6cc;
+      --note-bg: #f4f8fc;
+    }
+
+    html {
+      font-size: 13.5px;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+      line-height: 1.45;
+      color: var(--fore-color);
+      background: var(--back-color) linear-gradient(#ffd200, #ffd200) repeat-y left top;
+      background-size: 1.5%;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 1rem 2rem 1.5rem;
+    }
+
+    article {
+      padding-top: 1rem;
+    }
+
+    h1, h2, h3 {
+      font-weight: 400;
+      line-height: 1.25;
+      margin: 1.2rem 0 0.8rem;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      margin-top: 0.5rem;
+    }
+
+    h2 {
+      font-size: 1.45rem;
+      border-bottom: 1px solid var(--heading-border-color);
+      padding-bottom: 0.2rem;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+    }
+
+    p {
+      margin: 0.5rem 0;
+    }
+
+    ul {
+      margin: 0.5rem 0 1rem;
+      padding-left: 1.5rem;
+    }
+
+    li {
+      margin: 0.35rem 0;
+    }
+
+    strong {
+      font-weight: 700;
+    }
+
+    code,
+    pre {
+      font-family: Menlo, Consolas, monospace;
+      font-size: 0.9em;
+    }
+
+    code {
+      background: var(--secondary-back-color);
+      border-radius: 2px;
+      padding: 0.1rem 0.3rem;
+    }
+
+    pre {
+      overflow: auto;
+      margin: 0.75rem 0;
+      padding: 0.9rem 1rem;
+      background: var(--secondary-back-color);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--pre-color);
+      border-radius: 0 3px 3px 0;
+      color: var(--fore-color);
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.75rem 0 1rem;
+    }
+
+    th,
+    td {
+      border: 1px solid #03234b;
+      padding: 0.6rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #03234b;
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) td {
+      background: #f4f4f4;
+    }
+
+    a {
+      color: var(--link-color);
+      text-decoration: none;
+    }
+
+    a:visited {
+      color: var(--visited-color);
+    }
+
+    a:hover,
+    a:focus {
+      text-decoration: underline;
+    }
+
+    .lead {
+      font-size: 1rem;
+    }
+
+    .note {
+      display: block;
+      margin: 0.75rem 0;
+      padding: 0.9rem;
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--blockquote-color);
+      border-radius: 0 3px 3px 0;
+      background: var(--note-bg);
+      font-style: italic;
+    }
+
+    @media (max-width: 700px) {
+      body {
+        background-size: 3%;
+      }
+
+      main {
+        padding-right: 0.75rem;
+      }
+
+      table,
+      thead,
+      tbody,
+      tr,
+      th,
+      td {
+        display: block;
+      }
+
+      thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
+
+      tr {
+        margin: 0 0 0.75rem;
+        border: 1px solid #03234b;
+        padding: 0.4rem;
+      }
+
+      td {
+        border: 0;
+        text-align: right;
+        padding: 0.35rem 0;
+      }
+
+      td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: 600;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <article>
+      <h1>SAI Audio Loopback DMA Example Description</h1>
+      <p class="lead">This example demonstrates how to configure the Serial Audio Interface (SAI) to transmit and receive audio data in a master/slave loopback topology using Direct Memory Access (GPDMA) on the STM32N6 microcontroller.</p>
+
+      <p>To ensure maximum performance and bypass Cortex-M55 D-Cache coherency issues, the transmit and receive audio double-buffers (<code>sai_tx_double_buffer</code> and <code>sai_rx_double_buffer</code>) are placed in a dedicated <code>__NON_CACHEABLE</code> memory region. The Memory Protection Unit (MPU) is specifically configured to enforce this policy.</p>
+
+      <p>The main loop initializes the transmit buffer with an incremental dummy data pattern. The GPDMA1 is then started to continuously transfer this data out of SAI1 and receive it into SAI2.</p>
+
+      <p>During the Half-Transfer and Full-Transfer DMA receiver callbacks, an optimized, loop-unrolled <code>memcmp32</code> function verifies that the received data perfectly matches the transmitted data.</p>
+
+      <h2>Audio Protocol Modes</h2>
+      <p>The application can be configured to operate in one of two audio modes by modifying the <code>APP_SAI_MODE</code> macro definition located in <code>main.c</code>. The size of the DMA buffers is automatically scaled based on the selected mode.</p>
+      <ul>
+        <li><strong>TDM Mode (<code>APP_SAI_MODE_TDM</code>):</strong> This is the default configuration. The SAI blocks are configured to use a Free Protocol for Time Division Multiplexing (TDM). It processes 8 audio slots per frame at a 96 kHz sampling frequency.</li>
+        <li><strong>I2S Mode (<code>APP_SAI_MODE_I2S</code>):</strong> The SAI blocks are configured to use the standard I2S protocol. It processes 2 audio slots (stereo left and right channels) per frame at a 96 kHz sampling frequency.</li>
+      </ul>
+
+      <h2>Hardware Connections (SAI Loopback)</h2>
+      <p>As this is a hardware-level loopback, the internal signals are not routed internally on the silicon. Physical connections must be made between the output pins of the Master (SAI1 Block B) and the input pins of the Slave (SAI2 Block B) using jumper wires.</p>
+
+      <p>Since the Master generates the clocks for the protocol, the wiring maps the outputs to the inputs based on the assigned GPIO pins:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Signal Name</th>
+            <th>Description</th>
+            <th>Master (SAI1 Block B)</th>
+            <th>Slave (SAI2 Block B)</th>
+            <th>Connection</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>SCK</strong></td>
+            <td>Serial Clock / Bit Clock</td>
+            <td>PG1</td>
+            <td>PE12</td>
+            <td>Connect PG1 to PE12</td>
+          </tr>
+          <tr>
+            <td><strong>FS</strong></td>
+            <td>Frame Sync / L-R Word</td>
+            <td>PG2</td>
+            <td>PE13</td>
+            <td>Connect PG2 to PE13</td>
+          </tr>
+          <tr>
+            <td><strong>SD</strong></td>
+            <td>Serial Data</td>
+            <td>PA3 (Transmit)</td>
+            <td>PE11 (Receive)</td>
+            <td>Connect PA3 to PE11</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <strong>Note:</strong> The Master Clock (MCLK) is disabled on the Master in this configuration, making a 3-wire connection sufficient.
+      </div>
+
+      <h2>Debugging and Signaling</h2>
+      <p>This example utilizes specific GPIOs for timing verification and error flagging. It is highly recommended to connect a logic analyzer to the debugging pins to profile the callback execution times.</p>
+
+      <h3>Debug Pins (Timing and Profiling)</h3>
+      <ul>
+        <li><strong>D1 (PC4):</strong> Toggles low on TX Complete Callback, high on TX Half-Complete Callback.</li>
+        <li><strong>D2 (PC5):</strong> Pulses during the execution of the RX Complete and RX Half-Complete Callbacks to profile the duration of the memory comparison routine.</li>
+        <li><strong>D3 (PC0):</strong> Pulses high if a data mismatch is detected during the memory comparison, or goes high permanently on a SAI HAL Error.</li>
+      </ul>
+
+      <h3>LED Indicators</h3>
+      <ul>
+        <li><strong>LED_BLUE (PG8):</strong> Toggles every 200ms in the main <code>while(1)</code> loop to indicate the system is running smoothly.</li>
+        <li><strong>LED_RED (PG10):</strong> Turns ON and stays ON if a data corruption/mismatch occurs or if a SAI DMA error is triggered.</li>
+        <li><strong>LED_GREEN (PG0):</strong> Available on the board but unused in this specific verification flow.</li>
+      </ul>
+
+      <h3>Keywords</h3>
+      <p>Audio, SAI, I2S, TDM, DMA, Loopback, Master, Slave, Non-Cacheable, MPU, Transmission, Reception</p>
+
+      <h3>Directory contents</h3>
+      <ul>
+        <li>SAI_I2S_Loopback_DMA/FSBL/Core/Inc/stm32n6xx_hal_conf.h - HAL configuration file</li>
+        <li>SAI_I2S_Loopback_DMA/FSBL/Core/Inc/stm32n6xx_it.h - Interrupt handlers header file</li>
+        <li>SAI_I2S_Loopback_DMA/FSBL/Core/Inc/main.h - Header for main.c module</li>
+        <li>SAI_I2S_Loopback_DMA/FSBL/Core/Src/stm32n6xx_it.c - Interrupt handlers</li>
+        <li>SAI_I2S_Loopback_DMA/FSBL/Core/Src/main.c - Main program</li>
+        <li>SAI_I2S_Loopback_DMA/FSBL/Core/Src/system_stm32n6xx_fsbl.c - stm32n6xx system source file</li>
+        <li>SAI_I2S_Loopback_DMA/FSBL/Core/Src/stm32n6xx_hal_msp.c - HAL MSP file</li>
+      </ul>
+
+      <h3>Hardware and Software Environment</h3>
+      <ul>
+        <li>This example runs on STM32N6 Series devices (Cortex-M55).</li>
+        <li>This example has been designed to be easily tailored to any supported development board.</li>
+        <li><strong>EWARM:</strong> To monitor a variable in the live watch window, it is necessary to proceed as follows:</li>
+        <li>Start a debugging session.</li>
+        <li>Open the View &gt; Images.</li>
+        <li>Double-click to deselect the second instance of project.out.</li>
+        <li><strong>MDK-ARM:</strong> To monitor a variable in the live watch window, the <code>SCB_EnableDCache()</code> call in the <code>main()</code> function must be commented out.</li>
+      </ul>
+
+      <h2>How to use it ?</h2>
+      <p>In order to make the program work, you must do the following:</p>
+      <ul>
+        <li>Ensure the hardware loopback jumpers (SCK, FS, SD) are connected between the specified SAI1 and SAI2 peripheral pins.</li>
+        <li>Observe the Blue LED toggling. If the Red LED illuminates, physical connections should be checked, and it must be verified that the MPU non-cacheable region is correctly aligned with the linker script.</li>
+        <li>Set the boot mode in development mode (BOOT1 switch position is 2-3, BOOT0 switch position does not matter).</li>
+        <li>Open your preferred toolchain.</li>
+        <li>Rebuild all files and load your image into target memory. Code can be executed in this mode for debugging purposes.</li>
+      </ul>
+
+      <p>Next, this program can be run in boot from flash mode. This is done by following the instructions below:</p>
+      <ul>
+        <li>Resort to CubeProgrammer to add a header to the generated binary <code>Project.bin</code> with the following command:</li>
+      </ul>
+
+      <pre><code>STM32_SigningTool_CLI.exe -bin Project.bin -nk -of 0x80000000 -t fsbl -o Project-trusted.bin -hv 2.3 -dump Project-trusted.bin</code></pre>
+
+      <ul>
+        <li>The resulting binary is <code>Project-trusted.bin</code>.</li>
+        <li>Next, in resorting again to CubeProgrammer, load the binary and its header (<code>Project-trusted.bin</code>) in the board external Flash at address <code>0x7000'0000</code>.</li>
+        <li>Set the boot mode in boot from external Flash (BOOT0 switch position is 1-2 and BOOT1 switch position is 1-2).</li>
+        <li>Press the reset button. The code then executes in boot from external Flash mode.</li>
+      </ul>
+
+      <div class="note">
+        <strong>Warning:</strong> If using CubeProgrammer v2.21 version or more recent, add <code>-align</code> option in the command line.
+      </div>
+    </article>
+  </main>

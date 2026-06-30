@@ -1,0 +1,7 @@
+[ProjectFiles]
+HeaderPath=
+[Others]
+Define=
+HALModule=GPIO
+[Groups]
+Doc=../README.md;

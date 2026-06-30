@@ -1173,8 +1173,8 @@ int mbedtls_gcm_self_test(int verbose)
                 goto exit;
             }
 
+            size_t rest_len = pt_len_test_data[i] - 32;
             if (pt_len_test_data[i] > 32) {
-                size_t rest_len = pt_len_test_data[i] - 32;
                 ret = mbedtls_gcm_update(&ctx,
                                          pt_test_data[pt_index_test_data[i]],
                                          32,
@@ -1193,7 +1193,11 @@ int mbedtls_gcm_self_test(int verbose)
                 if (ret != 0) {
                     goto exit;
                 }
+#if defined(MBEDTLS_HAL_GCM_ALT)
+                if (olen != (rest_len - (rest_len % 16))) {
+#else
                 if (olen != rest_len) {
+#endif /* MBEDTLS_HAL_GCM_ALT */
                     goto exit;
                 }
             } else {
@@ -1208,8 +1212,11 @@ int mbedtls_gcm_self_test(int verbose)
                     goto exit;
                 }
             }
-
+#if defined(MBEDTLS_HAL_GCM_ALT)
+            ret = mbedtls_gcm_finish(&ctx, (buf + pt_len_test_data[i] - (rest_len % 16)), (rest_len % 16), &olen, tag_buf, 16);
+#else
             ret = mbedtls_gcm_finish(&ctx, NULL, 0, &olen, tag_buf, 16);
+#endif /* MBEDTLS_HAL_GCM_ALT */
             if (ret != 0) {
                 goto exit;
             }
@@ -1273,7 +1280,11 @@ int mbedtls_gcm_self_test(int verbose)
                 if (ret != 0) {
                     goto exit;
                 }
+#if defined(MBEDTLS_HAL_GCM_ALT)
+                if (olen != (rest_len - (rest_len % 16))) {
+#else
                 if (olen != rest_len) {
+#endif /* MBEDTLS_HAL_GCM_ALT */
                     goto exit;
                 }
             } else {
@@ -1289,7 +1300,11 @@ int mbedtls_gcm_self_test(int verbose)
                 }
             }
 
+#if defined(MBEDTLS_HAL_GCM_ALT)
+            ret = mbedtls_gcm_finish(&ctx, (buf + pt_len_test_data[i] - (rest_len % 16)), (rest_len % 16), &olen, tag_buf, 16);
+#else
             ret = mbedtls_gcm_finish(&ctx, NULL, 0, &olen, tag_buf, 16);
+#endif /* MBEDTLS_HAL_GCM_ALT */
             if (ret != 0) {
                 goto exit;
             }

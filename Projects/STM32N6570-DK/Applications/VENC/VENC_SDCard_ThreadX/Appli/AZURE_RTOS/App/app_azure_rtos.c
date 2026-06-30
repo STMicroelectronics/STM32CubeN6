@@ -33,7 +33,7 @@
 #pragma data_alignment=4
 #endif
 __ALIGN_BEGIN static UCHAR tx_byte_pool_buffer[TX_APP_MEM_POOL_SIZE] __ALIGN_END;
-static TX_BYTE_POOL tx_app_byte_pool;
+TX_BYTE_POOL tx_app_byte_pool;
 
 TX_THREAD venc_thread;
 TX_THREAD sdcard_thread;
@@ -49,6 +49,11 @@ __weak void venc_thread_func(ULONG arg)
 __weak void sdcard_thread_func(ULONG arg)
 {
   while(1);
+}
+
+__weak void monitor_thread_create(void)
+{
+  return;
 }
 
 /**
@@ -67,6 +72,8 @@ VOID tx_application_define(VOID *first_unused_memory)
   }
   else
   {
+    monitor_thread_create();
+
     void *thread_stack_pointer;
     if(tx_byte_allocate(&tx_app_byte_pool, &thread_stack_pointer, 8000, TX_NO_WAIT) != TX_SUCCESS){
       Error_Handler();
@@ -83,7 +90,7 @@ VOID tx_application_define(VOID *first_unused_memory)
       Error_Handler();
     }
 
-    /* Start the VENC Thread */
+    /* Start the SDCard thread. */
     status = tx_thread_create(&sdcard_thread, "SDCard App Thread", sdcard_thread_func, 0,
                               thread_stack_pointer, 4000, 12, 12, TX_NO_TIME_SLICE, TX_AUTO_START);
     if(status != TX_SUCCESS)

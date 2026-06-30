@@ -2,7 +2,7 @@
 
 This project provides a OEMuROT boot path application example.
 
-This project template is based on the STM32Cube HAL API. It hightlights the ROT specificies:
+This project template is based on the STM32Cube HAL API. It highlights the ROT specificies:
 
   - Specific memory regions, defines automatically updated in the linker file.
   - Postbuild script (postbuild.bat (.sh)) called from the project files.

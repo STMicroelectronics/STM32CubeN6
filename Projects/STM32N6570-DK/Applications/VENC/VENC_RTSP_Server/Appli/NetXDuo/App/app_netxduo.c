@@ -25,6 +25,7 @@
 #include "nxd_dhcp_client.h"
 #include "app_rtsp_over_rtp.h"
 #include "main.h"
+#include "utils.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -36,6 +37,7 @@ TX_THREAD AppLinkThread;
 TX_SEMAPHORE DHCPSemaphore;
 
 NX_PACKET_POOL AppPool;
+NX_PACKET_POOL RtpPacketPool;
 
 NX_IP IpInstance;
 NX_DHCP DHCPClient;
@@ -58,6 +60,7 @@ UCHAR *pointer;
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
+static UCHAR rtp_packet_pool_buffer[RTP_PACKET_POOL_SIZE] ALIGN_32;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -93,6 +96,14 @@ UINT MX_NetXDuo_Init(VOID *memory_ptr)
 
   /* Create the Packet pool to be used for packet allocation */
   ret = nx_packet_pool_create(&AppPool, "Main Packet Pool", PAYLOAD_SIZE, pointer, NX_PACKET_POOL_SIZE);
+
+  if (ret != NX_SUCCESS)
+  {
+    return NX_POOL_ERROR;
+  }
+
+  ret = nx_packet_pool_create(&RtpPacketPool, "RTP Packet Pool", PAYLOAD_SIZE,
+                              rtp_packet_pool_buffer, RTP_PACKET_POOL_SIZE);
 
   if (ret != NX_SUCCESS)
   {
@@ -179,7 +190,7 @@ UINT MX_NetXDuo_Init(VOID *memory_ptr)
     return TX_POOL_ERROR;
   }
 
-  /* create the Link thread */
+  /* Create the link thread. */
   ret = tx_thread_create(&AppLinkThread, "App Link Thread", App_Link_Thread_Entry, 0, pointer, 2 * DEFAULT_MEMORY_SIZE,
                          LINK_PRIORITY, LINK_PRIORITY, TX_NO_TIME_SLICE, TX_AUTO_START);
 
@@ -188,7 +199,7 @@ UINT MX_NetXDuo_Init(VOID *memory_ptr)
     return TX_THREAD_ERROR;
   }
 
-  /* create the DHCP client */
+  /* Create the DHCP client. */
   ret = nx_dhcp_create(&DHCPClient, &IpInstance, "DHCP Client");
 
   if (ret != NX_SUCCESS)
@@ -256,7 +267,7 @@ static VOID App_Main_Thread_Entry(ULONG thread_input)
     /* USER CODE END DHCP client start error */
   }
 
-  /* wait until an IP address is ready */
+  /* Wait until an IP address is ready. */
   if(tx_semaphore_get(&DHCPSemaphore, TX_WAIT_FOREVER) != TX_SUCCESS)
   {
     /* USER CODE BEGIN DHCPSemaphore get error */
@@ -270,10 +281,10 @@ static VOID App_Main_Thread_Entry(ULONG thread_input)
   {
     Error_Handler();
   }
-  /* the network is correctly initialized, start the sample */
-  sample_entry(&IpInstance, &AppPool, NX_NULL, NX_NULL);
+  /* The network is correctly initialized; start the sample. */
+  sample_entry(&IpInstance, &RtpPacketPool, NX_NULL, NX_NULL);
 
-  /* this thread is not needed any more, relinquish it */
+  /* This thread is not needed anymore; relinquish it. */
   tx_thread_relinquish();
 
   return;
@@ -327,7 +338,7 @@ static VOID App_Link_Thread_Entry(ULONG thread_input)
           /* Start DHCP */
           nx_dhcp_start(&DHCPClient);
 
-          /* wait until an IP address is ready */
+          /* Wait until an IP address is ready. */
           if(tx_semaphore_get(&DHCPSemaphore, TX_WAIT_FOREVER) != TX_SUCCESS)
           {
             /* USER CODE BEGIN DHCPSemaphore get error */

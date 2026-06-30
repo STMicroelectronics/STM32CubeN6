@@ -17,76 +17,91 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
-#include "secure_nsc.h"
 #include "app_threadx.h"
-#include <stdio.h>
+#include "main.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+
+/* USER CODE END PD */
+
 /* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
 /* Private variables ---------------------------------------------------------*/
 
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
 /* Private function prototypes -----------------------------------------------*/
+static void MX_GPIO_Init(void);
+/* USER CODE BEGIN PFP */
 void SystemClock_Config(void);
 static void SystemPower_Config(void);
-static void MX_GPIO_Init(void);
 void SecureFault_Callback(void);
 void SecureError_Callback(void);
-
-/* USER CODE BEGIN PFP */
 void MPU_Config(void);
 /* USER CODE END PFP */
 
-/* Private functions ---------------------------------------------------------*/
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
 
 /**
-  * @brief  Main program
-  * @param  None
-  * @retval None
+  * @brief  The application entry point.
+  * @retval int
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
-  /* Enable and set up the MPU------------------------------------------------*/
-  MPU_Config();
 
   /* USER CODE END 1 */
 
-  /* Enable the CPU Cache */
-
-  /* Enable I-Cache---------------------------------------------------------*/
-  SCB_EnableICache();
-
-  /* Enable D-Cache---------------------------------------------------------*/
-  SCB_EnableDCache();
-  /* Reset of all peripherals, Initializes the Flash interface and the systick. */
+  /* MCU Configuration--------------------------------------------------------*/
   HAL_Init();
 
+  /* USER CODE BEGIN Init */
   /* Register SecureFault callback defined in non-secure and to be called by secure handler */
   SECURE_RegisterCallback(SECURE_FAULT_CB_ID, (void *)SecureFault_Callback);
 
   /* Register SecureError callback defined in non-secure and to be called by secure handler */
   SECURE_RegisterCallback(IAC_ERROR_CB_ID, (void *)SecureError_Callback);
 
+  /* USER CODE END Init */
+
+  /* USER CODE BEGIN SysInit */
   /* Configure the System Power */
   SystemPower_Config();
 
   /* Configure the system clock */
   SystemClock_Config();
+  /* USER CODE END SysInit */
 
-  /* Configure GPIO pins */
+  /* Initialize all configured peripherals */
   MX_GPIO_Init();
-
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
 
-  /* Configure and launch ThreadX*/
   MX_ThreadX_Init();
 
   /* We should never get here as control is now taken by the scheduler */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -98,6 +113,37 @@ int main(void)
   /* USER CODE END 3 */
 }
 
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+  /* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOG_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOG, LED_RED_Pin|LED_BLUE_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pins : LED_RED_Pin LED_BLUE_Pin */
+  GPIO_InitStruct.Pin = LED_RED_Pin|LED_BLUE_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
+}
+
+/* USER CODE BEGIN 4 */
 /**
   * @brief  Callback called by secure code following a secure fault interrupt
   * @note   This callback is called by secure code thanks to the registration
@@ -245,7 +291,6 @@ static void SystemPower_Config(void)
   }
 }
 
-/* USER CODE BEGIN 4 */
 /* MPU Configuration */
 void MPU_Config(void)
 {
@@ -283,28 +328,6 @@ void MPU_Config(void)
 /* USER CODE END 4 */
 
 /**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_GPIO_Init(void)
-{
-  GPIO_InitTypeDef  GPIO_InitStruct = {0};
-
-  __HAL_RCC_GPIOG_CLK_ENABLE();
-
-  /* Configure default pin levels (LEDs OFF)*/
-  HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_SET);
-
-  /* Configure the LED pins */
-  GPIO_InitStruct.Pin =  LED_RED_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
-}
-
-/**
   * @brief  Period elapsed callback in non blocking mode
   * @note   This function is called  when TIM6 interrupt took place, inside
   * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
@@ -317,7 +340,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM6) {
+  if (htim->Instance == TIM6)
+  {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
@@ -327,22 +351,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 /**
   * @brief  This function is executed in case of error occurrence.
-  * @param  None
+  * @param None
   * @retval None
   */
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* User may add here some code to deal with this error */
+  /* User can add his own implementation to report the HAL error return state */
   while (1)
   {
-    HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
-    HAL_Delay(1000);
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -353,16 +374,8 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-  /* Prevent unused argument(s) compilation warning */
-  UNUSED(file);
-  UNUSED(line);
-
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* Infinite loop */
-  while (1)
-  {
-  }
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

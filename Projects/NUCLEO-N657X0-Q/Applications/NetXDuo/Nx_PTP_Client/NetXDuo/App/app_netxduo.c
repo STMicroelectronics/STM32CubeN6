@@ -254,12 +254,7 @@ UINT MX_NetXDuo_Init(VOID *memory_ptr)
   }
 
   /* set DHCP notification callback  */
-  ret = tx_semaphore_create(&DHCPSemaphore, "DHCP Semaphore", 0);
-
-  if (ret != TX_SUCCESS)
-  {
-    return TX_SEMAPHORE_ERROR;
-  }
+  tx_semaphore_create(&DHCPSemaphore, "DHCP Semaphore", 0);
 
   /* USER CODE BEGIN MX_NetXDuo_Init */
 

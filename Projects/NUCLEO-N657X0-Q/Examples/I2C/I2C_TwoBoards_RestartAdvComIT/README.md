@@ -1,11 +1,4 @@
 
----
-pagetitle: Readme
-lang: en
----
-::: {.row}
-::: {.col-sm-12 .col-lg-8}
-
 ## <b>I2C_TwoBoards_RestartAdvComIT Example Description</b>
 
 How to perform multiple I2C data buffer transmission/reception between two boards, 
@@ -101,6 +94,7 @@ Both sides :
 These LEDs status are keeped at same value during 1 Second and then clear, this will allow to monitor a next transfer status.
  
 Also only on Master board side, Terminal I/O can be used to watch the Action Command Code sent by Master and associated Slave action with IDE in debug mode.
+
 Depending of IDE, to watch content of Terminal I/O note that :
 
  - When resorting to EWARM IAR IDE:
@@ -110,16 +104,34 @@ Depending of IDE, to watch content of Terminal I/O note that :
    Command Code could not be displayed on debugger but user can use the Virtual Com port of the NUCLEO-N657X0-Q
    to display Command Code on PC side using an hyperterminal. See below, information related to this possibility.
 
- When resorting to STM32CubeIDE:
+ - When resorting to STM32CubeIDE:
+   Command Code is displayed on debugger as follows: Window--> Show View--> Console.
 
- Command Code is displayed on debugger as follows: Window--> Show View--> Console.
-
- In Debug configuration : 
-
-- Window\Debugger, select the Debug probe : ST-LINK(OpenOCD)
-- Window\Startup,add the command "monitor arm semihosting enable"
-
+   In the Debug configuration, there are two possible options:
+   
+   - Option 1:
+      - Window\Debugger, select the Debug probe : ST-LINK(OpenOCD)
+      - Window\Debugger, select the Semihosting: "mon gdb_breakpoint_override hard" and "monitor arm semihosting enable"
+   - Option 2:
+      - Window\Debugger, select the Debug probe : ST-LINK(ST-LINK GDB server)
+      - Window\Startup,add the following commands: Enable terminal mode   
+	  
 Other proposal to retrieve display of Command Code for all IDE is to use the Virtual Com.
+
+ - When resorting to EWARM IAR IDE:
+   Command Code is displayed on PC (as HyperTerminal or TeraTerm) with proper configuration
+
+ - When resorting to MDK-ARM KEIL IDE:
+   Command Code is displayed on PC (as HyperTerminal or TeraTerm) with proper configuration :
+   - remove the "__DBG_ITM" from MDK-ARM Settings --> C/C++ (AC6) --> Preprocessor Symbols --> Define
+   - uncheck "Trace Enable" from MDK-ARM Settings --> Debug --> Settings --> Trace
+   - exclude "Retarget.c" from MDK-ARM Project
+
+ - When resorting to STM32CubeIDE (Debug and Release) :
+   Command Code is displayed on PC (as HyperTerminal or TeraTerm) with proper configuration :
+   - uncheck "exclude resource from build" for "syscall.c" file
+   - remove "-specs=rdimon.specs -lc -lrdimon" from from cubeIDE Properties --> C/C++ Build --> Settings
+   --> Tool Settings --> MCU GCC linker --> Miscellaneous
 
 In order to select use of Virtual Com port feature of STLINK for connection between NUCLEO-N657X0-Q and PC,
 User has to set USE_VCP_CONNECTION define to 1 in main.h file.
@@ -181,6 +193,8 @@ These LEDs status are keeped at same value during 1 Second and then clear, this 
 
 Also only on Master board side, Terminal I/O can be used to watch the Request Command Code sent by Master and associated Slave answer with IDE in debug mode.
 
+Depending of IDE, to watch content of Terminal I/O note that :
+
  - When resorting to EWARM IAR IDE:
    Command Code is displayed on debugger as follows: View --> Terminal I/O
 
@@ -188,17 +202,35 @@ Also only on Master board side, Terminal I/O can be used to watch the Request Co
    Command Code could not be displayed on debugger but user can use the Virtual Com port of the NUCLEO-N657X0-Q
    to display Command Code on PC side using an hyperterminal. See below, information related to this possibility.
  
- When resorting to STM32CubeIDE:
+ - When resorting to STM32CubeIDE:
+   Command Code is displayed on debugger as follows: Window--> Show View--> Console.
 
- Command Code is displayed on debugger as follows: Window--> Show View--> Console.
-
- In Debug configuration :
-
-- Window\Debugger, select the Debug probe : ST-LINK(OpenOCD)
-- Window\Startup,add the command "monitor arm semihosting enable"
-
+   In the Debug configuration, there are two possible options:
+   
+   - Option 1:
+      - Window\Debugger, select the Debug probe : ST-LINK(OpenOCD)
+      - Window\Debugger, select the Semihosting: "mon gdb_breakpoint_override hard" and "monitor arm semihosting enable"
+   - Option 2:
+      - Window\Debugger, select the Debug probe : ST-LINK(ST-LINK GDB server)
+      - Window\Startup,add the following commands: Enable terminal mode   
+	  
 Other proposal to retrieve display of Command Code for all IDE is to use the Virtual Com.
 
+ - When resorting to EWARM IAR IDE:
+   Command Code is displayed on PC (as HyperTerminal or TeraTerm) with proper configuration
+
+ - When resorting to MDK-ARM KEIL IDE:
+   Command Code is displayed on PC (as HyperTerminal or TeraTerm) with proper configuration :
+   - remove the "__DBG_ITM" from MDK-ARM Settings --> C/C++ (AC6) --> Preprocessor Symbols --> Define
+   - uncheck "Trace Enable" from MDK-ARM Settings --> Debug --> Settings --> Trace
+   - exclude "Retarget.c" from MDK-ARM Project
+
+ - When resorting to STM32CubeIDE (Debug and Release) :
+   Command Code is displayed on PC (as HyperTerminal or TeraTerm) with proper configuration :
+   - uncheck "exclude resource from build" for "syscall.c" file
+   - remove "-specs=rdimon.specs -lc -lrdimon" from from cubeIDE Properties --> C/C++ Build --> Settings
+   --> Tool Settings --> MCU GCC linker --> Miscellaneous
+   
 In order to select use of Virtual Com port feature of STLINK for connection between NUCLEO-N657X0-Q and PC,
 User has to set USE_VCP_CONNECTION define to 1 in main.h file.
 If so, please ensure that USART communication between the target MCU and ST-LINK MCU is properly enabled 
@@ -287,6 +319,4 @@ In order to make the program work, you must do the following :
 
 **Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.
 
-:::
-:::
 

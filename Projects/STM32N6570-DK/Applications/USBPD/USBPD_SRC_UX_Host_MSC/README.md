@@ -41,7 +41,10 @@ None.
 
 ### <b>Notes</b>
 
-None
+- In main(), power domains are enabled early using:
+  HAL_PWREx_EnableVddA(), HAL_PWREx_EnableVddIO2(), HAL_PWREx_EnableVddIO3(),
+  HAL_PWREx_EnableVddIO4(), HAL_PWREx_EnableVddIO5() and HAL_PWREx_EnableVddUSB().
+  This helps ensure required analog/IO/USB supplies are available before peripheral initialization.
 
 #### <b>ThreadX usage hints</b>
 

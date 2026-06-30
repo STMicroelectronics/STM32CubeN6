@@ -75,7 +75,7 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
-  /* FIXME : can not be set currently under boot from flash due to bootrom lock */
+  /* Not available when booting from flash because the boot ROM keeps it locked. */
 #ifndef NO_OTP_FUSE
   /* Set OTP fuses for XSPI IO pins speed optimization */
   if(OTP_Config() != 0){

@@ -272,7 +272,7 @@ __tx_DBGHandler:
 
 #endif
 
-#if defined (__GNUC__) && !defined(__clang__)
+#if defined (__GNUC__)
 /**************************************************************************/
 /*                                                                        */
 /*       Copyright (c) Microsoft Corporation. All rights reserved.        */
@@ -301,6 +301,12 @@ __tx_DBGHandler:
 
 SYSTEM_CLOCK        =     800000000
 SYSTICK_CYCLES      =     ((SYSTEM_CLOCK / 100) -1)
+
+#if defined(__clang__)
+#define TX_VECTOR_TABLE __Vectors
+#else
+#define TX_VECTOR_TABLE g_pfnVectors
+#endif
 
 /* Setup the stack and heap areas.  */
 
@@ -375,7 +381,7 @@ _tx_initialize_low_level:
 #endif
     /* Setup Vector Table Offset Register.  */
     MOV     r0, #0xE000E000                         // Build address of NVIC registers
-    LDR     r1, =g_pfnVectors                           // Pickup address of vector table
+    LDR     r1, =TX_VECTOR_TABLE                        // Pickup address of vector table
     STR     r1, [r0, #0xD08]                        // Set vector table address
 
     /* Enable the cycle count register.  */
@@ -386,7 +392,7 @@ _tx_initialize_low_level:
 
     /* Set system stack pointer from vector value.  */
     LDR     r0, =_tx_thread_system_stack_ptr        // Build address of system stack pointer
-    LDR     r1, =g_pfnVectors                           // Pickup address of vector table
+    LDR     r1, =TX_VECTOR_TABLE                        // Pickup address of vector table
     LDR     r1, [r1]                                // Pickup reset stack pointer
     STR     r1, [r0]                                // Save system stack pointer
 

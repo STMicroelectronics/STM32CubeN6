@@ -91,7 +91,6 @@ UINT MX_USBX_Host_Stack_Init(VOID);
 UINT MX_USBX_Host_Stack_DeInit(VOID);
 
 /* USER CODE BEGIN EFP */
-VOID USBX_APP_Host_Init(VOID);
 void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin);
 /* USER CODE END EFP */
 

@@ -1,11 +1,10 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    UART/UART_HyperTerminal_IT/Src/stm32n6xx_it.c
+  * @file    stm32n6xx_it.c
   * @author  MCD Application Team
   * @brief   Main Interrupt Service Routines.
-  *          This file provides template for all exceptions handler and
-  *          peripherals interrupt service routine.
+  *          This file provides the interrupt handlers for the application.
   ******************************************************************************
   * @attention
   *

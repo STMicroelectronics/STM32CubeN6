@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32_mx66uw1g45g.h
   * @author  MCD Application Team
-  * @brief   This file includes a driver for custom support of
-  *          Macronix MX66UW1G45G Nor Flash memory
+  * @brief   This file contains configuration details for support of the Macronix MX66UW1G45G NOR flash memory,
+  *          using EMM Custom Driver
   ******************************************************************************
   * @attention
   *
@@ -61,14 +61,14 @@ extern "C" {
 #define EXTMEM_MX66UW1G45G_CMD1_WRITE_CFG2          0x72    /*!< Command to write to a register */
 #define EXTMEM_MX66UW1G45G_CMD1_READ_CFG2           0x71    /*!< Command to read from a register */
 #define EXTMEM_MX66UW1G45G_CMD1_READAW_CFG2         0x71    /*!< Command to read after write operation */
-#define EXTMEM_MX66UW1G45G_CMD1_ADDR_CFG2           0x300   /*!< Address of the register */
-#define EXTMEM_MX66UW1G45G_CMD1_VALUE_CFG2          0x00    /*!< Value of the register */
+#define EXTMEM_MX66UW1G45G_CMD1_ADDR_CFG2           0x300   /*!< Address of the register => Dummy cycles */
+#define EXTMEM_MX66UW1G45G_CMD1_VALUE_CFG2          0x00    /*!< Value of the register : 0 (default) => 20 cycles */
 #define EXTMEM_MX66UW1G45G_CMD1_MASK_CFG2           0x07    /*!< Mask for the register */
 
 #define EXTMEM_MX66UW1G45G_CMD2_WRITE_CFG2          0x72    /*!< Command to write to a register */
 #define EXTMEM_MX66UW1G45G_CMD2_READ_CFG2           0x71    /*!< Command to read from a register */
 #define EXTMEM_MX66UW1G45G_CMD2_ADDR_CFG2           0x00    /*!< Address of the register */
-#define EXTMEM_MX66UW1G45G_CMD2_VALUE_CFG2          0x02    /*!< Value of the register */
+#define EXTMEM_MX66UW1G45G_CMD2_VALUE_CFG2          0x02    /*!< Value of the register : DTR OPI enable */
 #define EXTMEM_MX66UW1G45G_CMD2_MASK_CFG2           0x02    /*!< Mask for the register */
 
 #define EXTMEM_MX66UW1G45G_CMD3_READAW_CFG2         0x718E  /*!< Command to read after write operation */
@@ -158,7 +158,7 @@ extern "C" {
                                   .NorFlashConfig.Startup.MatchMask_WIP     = EXTMEM_MX66UW1G45G_MASK_WIP,           /*!< Mask for write in progress */ \
                                   .NorFlashConfig.Startup.MatchValue_WIP    = EXTMEM_MX66UW1G45G_VALUE_WIP,          /*!< Match Value for write in progress */ \
                                   .NorFlashConfig.Startup.SRAccessDetails   = EXTMEM_CUSTOM_SR_ACCESS_CFG_UNDEFINED, /*!< No details for SR register access (no address required) */ \
-                                  .NorFlashConfig.OptionalConfigEnable      = 1,                                   /*!< Optional config for NorFlash is used */ \
+                                  .NorFlashConfig.OptionalConfigEnable      = 1,                                     /*!< Optional config for NorFlash is used */ \
                                   .NorFlashConfig.Optional.Cmd_EraseSector  = EXTMEM_MX66UW1G45G_OCTAL_CMD_ERASE_SECTOR,  /*!< Command to erase a sector */ \
                                   .NorFlashConfig.Optional.Cmd_MassErase    = EXTMEM_MX66UW1G45G_OCTAL_CMD_MASS_ERASE,    /*!< Command to perform mass erase */ \
                                   .NorFlashConfig.Optional.Cmd_RDSR         = EXTMEM_MX66UW1G45G_OCTAL_CMD_RDSR,     /*!< Command to read status register in octal mode */ \

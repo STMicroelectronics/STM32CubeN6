@@ -153,7 +153,7 @@ g_pfnVectors:
   .word	LOCKUP_IRQHandler          			/* LOCKUP - no overstack in Cortex-M55                           */
   .word	CACHE_ECC_IRQHandler       			/* Cache ECC error                                               */
   .word	TCM_ECC_IRQHandler         			/* TCM ECC error                                                 */
-  .word	BCK_ECC_IRQHandler         			/* Backup RAM interrupts (SEC and DED)                           */
+  .word	BKP_ECC_IRQHandler         			/* Backup RAM interrupts (SEC and DED)                           */
   .word	FPU_IRQHandler             			/* FPU safety flag                                               */
   .word	0                          			/* Reserved                                                      */
   .word	RTC_S_IRQHandler           			/* RTC secure interrupt                                          */
@@ -398,8 +398,8 @@ g_pfnVectors:
 	.weak	TCM_ECC_IRQHandler
 	.thumb_set TCM_ECC_IRQHandler,Default_Handler
 
-	.weak	BCK_ECC_IRQHandler
-	.thumb_set BCK_ECC_IRQHandler,Default_Handler
+	.weak	BKP_ECC_IRQHandler
+	.thumb_set BKP_ECC_IRQHandler,Default_Handler
 
 	.weak	FPU_IRQHandler
 	.thumb_set FPU_IRQHandler,Default_Handler

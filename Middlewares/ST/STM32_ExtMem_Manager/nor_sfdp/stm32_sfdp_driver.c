@@ -220,6 +220,9 @@ EXTMEM_DRIVER_NOR_SFDP_StatusTypeDef EXTMEM_DRIVER_NOR_SFDP_Init(void *Periphera
   /* Keep manufacturer information, it could be used to help in
      building of consistent driver */
   SFDPObject->sfdp_private.ManuID = DataID[0];
+#if defined(EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG)
+  SFDPObject->sfdp_private.SALObject.ManufacturerId = DataID[0];
+#endif /* EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG */
 
   /* Get the complete SFDP data */
   SFDP_DEBUG_STR("8 - collect the SFDP data")
@@ -771,6 +774,29 @@ EXTMEM_DRIVER_NOR_SFDP_StatusTypeDef driver_set_FlagWEL(EXTMEM_DRIVER_NOR_SFDP_O
   /* Wait for write enable status */
   if (0u != SFDPObject->sfdp_private.DriverInfo.ReadWELCommand)
   {
+#if defined(EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG)
+    uint8_t status_reg[2] = {0u, 0u};
+    uint32_t tickstart = HAL_GetTick();
+    uint8_t match_value = (uint8_t)(((SFDPObject->sfdp_private.DriverInfo.WELBusyPolarity == 0u) ? 1u : 0u)
+                                    << SFDPObject->sfdp_private.DriverInfo.WELPosition);
+    uint8_t match_mask = (uint8_t)(1u << SFDPObject->sfdp_private.DriverInfo.WELPosition);
+
+    while ((HAL_GetTick() - tickstart) <= Timeout)
+    {
+      if (HAL_OK != SAL_XSPI_SendReadCommand(&SFDPObject->sfdp_private.SALObject,
+                                             SFDPObject->sfdp_private.DriverInfo.ReadWELCommand,
+                                             status_reg, sizeof(status_reg)))
+      {
+        goto error;
+      }
+
+      if (((status_reg[0] & match_mask) == match_value) && ((status_reg[1] & match_mask) == match_value))
+      {
+        retr = EXTMEM_DRIVER_NOR_SFDP_OK;
+        return retr;
+      }
+    }
+#else
     /* Check if flag write enable is enabled */
     if (HAL_OK == SAL_XSPI_CheckStatusRegister(&SFDPObject->sfdp_private.SALObject,
                                                SFDPObject->sfdp_private.DriverInfo.ReadWELCommand,
@@ -782,7 +808,11 @@ EXTMEM_DRIVER_NOR_SFDP_StatusTypeDef driver_set_FlagWEL(EXTMEM_DRIVER_NOR_SFDP_O
     {
       retr = EXTMEM_DRIVER_NOR_SFDP_OK;
     }
+#endif /* EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG */
   }
+#if defined(EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG)
+error:
+#endif /* EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG */
   return retr;
 }
 

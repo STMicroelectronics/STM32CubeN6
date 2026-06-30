@@ -6,6 +6,15 @@
   *          Azure RTOS FileX for STM32 devices.
   ******************************************************************************
   */
+
+### V6.4.0 (03-04-2026) ###
+============================
+- Add SW_Security_Level.md file
+
+### V6.4.0 (06-10-2025) ###
+============================
+- Align version against the low-level interfaces
+
 ### V6.4.0 (11-08-2025) ###
 =================================
 - SA0038 issue is fixed (Buffer overflow issue in the Azure RTOS FileX STM32 RAM driver)

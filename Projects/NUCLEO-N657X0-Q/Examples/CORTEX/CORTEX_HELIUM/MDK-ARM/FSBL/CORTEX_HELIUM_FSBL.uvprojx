@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>STM32N657X0HxQ</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32N6xx_DFP.0.1.2</PackID>
+          <PackID>Keil.STM32N6xx_DFP.1.0.0</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IRAM(0x341C0000-0x341FFFFF) IROM(0x34180400-0x341BFFFF) CPUTYPE("Cortex-M55") FPU3(DFPU) DSP TZ CLOCK(12000000) ESEL ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -493,6 +493,16 @@
               <FileName>system_stm32n6xx_fsbl.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../FSBL/Src/system_stm32n6xx_fsbl.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Doc</GroupName>
+          <Files>
+            <File>
+              <FileName>README.md</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\README.md</FilePath>
             </File>
           </Files>
         </Group>

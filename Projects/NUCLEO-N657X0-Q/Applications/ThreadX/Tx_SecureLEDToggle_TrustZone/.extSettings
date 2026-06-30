@@ -1,0 +1,9 @@
+[ProjectFiles]
+[Others]
+[FSBL:Others]
+Define=NO_OTP_FUSE
+HALModule=BSEC
+Define=
+HALModule=
+[Groups]
+Doc=../README.md;

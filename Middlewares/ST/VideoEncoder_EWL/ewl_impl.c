@@ -142,8 +142,6 @@ EWLHwConfig_t EWLReadAsicConfig(void)
   * @brief Allocate resources and setup the wrapper module
   * @note   implementation depends on the OS compatibility setup in ewl_conf.h
   * @param  param EWLInitParam_t type of encoding to be done
-  * @note   0 : H264
-  *         1 : JPEG
   * @retval void* pointer to the EWL instance
   * @note Only one instance is supported. No apparent need for multi-instance support.
   */
@@ -154,8 +152,8 @@ const void *EWLInit(EWLInitParam_t *param)
 
   /* Check for NULL pointer */
   assert_param(param != NULL);
-  /* only H264 (0) and JPEG (1) are supported */
-  assert_param(param->clientType <= 1U);
+  /* only H264 and JPEG are supported */
+  assert_param((param->clientType == EWL_CLIENT_TYPE_H264_ENC) || (param->clientType == EWL_CLIENT_TYPE_JPEG_ENC));
 
   u8 *mem_pool = NULL;
   size_t mem_pool_size = EWL_DEFAULT_POOL_SIZE;

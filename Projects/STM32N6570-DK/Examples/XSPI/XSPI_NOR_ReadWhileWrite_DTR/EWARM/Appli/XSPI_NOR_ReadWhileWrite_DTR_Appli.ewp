@@ -359,11 +359,11 @@
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$/../../Appli/Inc</state>
           <state>$PROJ_DIR$/../../Secure_nsclib</state>
+          <state>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc</state>
+          <state>$PROJ_DIR$/../../../../../../../Drivers/CMSIS/Device/ST/STM32N6xx/Include</state>
+          <state>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy</state>
+          <state>$PROJ_DIR$/../../../../../../../Drivers/CMSIS/Include</state>
           <state>$PROJ_DIR$/../../../../../../../Drivers/BSP/STM32N6570-DK</state>
-          <state>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Inc</state>
-          <state>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/CMSIS/Device/ST/STM32N6xx/Include</state>
-          <state>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Inc/Legacy</state>
-          <state>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/CMSIS/Include</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1150,40 +1150,40 @@
     <group>
       <name>STM32N6xx_HAL_Driver</name>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc_ex.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc_ex.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_gpio.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_gpio.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma_ex.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma_ex.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pwr.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pwr.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pwr_ex.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pwr_ex.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_cortex.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_cortex.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_exti.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_exti.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_xspi.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_xspi.c</name>
       </file>
       <file>
-        <name>C:/Users/frq09519/STM32Cube/Repository/STM32Cube_FW_N6_V1.3.0RC1/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rif.c</name>
+        <name>$PROJ_DIR$/../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rif.c</name>
       </file>
     </group>
   </group>

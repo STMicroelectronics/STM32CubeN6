@@ -110,8 +110,11 @@ UCHAR                       *buffer;
     *buffer++ = *encoded_feedback ++;
     *buffer++ = *encoded_feedback ++;
     *buffer++ = *encoded_feedback ++;
-    if (_ux_system_slave -> ux_system_slave_speed == UX_HIGH_SPEED_DEVICE)
+    if (transfer -> ux_slave_transfer_request_requested_length > 3U)
+    {
         *buffer = *encoded_feedback;
+    }
+
     return(UX_SUCCESS);
 #endif
 }

@@ -232,6 +232,7 @@
                     <state>DEBUG</state>
                     <state>USE_HAL_DRIVER</state>
                     <state>TX_SINGLE_MODE_SECURE</state>
+                    <state>TX_EXECUTION_PROFILE_ENABLE</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -365,6 +366,7 @@
                     <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\Third_Party\VideoEncoder\source\h264</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\threadx\common\inc</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\threadx\ports\cortex_m55\iar\inc</state>
+                    <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\threadx\utility\execution_profile_kit</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\STM32_ISP_Library\isp\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\STM32_ISP_Library\evision\Inc</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\filex\common\inc</state>
@@ -549,6 +551,7 @@
                 <option>
                     <name>ADefines</name>
                     <state>TX_SINGLE_MODE_SECURE</state>
+                    <state>TX_EXECUTION_PROFILE_ENABLE</state>
                 </option>
                 <option>
                     <name>AList</name>
@@ -1147,6 +1150,9 @@
                     <name>$PROJ_DIR$\..\..\Appli\Core\Src\dcmipp_app.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\..\Appli\Core\Src\frame_rb.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\..\Appli\Core\Src\fx_stm32_sd_driver_glue.c</name>
                 </file>
                 <file>
@@ -1184,6 +1190,21 @@
                 </file>
             </group>
             <group>
+                <name>Monitoring</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\Appli\Core\Src\st_monitor.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\Appli\Core\Src\st_monitor_bitrate.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\Appli\Core\Src\st_monitor_cpu_threadx.c</name>
+                    <excluded>
+                        <configuration>VENC_SDCard_ThreadX_Debug</configuration>
+                    </excluded>
+                </file>
+            </group>
+            <group>
                 <name>Patch</name>
                 <file>
                     <name>$PROJ_DIR$\..\..\Appli\Core\Src\Patch\stm32n6570_discovery_camera.c</name>
@@ -1195,6 +1216,12 @@
         <name>Drivers</name>
         <group>
             <name>BSP</name>
+            <group>
+                <name>Utilities</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\threadx\utility\execution_profile_kit\tx_execution_profile.c</name>
+                </file>
+            </group>
             <file>
                 <name>$PROJ_DIR$\..\..\..\..\..\..\..\Drivers\BSP\Components\aps256xx\aps256xx.c</name>
             </file>
@@ -2731,6 +2758,7 @@
                             <state>DEBUG</state>
                             <state>USE_HAL_DRIVER</state>
                             <state>TX_SINGLE_MODE_SECURE</state>
+                            <state>TX_EXECUTION_PROFILE_ENABLE</state>
                         </option>
                         <option>
                             <name>CCPreprocFile</name>
@@ -2864,6 +2892,7 @@
                             <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\Third_Party\VideoEncoder\source\h264</state>
                             <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\threadx\common\inc</state>
                             <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\threadx\ports\cortex_m55\iar\inc</state>
+                            <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\threadx\utility\execution_profile_kit</state>
                             <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\STM32_ISP_Library\isp\Inc</state>
                             <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\STM32_ISP_Library\evision\Inc</state>
                             <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\filex\common\inc</state>

@@ -57,7 +57,7 @@
 /*                                                                        */
 /*  CALLS                                                                 */
 /*                                                                        */
-/*    _ux_dcd_stm32_register_read           Read register                 */
+/*    None                                                                */
 /*                                                                        */
 /*  CALLED BY                                                             */
 /*                                                                        */
@@ -77,7 +77,13 @@
 UINT  _ux_dcd_stm32_frame_number_get(UX_DCD_STM32 *dcd_stm32, ULONG *frame_number)
 {
 
-    /* This function never fails. */
+    if ((frame_number == UX_NULL) || (dcd_stm32 == UX_NULL) || (dcd_stm32 -> pcd_handle == UX_NULL))
+    {
+        return(UX_ERROR);
+    }
+
+    *frame_number = (ULONG)(dcd_stm32 -> pcd_handle -> FrameNumber);
+
     return(UX_SUCCESS);
 }
 

@@ -1233,6 +1233,9 @@
           <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/iar/src/txe_thread_secure_stack_free.c</name>
         </file>
         <file>
+          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/iar/src/txe_thread_secure_stack_allocate.c</name>
+        </file>
+        <file>
           <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/iar/src/tx_thread_context_restore.s</name>
         </file>
         <file>

@@ -42,7 +42,6 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 #define USBX_MEMORY_STACK_SIZE       22 * 1024
-
 /* USER CODE BEGIN EC */
 
 /* USER CODE END EC */

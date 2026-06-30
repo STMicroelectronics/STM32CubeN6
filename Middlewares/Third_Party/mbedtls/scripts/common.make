@@ -117,7 +117,7 @@ endif
 default: all
 
 $(MBEDLIBS):
-	$(MAKE) -C $(MBEDTLS_PATH)/library
+	$(MAKE) -C $(MBEDTLS_PATH)/library $(@F)
 
 neat: clean
 ifndef WINDOWS

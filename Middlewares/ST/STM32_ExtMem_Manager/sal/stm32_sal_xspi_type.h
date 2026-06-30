@@ -57,6 +57,8 @@ typedef enum
   PHY_LINK_1S1S2S,    /*!< Physical link configure in 1S1S2S */
   PHY_LINK_1S2S2S,    /*!< Physical link configure in 1S2S2S */
   PHY_LINK_1S1D1D,    /*!< Physical link configure in 1S1D1D */
+  PHY_LINK_1S1S4S,    /*!< Physical link configure in 1S1S4S */
+  PHY_LINK_1S4S4S,    /*!< Physical link configure in 1S4S4S */
   PHY_LINK_4S4S4S,    /*!< Physical link configure in 4S4S4S */
   PHY_LINK_4S4D4D,    /*!< Physical link configure in 4S4D4D */
   PHY_LINK_4D4D4D,    /*!< Physical link configure in 4D4D4D */
@@ -78,6 +80,11 @@ typedef struct
   uint8_t                      SFDPDummyCycle;    /*!< SDPF dummy cycle */
   SAL_XSPI_PhysicalLinkTypeDef PhyLink;           /*!< Only used for data Read in 4S4D4d 2S2D2D 1S1D1D */
   uint8_t                      DTRDummyCycle;     /*!< Specify that DTR read only valid for data read using DTRDummyCycle value */
+#if defined(EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG)
+  uint8_t                      ManufacturerId;    /*!< JEDEC manufacturer ID associated with the current memory */
+  uint8_t                      ReadWipCommand;    /*!< Busy-polling read command used to apply command-specific quirks */
+  uint8_t                      ReadWelCommand;    /*!< Write-enable polling read command used to apply command-specific quirks */
+#endif /* EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG */
 } SAL_XSPI_ObjectTypeDef;
 
 /**

@@ -77,6 +77,7 @@ int main(void)
   HAL_PWREx_EnableVddIO3();
   HAL_PWREx_EnableVddIO4();
   HAL_PWREx_EnableVddIO5();
+  HAL_PWREx_EnableVddUSB();
   /* USER CODE END 1 */
 
   /* MPU Configuration--------------------------------------------------------*/
@@ -252,9 +253,9 @@ void SystemClock_Config(void)
   static void SystemIsolation_Config(void)
 {
 
-  /* USER CODE BEGIN RIF_Init 0 */
+/* USER CODE BEGIN RIF_Init 0 */
 
-  /* USER CODE END RIF_Init 0 */
+/* USER CODE END RIF_Init 0 */
 
   /* set all required IPs as secure privileged */
   __HAL_RCC_RIFSC_CLK_ENABLE();
@@ -289,12 +290,12 @@ void SystemClock_Config(void)
   HAL_GPIO_ConfigPinAttributes(GPIOE,GPIO_PIN_5,GPIO_PIN_SEC|GPIO_PIN_PRIV);
   HAL_GPIO_ConfigPinAttributes(GPIOF,GPIO_PIN_11,GPIO_PIN_SEC|GPIO_PIN_PRIV);
 
-  /* USER CODE BEGIN RIF_Init 1 */
+/* USER CODE BEGIN RIF_Init 1 */
 
-  /* USER CODE END RIF_Init 1 */
-  /* USER CODE BEGIN RIF_Init 2 */
+/* USER CODE END RIF_Init 1 */
+/* USER CODE BEGIN RIF_Init 2 */
 
-  /* USER CODE END RIF_Init 2 */
+/* USER CODE END RIF_Init 2 */
 
 }
 
@@ -366,6 +367,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 /**
   * @brief  This function is executed in case of error occurrence.
+  * @param None
   * @retval None
   */
 void Error_Handler(void)
@@ -377,7 +379,6 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
 #ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number

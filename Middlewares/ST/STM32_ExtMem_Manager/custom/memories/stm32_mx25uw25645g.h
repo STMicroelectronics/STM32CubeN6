@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32_mx25uw25645g.h
   * @author  MCD Application Team
-  * @brief   This file includes a driver for custom support of
-  *          Macronix MX25UW25645G Nor Flash memory
+  * @brief   This file contains configuration details for support of the Macronix MX25UW25645G NOR flash memory,
+  *          using EMM Custom Driver
   ******************************************************************************
   * @attention
   *
@@ -61,14 +61,14 @@ extern "C" {
 #define EXTMEM_MX25UW25645G_CMD1_WRITE_CFG2          0x72    /*!< Command to write to a register */
 #define EXTMEM_MX25UW25645G_CMD1_READ_CFG2           0x71    /*!< Command to read from a register */
 #define EXTMEM_MX25UW25645G_CMD1_READAW_CFG2         0x71    /*!< Command to read after write operation */
-#define EXTMEM_MX25UW25645G_CMD1_ADDR_CFG2           0x300   /*!< Address of the register */
-#define EXTMEM_MX25UW25645G_CMD1_VALUE_CFG2          0x00    /*!< Value of the register */
+#define EXTMEM_MX25UW25645G_CMD1_ADDR_CFG2           0x300   /*!< Address of the register => Dummy cycles */
+#define EXTMEM_MX25UW25645G_CMD1_VALUE_CFG2          0x00    /*!< Value of the register : 0 (default) => 20 cycles */
 #define EXTMEM_MX25UW25645G_CMD1_MASK_CFG2           0x07    /*!< Mask for the register */
 
 #define EXTMEM_MX25UW25645G_CMD2_WRITE_CFG2          0x72    /*!< Command to write to a register */
 #define EXTMEM_MX25UW25645G_CMD2_READ_CFG2           0x71    /*!< Command to read from a register */
 #define EXTMEM_MX25UW25645G_CMD2_ADDR_CFG2           0x00    /*!< Address of the register */
-#define EXTMEM_MX25UW25645G_CMD2_VALUE_CFG2          0x02    /*!< Value of the register */
+#define EXTMEM_MX25UW25645G_CMD2_VALUE_CFG2          0x02    /*!< Value of the register : DTR OPI enable */
 #define EXTMEM_MX25UW25645G_CMD2_MASK_CFG2           0x02    /*!< Mask for the register */
 
 #define EXTMEM_MX25UW25645G_CMD3_READAW_CFG2         0x718E  /*!< Command to read after write operation */
@@ -134,7 +134,7 @@ extern "C" {
                                   .RegisterConfig[3].ConfigStepType                      = EXTMEM_CUSTOM_CFGSTEP_RAW_REG_ADDR,    /*!< Config step to read/write/read a register */ \
                                   .RegisterConfig[3].RWConfigStep.CommandRegisterReadAW  = EXTMEM_MX25UW25645G_CMD3_READAW_CFG2,  /*!< Command to read from a register after write operation */ \
                                   .RegisterConfig[3].RWConfigStep.RegisterAddress        = EXTMEM_MX25UW25645G_CMD3_ADDR_CFG2,    /*!< Address of the register */ \
-                                  .OptionalConfig.Frequency                 = 50000000,                              /*!< Operating frequency in Hz*/ \
+                                  .OptionalConfig.Frequency                 = 200000000,                              /*!< Operating frequency in Hz*/ \
                                   .OptionalConfig.CommandRead               = EXTMEM_MX25UW25645G_OCTAL_CMD_READ,     /*!< Command to read data */ \
                                   .OptionalConfig.CommandWrite              = EXTMEM_MX25UW25645G_OCTAL_CMD_WRITE,    /*!< Command to write data */ \
                                   .OptionalConfig.DummyCycleRead            = EXTMEM_MX25UW25645G_OCTAL_DUMMY_READ,   /*!< Number of dummy cycles for read operations */ \

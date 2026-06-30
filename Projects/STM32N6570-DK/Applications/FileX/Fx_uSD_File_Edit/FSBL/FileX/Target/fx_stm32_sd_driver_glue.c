@@ -19,9 +19,9 @@ extern SD_HandleTypeDef hsd2;
 extern void MX_SDMMC2_SD_Init(void);
 #endif
 
-/* USER CODE BEGIN 0 */
+/* USER CODE BEGIN  0 */
 
-/* USER CODE END 0 */
+/* USER CODE END  0 */
 
 /**
 * @brief Initializes the SD IP instance
@@ -37,7 +37,7 @@ INT fx_stm32_sd_init(UINT instance)
   /* USER CODE END PRE_FX_SD_INIT */
 
 #if (FX_STM32_SD_INIT == 1)
-  MX_SDMMC2_SD_Init();
+	MX_SDMMC2_SD_Init();
 #endif
 
   /* USER CODE BEGIN POST_FX_SD_INIT */

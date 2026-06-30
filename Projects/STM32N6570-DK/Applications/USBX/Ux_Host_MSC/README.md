@@ -36,6 +36,13 @@ User is familiar with USB 2.0 "Universal Serial BUS" specification and mass stor
 
 None
 
+#### <b>Notes</b>
+
+- In main(), power domains are enabled early using:
+  HAL_PWREx_EnableVddA(), HAL_PWREx_EnableVddIO2(), HAL_PWREx_EnableVddIO3(),
+  HAL_PWREx_EnableVddIO4(), HAL_PWREx_EnableVddIO5() and HAL_PWREx_EnableVddUSB().
+  This helps ensure required analog/IO/USB supplies are available before peripheral initialization.
+
 #### <b>ThreadX usage hints</b>
 
  - ThreadX uses the Systick as time base, thus it is mandatory that the HAL uses a separate time base through the TIM IPs.

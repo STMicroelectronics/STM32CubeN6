@@ -217,12 +217,7 @@ UINT MX_NetXDuo_Init(VOID *memory_ptr)
   }
 
   /* set DHCP notification callback  */
-  ret = tx_semaphore_create(&DHCPSemaphore, "DHCP Semaphore", 0);
-
-  if (ret != NX_SUCCESS)
-  {
-    return NX_DHCP_ERROR;
-  }
+  tx_semaphore_create(&DHCPSemaphore, "DHCP Semaphore", 0);
 
   /* USER CODE BEGIN MX_NetXDuo_Init */
   /* Allocate the memory for Link thread   */

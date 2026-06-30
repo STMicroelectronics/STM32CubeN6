@@ -81,7 +81,7 @@
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
-            <RunUserProg2>0</RunUserProg2>
+            <RunUserProg2>1</RunUserProg2>
             <UserProg1Name>fromelf #L --bincombined --output=$L@L.bin</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
@@ -480,6 +480,11 @@
           <GroupName>Application/User/FSBL/USBPD/Target</GroupName>
           <Files>
             <File>
+              <FileName>usbpd_user_services.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\FSBL\USBPD\Target\usbpd_user_services.c</FilePath>
+            </File>
+            <File>
               <FileName>usbpd_dpm_user.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../FSBL/USBPD/Target/usbpd_dpm_user.c</FilePath>
@@ -493,11 +498,6 @@
               <FileName>usbpd_pwr_user.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../FSBL/USBPD/Target/usbpd_pwr_user.c</FilePath>
-            </File>
-            <File>
-              <FileName>usbpd_user_services.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\FSBL\USBPD\Target\usbpd_user_services.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1405,39 +1405,9 @@
           <GroupName>Middlewares/threadx/Core</GroupName>
           <Files>
             <File>
-              <FileName>tx_initialize_high_level.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Middlewares/ST/threadx/common/src/tx_initialize_high_level.c</FilePath>
-            </File>
-            <File>
-              <FileName>tx_initialize_kernel_enter.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Middlewares/ST/threadx/common/src/tx_initialize_kernel_enter.c</FilePath>
-            </File>
-            <File>
-              <FileName>tx_initialize_kernel_setup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Middlewares/ST/threadx/common/src/tx_initialize_kernel_setup.c</FilePath>
-            </File>
-            <File>
-              <FileName>tx_thread_secure_stack_initialize.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/src/tx_thread_secure_stack_initialize.S</FilePath>
-            </File>
-            <File>
-              <FileName>tx_thread_secure_stack_allocate.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/src/tx_thread_secure_stack_allocate.S</FilePath>
-            </File>
-            <File>
               <FileName>tx_thread_secure_stack_free.S</FileName>
               <FileType>2</FileType>
               <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/ac6/src/tx_thread_secure_stack_free.S</FilePath>
-            </File>
-            <File>
-              <FileName>txe_thread_secure_stack_free.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/src/txe_thread_secure_stack_free.c</FilePath>
             </File>
             <File>
               <FileName>tx_thread_context_restore.S</FileName>
@@ -1483,6 +1453,41 @@
               <FileName>tx_timer_interrupt.S</FileName>
               <FileType>2</FileType>
               <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/ac6/src/tx_timer_interrupt.S</FilePath>
+            </File>
+            <File>
+              <FileName>tx_initialize_high_level.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Middlewares/ST/threadx/common/src/tx_initialize_high_level.c</FilePath>
+            </File>
+            <File>
+              <FileName>tx_initialize_kernel_enter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Middlewares/ST/threadx/common/src/tx_initialize_kernel_enter.c</FilePath>
+            </File>
+            <File>
+              <FileName>tx_initialize_kernel_setup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Middlewares/ST/threadx/common/src/tx_initialize_kernel_setup.c</FilePath>
+            </File>
+            <File>
+              <FileName>tx_thread_secure_stack_initialize.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/src/tx_thread_secure_stack_initialize.S</FilePath>
+            </File>
+            <File>
+              <FileName>tx_thread_secure_stack_allocate.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/src/tx_thread_secure_stack_allocate.S</FilePath>
+            </File>
+            <File>
+              <FileName>txe_thread_secure_stack_free.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/src/txe_thread_secure_stack_free.c</FilePath>
+            </File>
+            <File>
+              <FileName>txe_thread_secure_stack_allocate.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/src/txe_thread_secure_stack_allocate.c</FilePath>
             </File>
             <File>
               <FileName>tx_thread_stack_error_handler.c</FileName>

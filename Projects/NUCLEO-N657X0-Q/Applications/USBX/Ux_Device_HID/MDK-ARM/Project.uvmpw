@@ -5,7 +5,7 @@
 
   <Header>### uVision Project, (C) Keil Software</Header>
 
-  <WorkspaceName>C:\git\n6_master\Firmware\Projects\NUCLEO-N657X0-Q\Applications\USBX\Ux_Device_HID\MDK-ARM\Project.uvmpw</WorkspaceName>
+  <WorkspaceName></WorkspaceName>
 
   <project>
     <PathAndName>.\FSBL\Ux_Device_HID_FSBL.uvprojx</PathAndName>

@@ -575,10 +575,17 @@ EXTMEM_StatusTypeDef EXTMEM_WriteInMappedMode(uint32_t MemId, uint32_t Address, 
         break;
 #endif /* EXTMEM_DRIVER_PSRAM == 1 */
 #if EXTMEM_DRIVER_CUSTOM == 1
+      /* Perform the Write in mapped mode operation using the CUSTOM driver */
       case EXTMEM_CUSTOM :
-        /* Functionality not supported in this driver */
-        retr = EXTMEM_ERROR_NOTSUPPORTED;
+      {
+        if (EXTMEM_DRV_CUSTOM_OK !=
+            EXTMEM_DRIVER_CUSTOM_WriteInMappedMode(&extmem_list_config[MemId].CustomObject,
+                                                   Address, Data, Size))
+        {
+          retr = EXTMEM_ERROR_DRIVER;
+        }
         break;
+      }
 #endif /* EXTMEM_DRIVER_CUSTOM == 1 */
 #if EXTMEM_DRIVER_USER == 1
       case EXTMEM_USER :

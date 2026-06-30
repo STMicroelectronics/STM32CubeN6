@@ -53,6 +53,8 @@ static TX_THREAD ux_video_thread;
 TX_SEMAPHORE video_thread_semaphore;
 VOID app_video_thread_entry(ULONG thread_input);
 
+ULONG _ux_utility_time_get(VOID);
+
 /* USER CODE BEGIN PV */
 extern PCD_HandleTypeDef hpcd_USB1_OTG_HS;
 
@@ -80,6 +82,11 @@ __ALIGN_BEGIN static UCHAR ux_device_cached_buffer[UX_DEVICE_APP_MEM_CACHED_SIZE
 #pragma data_alignment=4
 #endif
 __ALIGN_BEGIN static UCHAR ux_device_uncached_buffer[UX_DEVICE_APP_MEM_UNCACHED_SIZE] IN_UNCACHED_RAM __ALIGN_END ;
+
+ULONG _ux_utility_time_get(VOID)
+{
+  return tx_time_get();
+}
 
 
 

@@ -118,6 +118,21 @@ enum
   @brief Default value for the maximum clock frequency supplied to the memory
 */
 #define EXTMEM_DEFAULT_MAX_CLOCK_FREQ  50000000U
+
+/*
+  @brief Enable dual-memory WIP check in NOR SFDP busy polling (Dual-Quad / Dual-Octal).
+  @note Uncomment to enable dual configuration behavior.
+*/
+/* #define EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG */
+
+/*
+  @brief Option for skipping loading of the Appli from the external Flash in the load and run mode (debug purpose).
+  @note This option is to be used when the external Flash is pre-loaded by the debugger and the copy
+        from external Flash to internal memory is not needed.
+  @note Uncomment to skip loading of the Appli from the external Flash.
+*/
+/* #define EXTMEM_DEBUG_NO_LOAD_FROM_EXT_FLASH */
+
 /**
   * @}
   */
@@ -159,7 +174,7 @@ EXTMEM_DefinitionTypeDef extmem_list_config[2] =
         .NumberOfConfig = 1u,
         /* Config */
         {
-          {.WriteMask = 0x40u, .WriteValue = 0x40u, .REGAddress = 0x08u},
+          {.WriteMask = 0x4000u, .WriteValue = 0x4000u, .REGAddress = 0x08u},
         },
         /* Memory command configuration */
         .ReadREG           = 0x40u,

@@ -219,12 +219,8 @@ UINT MX_NetXDuo_Init(VOID *memory_ptr)
 
   /* USER CODE BEGIN MX_NetXDuo_Init */
   /* Create TAS Semaphore  */
-  ret = tx_semaphore_create(&TAS_Semaphore, "TAS Semaphore", 0);
+  tx_semaphore_create(&TAS_Semaphore, "TAS Semaphore", 0);
 
-  if (ret != TX_SUCCESS)
-  {
-    return TX_SEMAPHORE_ERROR;
-  }
   /* USER CODE END MX_NetXDuo_Init */
   return ret;
 }

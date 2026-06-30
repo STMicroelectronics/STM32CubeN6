@@ -41,62 +41,53 @@ TIM_HandleTypeDef        htim6;
 HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 {
   RCC_ClkInitTypeDef    clkconfig;
-  uint32_t              uwTimclock = 0;
-  uint32_t              uwPrescalerValue = 0;
-  HAL_StatusTypeDef     status;
+  uint32_t              uwTimclock;
+  uint32_t              uwPrescalerValue;
+
+  /*Configure the TIM6 IRQ priority */
+  HAL_NVIC_SetPriority(TIM6_IRQn, TickPriority ,0);
+  /* Enable the TIM6 global Interrupt */
+  HAL_NVIC_EnableIRQ(TIM6_IRQn);
 
   /* Enable TIM6 clock */
   __HAL_RCC_TIM6_CLK_ENABLE();
 
+  /* Compute TIM6 clock */
+  uwTimclock = HAL_RCCEx_GetTIMGFreq();
+
   /* Get clock configuration */
   HAL_RCC_GetClockConfig(&clkconfig);
 
-  /* Compute TIM6 clock */
-  uwTimclock = HAL_RCC_GetPCLK1Freq();
-
   /* Compute the prescaler value to have TIM6 counter clock equal to 1MHz */
-  uwPrescalerValue = (uint32_t)((uwTimclock / 1000000U) - 1U);
+  uwPrescalerValue = (uint32_t) ((uwTimclock / 1000000U) - 1U);
 
   /* Initialize TIM6 */
   htim6.Instance = TIM6;
 
   /* Initialize TIMx peripheral as follow:
-
-  + Period = [(TIM6CLK/1000) - 1]. to have a (1/1000) s time base.
-  + Prescaler = (uwTimclock/1000000 - 1) to have a 1MHz counter clock.
-  + ClockDivision = 0
-  + Counter direction = Up
-  */
+   * Period = [(TIM6CLK/1000) - 1]. to have a (1/1000) s time base.
+   * Prescaler = (uwTimclock/1000000 - 1) to have a 1MHz counter clock.
+   * ClockDivision = 0
+   * Counter direction = Up
+   */
   htim6.Init.Period = (1000000U / 1000U) - 1U;
   htim6.Init.Prescaler = uwPrescalerValue;
   htim6.Init.ClockDivision = 0;
   htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
 
-  status = HAL_TIM_Base_Init(&htim6);
-  if (status == HAL_OK)
+  if(HAL_TIM_Base_Init(&htim6) == HAL_OK)
   {
+#if (USE_HAL_TIM_REGISTER_CALLBACKS == 1U)
+      /* Register callback */
+      HAL_TIM_RegisterCallback(&htim6, HAL_TIM_PERIOD_ELAPSED_CB_ID, TimeBase_TIM_PeriodElapsedCallback);
+#endif /* USE_HAL_TIM_REGISTER_CALLBACKS */
+
     /* Start the TIM time Base generation in interrupt mode */
-    status = HAL_TIM_Base_Start_IT(&htim6);
-    if (status == HAL_OK)
-    {
-      if (TickPriority < (1UL << __NVIC_PRIO_BITS))
-      {
-        /* Enable the TIM6 global Interrupt */
-        HAL_NVIC_SetPriority(TIM6_IRQn, TickPriority, 0U);
-        uwTickPrio = TickPriority;
-      }
-      else
-      {
-        status = HAL_ERROR;
-      }
-    }
+    return HAL_TIM_Base_Start_IT(&htim6);
   }
 
-  /* Enable the TIM6 global Interrupt */
-  HAL_NVIC_EnableIRQ(TIM6_IRQn);
-
   /* Return function status */
-  return status;
+  return HAL_ERROR;
 }
 
 /**

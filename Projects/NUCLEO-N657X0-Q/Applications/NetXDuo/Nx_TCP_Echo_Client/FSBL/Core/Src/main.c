@@ -71,8 +71,6 @@ ETH_DMADescTypeDef DMARxDscrTab[ETH_DMA_RX_CH_CNT][ETH_RX_DESC_CNT] __attribute_
 ETH_DMADescTypeDef DMATxDscrTab[ETH_DMA_TX_CH_CNT][ETH_TX_DESC_CNT] __attribute__((section(".TxDecripSection")));   /* Ethernet Tx DMA Descriptors */
 #endif
 
-ETH_TxPacketConfig TxConfig;
-
 ETH_HandleTypeDef heth1;
 
 UART_HandleTypeDef huart1;
@@ -293,11 +291,6 @@ static void MX_ETH1_Init(void)
   /* USER CODE BEGIN ETH1_Init 1 */
 
   /* USER CODE END ETH1_Init 1 */
-
-  memset(&TxConfig, 0 , sizeof(ETH_TxPacketConfig));
-  TxConfig.Attributes = ETH_TX_PACKETS_FEATURES_CSUM | ETH_TX_PACKETS_FEATURES_CRCPAD;
-  TxConfig.ChecksumCtrl = ETH_CHECKSUM_IPHDR_PAYLOAD_INSERT_PHDR_CALC;
-  TxConfig.CRCPadCtrl = ETH_CRC_PAD_INSERT;
   heth1.Instance = ETH1;
   MACAddr[0] = 0x00;
   MACAddr[1] = 0x80;
@@ -342,7 +335,7 @@ static void MX_ETH1_Init(void)
 
   /* set all required IPs as secure privileged */
   __HAL_RCC_RIFSC_CLK_ENABLE();
-  
+
   /*RIMC configuration*/
   RIMC_MasterConfig_t RIMC_master = {0};
   RIMC_master.MasterCID = RIF_CID_1;
@@ -585,6 +578,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 /**
   * @brief  This function is executed in case of error occurrence.
+  * @param None
   * @retval None
   */
 void Error_Handler(void)

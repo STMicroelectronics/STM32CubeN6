@@ -60,7 +60,7 @@ else
 	rm -f tmp/* 
 fi
 
-waitType "1:2" "Select application to sign and flash (1=VENC_RTSP)> " "" "1"
+waitType "1:2" "Select application to sign and flash (1=VENC_RTSP, 2=VENC_OPUS_RTSP)> " "" "1"
 APP_CHOICE="$val_waitType"
 FSBL_PATH="../STM32CubeIDE/FSBL/Debug/VENC_RTSP_Server_FSBL.bin"
 
@@ -68,6 +68,10 @@ case "$APP_CHOICE" in
 	1)
 		APP_NAME="VENC_RTSP"
 		BIN_PATH="../STM32CubeIDE/Appli/Debug/VENC_RTSP_Server_Appli.bin"
+		;;
+	2)
+		APP_NAME="VENC_OPUS_RTSP"
+		BIN_PATH="../STM32CubeIDE/Appli_Opus/Debug/VENC_RTSP_Server_Appli_Opus.bin"
 		;;
 	*)
 		echo "Invalid selection."

@@ -7,7 +7,7 @@ his project provides a description of how to run encrypted application code from
 - This project is targeted to run on STM32N657X0H3QU device on STM32N6570-DK board from STMicroelectronics.  
 - The FSBL project configures the maximum system clock frequency at 600 MHz.
 - Once the application runs, the green LED (GPIO PO.01) toggles in an infinite loop with a 250-ms period.
-STM32H7S78-DK board's LED can be used to monitor the execution status:
+STM32N6570-DK board's LED can be used to monitor the execution status:
 
  - [**LD1**]{style="color: GREEN"} toggles when the the encrypted code is successfully executed.
  - [**LD2**]{style="color: RED"}  Toggles as soon as an error occurs.

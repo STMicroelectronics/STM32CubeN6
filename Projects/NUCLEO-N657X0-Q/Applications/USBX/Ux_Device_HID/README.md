@@ -1,12 +1,3 @@
-
----
-pagetitle: Readme
-lang: en
----
-::: {.row}
-::: {.col-sm-12 .col-lg-8}
-
-
 ## <b>Ux_Device_HID Application Description</b>
 
 This application provides an example of Azure RTOS USBX stack usage on NUCLEO-N657X0-Q board, it shows how to develop USB Device Human Interface "HID" mouse based application.
@@ -45,6 +36,11 @@ User is familiar with USB 2.0 "Universal Serial BUS" Specification and HID class
 The remote wakeup feature is not yet implemented (used to bring the USB suspended bus back to the active condition).
 
 #### <b>Notes</b>
+
+- In main(), power domains are enabled early using:
+  HAL_PWREx_EnableVddA(), HAL_PWREx_EnableVddIO2(), HAL_PWREx_EnableVddIO3(),
+  HAL_PWREx_EnableVddIO4(), HAL_PWREx_EnableVddIO5() and HAL_PWREx_EnableVddUSB().
+  This helps ensure required analog/IO/USB supplies are available before peripheral initialization.
 
 The user has to check the list of the COM ports in Device Manager to find out the COM port number that have been assigned (by OS) to the VCP interface.
 
@@ -123,7 +119,3 @@ Next, this program can be run in boot from flash mode. This can be done by follo
 
 
 **Warning** If using CubeProgrammer v2.21 version or more recent, add *-align* option in the command line.
-
-:::
-:::
-

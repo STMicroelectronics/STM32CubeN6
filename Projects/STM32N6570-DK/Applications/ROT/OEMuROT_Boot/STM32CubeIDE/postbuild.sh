@@ -53,7 +53,6 @@ current_log_file="$project_dir/postbuild.log"
 
 # arg1 is the config type (Debug, Release)
 config=$1
-projname=$2
 
 # Check if Python is installed
 if ! python3 --version > /dev/null 2>&1; then
@@ -81,7 +80,7 @@ error()
 
 encrypted=0
 appli_dir=../../../../$oemurot_appli_path_project
-binary_file=$binarydir/OEMuROT_Boot.bin
+binary_file=$binarydir/STM32N6570-DK_OEMuROT_Boot.bin
 trusted_binary_file=$binarydir/OEMuROT_Boot_Trusted.bin
 
 bootrom_path=$provisioningdir/BootROM
@@ -132,12 +131,8 @@ ns_code_xml=$provisioningdir/OEMuROT/Images/OEMuROT_NS_Code_Image.xml
 s_data_xml=$provisioningdir/OEMuROT/Images/OEMuROT_S_Data_Image.xml
 ns_data_xml=$provisioningdir/OEMuROT/Images/OEMuROT_NS_Data_Image.xml
 
-# Binary copy
-cp "$project_dir/$config/$projname.bin" "$project_dir/../Binary/OEMuROT_Boot.bin" >> "$current_log_file" 2>&1
-if [ $? != 0 ]; then error; fi
-
 # Image signing
-"$stm32signingtoolcli" -bin "$binary_file" $scmd $enccmd $optionflag -o "$trusted_binary_file" -hv 2.3 -s >> "$current_log_file" 2>&1
+"$stm32signingtoolcli" -bin "$binary_file" $scmd $enccmd $optionflag -o "$trusted_binary_file" -hv 2.3 -s -align >> "$current_log_file" 2>&1
 if [ $? != 0 ]; then error; fi
 
 # Provisioning

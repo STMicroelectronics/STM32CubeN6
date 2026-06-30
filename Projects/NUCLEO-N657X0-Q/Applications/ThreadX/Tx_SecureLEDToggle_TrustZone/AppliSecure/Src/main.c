@@ -18,54 +18,114 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stm32n6xx_it.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
-/* Non-secure Vector table to jump to                                         */
-/* Caution: address must correspond to non-secure address as it is mapped in  */
-/*          the non-secure vector table                                       */
-
-/* Memory partitioning on STM32N6xx uses */
-/* - AXI SRAM1 for Secure code & data */
-/* - AXI SRAM2 for Non-secure code & data */
+/* USER CODE BEGIN PD */
 
 #define VECT_TAB_NS_OFFSET  0x00400
 #define VTOR_TABLE_NS_START_ADDR (SRAM2_AXI_BASE_NS|VECT_TAB_NS_OFFSET)
 
+/* USER CODE END PD */
+
 /* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
 /* Private variables ---------------------------------------------------------*/
+
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
 /* Private function prototypes -----------------------------------------------*/
+static void NonSecure_Init(void);
 static void SystemIsolation_Config(void);
 static void MX_GPIO_Init(void);
-/* Global variables ----------------------------------------------------------*/
+/* USER CODE BEGIN PFP */
 
-/* Private functions ---------------------------------------------------------*/
+/* USER CODE END PFP */
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+
+/* USER CODE END 0 */
 
 /**
-  * @brief  Main program
-  * @param  None
-  * @retval None
+  * @brief  The application entry point.
+  * @retval int
   */
 int main(void)
 {
-  funcptr_NS NonSecure_ResetHandler;
+
+  /* USER CODE BEGIN 1 */
 
   /* Enable BusFault and SecureFault handlers (HardFault is default) */
   SCB->SHCSR |= (SCB_SHCSR_BUSFAULTENA_Msk | SCB_SHCSR_SECUREFAULTENA_Msk);
+  /* USER CODE END 1 */
 
-  /* Reset of all peripherals, Initializes the Flash interface and the systick. */
+  /* MCU Configuration--------------------------------------------------------*/
   HAL_Init();
 
-  /* Secure/Non-secure Memory and Peripheral isolation configuration */
-  SystemIsolation_Config();
+  /* USER CODE BEGIN Init */
 
+  /* USER CODE END Init */
+
+  /* USER CODE BEGIN SysInit */
+
+  /* USER CODE END SysInit */
+
+  /* Initialize all configured peripherals */
+  SystemIsolation_Config();
   MX_GPIO_Init();
+  /* USER CODE BEGIN 2 */
+
+  /* USER CODE END 2 */
+
+  /* We should never get here as control is now taken by the scheduler */
+
+  /* Secure SysTick should rather be suspended before calling non-secure  */
+  /* in order to avoid wake-up from sleep mode entered by non-secure      */
+  /* The Secure SysTick shall be resumed on non-secure callable functions */
+  HAL_SuspendTick();
 
   /*************** Setup and jump to non-secure *******************************/
 
-  /* Set non-secure vector table location */
+  NonSecure_Init();
+
+  /* Non-secure software does not return, this code is not executed */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+  }
+  /* USER CODE END 3 */
+}
+
+/**
+  * @brief  Non-secure call function
+  *         This function is responsible for Non-secure initialization and switch
+  *         to non-secure state
+  * @retval None
+  */
+static void NonSecure_Init(void)
+{
+  funcptr_NS NonSecure_ResetHandler;
+
   SCB_NS->VTOR = VTOR_TABLE_NS_START_ADDR;
 
   /* Set non-secure main stack (MSP_NS) */
@@ -76,58 +136,71 @@ int main(void)
 
   /* Start non-secure state software application */
   NonSecure_ResetHandler();
-
-  /* Non-secure software does not return, this code is not executed */
-  while (1) {
-    __NOP();
-  }
 }
 
 /**
-  * @brief  System Isolation Configuration
-  *         This function is responsible for Memory and Peripheral isolation
-  *         for secure and non-secure application parts
+  * @brief RIF Initialization Function
+  * @param None
   * @retval None
   */
-static void SystemIsolation_Config(void)
+  static void SystemIsolation_Config(void)
 {
-  RISAF_BaseRegionConfig_t risaf_conf;
+
+  /* USER CODE BEGIN RIF_Init 0 */
+
+  /* USER CODE END RIF_Init 0 */
+
+  /* set all required IPs as secure privileged */
+  __HAL_RCC_RIFSC_CLK_ENABLE();
+
+  /*RISUP configuration*/
+  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_XSPI2 , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_NPRIV);
+  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RISC_PERIPH_INDEX_XSPIM , RIF_ATTRIBUTE_SEC | RIF_ATTRIBUTE_NPRIV);
 
   /* RISAF Config */
+  RISAF_BaseRegionConfig_t risaf_base_config;
   __HAL_RCC_RISAF_CLK_ENABLE();
 
-  /* set up base region configuration for AXISRAM1 and 2 */
-  risaf_conf.StartAddress = 0;
-  risaf_conf.Filtering = RISAF_FILTER_ENABLE;
-  risaf_conf.PrivWhitelist = 0;
-  risaf_conf.ReadWhitelist = RIF_CID_MASK;
-  risaf_conf.WriteWhitelist = RIF_CID_MASK;
+  /* set up base region configuration for CPUAXI_RAM1*/
+  /* region 1 is non-secure */
+  risaf_base_config.EndAddress = 0xfffff;
+  risaf_base_config.Filtering = RISAF_FILTER_ENABLE;
+  risaf_base_config.ReadWhitelist = 255;
+  risaf_base_config.WriteWhitelist = 255;
+  risaf_base_config.Secure = RIF_ATTRIBUTE_NSEC;
+  risaf_base_config.PrivWhitelist = RIF_CID_NONE;
+  risaf_base_config.StartAddress = 0x0000;
+  HAL_RIF_RISAF_ConfigBaseRegion(RISAF3, RISAF_REGION_1, &risaf_base_config);
 
-  /* FLEXRAM is secure */
-  risaf_conf.Secure = RIF_ATTRIBUTE_SEC;
-  risaf_conf.EndAddress = 0x00063FFF;
-  HAL_RIF_RISAF_ConfigBaseRegion(RISAF7, RISAF_REGION_1, &risaf_conf);
+  /* set up base region configuration for CPUAXI_RAM0*/
+  /* region 1 is secure */
+  risaf_base_config.EndAddress = 0x9bfff;
+  risaf_base_config.Secure = RIF_ATTRIBUTE_SEC;
+  HAL_RIF_RISAF_ConfigBaseRegion(RISAF2, RISAF_REGION_1, &risaf_base_config);
 
-  /* AXISRAM1 is secure */
-  risaf_conf.Secure = RIF_ATTRIBUTE_SEC;
-  risaf_conf.EndAddress = 0x0009BFFF;
-  HAL_RIF_RISAF_ConfigBaseRegion(RISAF2, RISAF_REGION_1, &risaf_conf);
+  /* set up base region configuration for FLEXRAM*/
+  /* region 1 is secure */
+  risaf_base_config.EndAddress = 0x63fff;
+  HAL_RIF_RISAF_ConfigBaseRegion(RISAF7, RISAF_REGION_1, &risaf_base_config);
 
-  /* AXISRAM2 is non-secure */
-  risaf_conf.Secure = RIF_ATTRIBUTE_NSEC;
-  risaf_conf.EndAddress = 0x000FFFFF;
-  HAL_RIF_RISAF_ConfigBaseRegion(RISAF3, RISAF_REGION_1, &risaf_conf);
+  /* RIF-Aware IPs Config */
 
-  __HAL_RCC_RIFSC_CLK_ENABLE();
-  /* Set GPIOG as configurable by non-secure */
-  HAL_RIF_RISC_SetSlaveSecureAttributes(RIF_RCC_PERIPH_INDEX_GPIOG, RIF_ATTRIBUTE_NSEC);
-
-  /* Enable GPIOG clock and ensure GPIOG bank is powered on */
+  /* set up GPIO configuration */
+  HAL_GPIO_ConfigPinAttributes(GPIOG,GPIO_PIN_0,GPIO_PIN_SEC|GPIO_PIN_NPRIV);
+  /* GPIOG Non Secure Ports Clock Enable */
   __HAL_RCC_GPIOG_CLK_ENABLE();
+  HAL_GPIO_ConfigPinAttributes(GPIOG,GPIO_PIN_8,GPIO_PIN_NSEC|GPIO_PIN_NPRIV);
+  HAL_GPIO_ConfigPinAttributes(GPIOG,GPIO_PIN_10,GPIO_PIN_NSEC|GPIO_PIN_NPRIV);
 
-  /* Configure PG8 as non-secure to be used for non-secure led toggling */
-  HAL_GPIO_ConfigPinAttributes(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_NSEC);
+  /* USER CODE BEGIN RIF_Init 1 */
+
+  /* USER CODE END RIF_Init 1 */
+  /* USER CODE BEGIN RIF_Init 2 */
+
+  /* USER CODE END RIF_Init 2 */
+
 }
+
 /**
   * @brief GPIO Initialization Function
   * @param None
@@ -135,26 +208,48 @@ static void SystemIsolation_Config(void)
   */
 static void MX_GPIO_Init(void)
 {
-  GPIO_InitTypeDef  GPIO_InitStruct = {0};
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
 
+  /* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOG_CLK_ENABLE();
 
-  /* Configure default pin levels (LEDs OFF)*/
+  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, GPIO_PIN_SET);
 
-  /* Configure the LED pins */
-  GPIO_InitStruct.Pin = LED_GREEN_Pin ;
+  /*Configure GPIO pin : LED_GREEN_Pin */
+  GPIO_InitStruct.Pin = LED_GREEN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+  HAL_GPIO_Init(LED_GREEN_GPIO_Port, &GPIO_InitStruct);
 
-  /* Configure LED2 as non-secure to be used for non-secure led toggling */
-  HAL_GPIO_ConfigPinAttributes(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_NSEC);
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
 
+  /* USER CODE END MX_GPIO_Init_2 */
 }
 
-#ifdef  USE_FULL_ASSERT
+/* USER CODE BEGIN 4 */
+
+/* USER CODE END 4 */
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @param None
+  * @retval None
+  */
+void Error_Handler(void)
+{
+  /* USER CODE BEGIN Error_Handler_Debug */
+  /* User can add his own implementation to report the HAL error return state */
+  while (1)
+  {
+  }
+  /* USER CODE END Error_Handler_Debug */
+}
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
@@ -165,16 +260,8 @@ static void MX_GPIO_Init(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-  /* Prevent unused argument(s) compilation warning */
-  UNUSED(file);
-  UNUSED(line);
-
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* Infinite loop */
-  while (1)
-  {
-  }
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

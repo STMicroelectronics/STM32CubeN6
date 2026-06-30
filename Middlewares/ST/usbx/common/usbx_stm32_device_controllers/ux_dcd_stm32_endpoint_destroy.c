@@ -77,16 +77,27 @@ UINT  _ux_dcd_stm32_endpoint_destroy(UX_DCD_STM32 *dcd_stm32, UX_SLAVE_ENDPOINT 
 {
 
 UX_DCD_STM32_ED     *ed;
+UINT                endpoint_type;
 
 
     /* Keep the physical endpoint address in the endpoint container.  */
     ed =  (UX_DCD_STM32_ED *) endpoint -> ux_slave_endpoint_ed;
+    endpoint_type = endpoint -> ux_slave_endpoint_descriptor.bmAttributes & UX_MASK_ENDPOINT_TYPE;
+
+    if (endpoint_type == UX_ISOCHRONOUS_ENDPOINT)
+    {
+#if defined(USBD_HAL_ISOINCOMPLETE_CALLBACK)
+        _ux_dcd_stm32_iso_endpoint_state_reset(endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress);
+#endif /* defined(USBD_HAL_ISOINCOMPLETE_CALLBACK) */
+    }
 
     /* We can free this endpoint.  */
     ed -> ux_dcd_stm32_ed_status =  UX_DCD_STM32_ED_STATUS_UNUSED;
+    ed -> ux_stm32_ed_interval_mask = 0U;
+    ed -> ux_stm32_ed_interval_position = 0U;
 
     /* Deactivate the endpoint.  */
-    HAL_PCD_EP_Close(dcd_stm32 -> pcd_handle, endpoint->ux_slave_endpoint_descriptor.bEndpointAddress);
+    HAL_PCD_EP_Close(dcd_stm32 -> pcd_handle, endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress);
 
     /* This function never fails.  */
     return(UX_SUCCESS);

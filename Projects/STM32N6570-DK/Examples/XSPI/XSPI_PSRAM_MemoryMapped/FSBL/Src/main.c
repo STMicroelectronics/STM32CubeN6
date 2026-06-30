@@ -167,11 +167,6 @@ int main(void)
       *mem_addr = aTxBuffer[index];
       mem_addr++;
     }
-
-    /* In memory-mapped mode, not possible to check if the memory is ready
-    after the programming. So a delay corresponding to max page programming
-    time is added */
-    HAL_Delay(1);
   }
 
   /* Reading Sequence ----------------------------------------------- */
@@ -188,11 +183,6 @@ int main(void)
       }
       mem_addr++;
     }
-
-     /* In memory-mapped mode, not possible to check if the memory is ready
-    after the programming. So a delay corresponding to max page programming
-    time is added */
-    HAL_Delay(1);
   }
   if (errorBuffer == 0)
   {
@@ -380,7 +370,7 @@ static void MX_XSPI1_Init(void)
   hxspi1.Init.ClockPrescaler = 1;
   hxspi1.Init.SampleShifting = HAL_XSPI_SAMPLE_SHIFT_NONE;
   hxspi1.Init.DelayHoldQuarterCycle = HAL_XSPI_DHQC_DISABLE;
-  hxspi1.Init.ChipSelectBoundary = HAL_XSPI_BONDARYOF_16KB;
+  hxspi1.Init.ChipSelectBoundary = HAL_XSPI_BONDARYOF_4KB;
   hxspi1.Init.MaxTran = 0;
   hxspi1.Init.Refresh = 0;
   hxspi1.Init.MemorySelect = HAL_XSPI_CSSEL_NCS1;
@@ -434,11 +424,11 @@ uint32_t APS256_WriteReg(XSPI_HandleTypeDef *Ctx, uint32_t Address, uint8_t *Val
   /* Initialize the write register command */
   sCommand1.OperationType      = HAL_XSPI_OPTYPE_COMMON_CFG;
   sCommand1.InstructionMode    = HAL_XSPI_INSTRUCTION_8_LINES;
-  sCommand1.InstructionWidth    = HAL_XSPI_INSTRUCTION_8_BITS;
+  sCommand1.InstructionWidth   = HAL_XSPI_INSTRUCTION_8_BITS;
   sCommand1.InstructionDTRMode = HAL_XSPI_INSTRUCTION_DTR_DISABLE;
   sCommand1.Instruction        = WRITE_REG_CMD;
   sCommand1.AddressMode        = HAL_XSPI_ADDRESS_8_LINES;
-  sCommand1.AddressWidth        = HAL_XSPI_ADDRESS_32_BITS;
+  sCommand1.AddressWidth       = HAL_XSPI_ADDRESS_32_BITS;
   sCommand1.AddressDTRMode     = HAL_XSPI_ADDRESS_DTR_ENABLE;
   sCommand1.Address            = Address;
   sCommand1.AlternateBytesMode = HAL_XSPI_ALT_BYTES_NONE;
@@ -478,17 +468,17 @@ uint32_t APS256_ReadReg(XSPI_HandleTypeDef *Ctx, uint32_t Address, uint8_t *Valu
   /* Initialize the read register command */
   sCommand.OperationType      = HAL_XSPI_OPTYPE_COMMON_CFG;
   sCommand.InstructionMode    = HAL_XSPI_INSTRUCTION_8_LINES;
-  sCommand.InstructionWidth    = HAL_XSPI_INSTRUCTION_8_BITS;
+  sCommand.InstructionWidth   = HAL_XSPI_INSTRUCTION_8_BITS;
   sCommand.InstructionDTRMode = HAL_XSPI_INSTRUCTION_DTR_DISABLE;
   sCommand.Instruction        = READ_REG_CMD;
   sCommand.AddressMode        = HAL_XSPI_ADDRESS_8_LINES;
-  sCommand.AddressWidth        = HAL_XSPI_ADDRESS_32_BITS;
+  sCommand.AddressWidth       = HAL_XSPI_ADDRESS_32_BITS;
   sCommand.AddressDTRMode     = HAL_XSPI_ADDRESS_DTR_ENABLE;
   sCommand.Address            = Address;
   sCommand.AlternateBytesMode = HAL_XSPI_ALT_BYTES_NONE;
   sCommand.DataMode           = HAL_XSPI_DATA_8_LINES;
   sCommand.DataDTRMode        = HAL_XSPI_DATA_DTR_ENABLE;
-  sCommand.DataLength            = 2;
+  sCommand.DataLength         = 2;
   sCommand.DummyCycles        = (LatencyCode - 1U);
   sCommand.DQSMode            = HAL_XSPI_DQS_ENABLE;
 
@@ -515,7 +505,7 @@ uint32_t APS256_ReadReg(XSPI_HandleTypeDef *Ctx, uint32_t Address, uint8_t *Valu
 static void Configure_APMemory(void)
 {
   /* MR0 register for read and write */
-  uint8_t regW_MR0[2]={0x30,0x8D}; /* To configure AP memory Latency Type and drive Strength */ 
+  uint8_t regW_MR0[2]={0x30,0x8D}; /* To configure AP memory Latency Type and drive Strength */
   uint8_t regR_MR0[2]={0};
 
   uint8_t regW_MR4[2]={0x20,0xF0}; /* To configure AP memory, Write Latency=7 up to 200MHz */
@@ -582,6 +572,7 @@ static void Configure_APMemory(void)
 
 /**
   * @brief  This function is executed in case of error occurrence.
+  * @param  None
   * @retval None
   */
 void Error_Handler(void)
@@ -595,7 +586,6 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
 #ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number

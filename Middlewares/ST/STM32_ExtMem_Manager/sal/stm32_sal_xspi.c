@@ -56,6 +56,8 @@ const uint8_t phylink_string[][17] = {"PHY_LINK_1S1S1S",
                                       "PHY_LINK_1S1S2S",
                                       "PHY_LINK_1S2S2S",
                                       "PHY_LINK_1S1D1D",
+                                      "PHY_LINK_1S1S4S",
+                                      "PHY_LINK_1S4S4S",
                                       "PHY_LINK_4S4S4S",
                                       "PHY_LINK_4S4D4D",
                                       "PHY_LINK_4D4D4D",
@@ -252,6 +254,11 @@ HAL_StatusTypeDef SAL_XSPI_Init(SAL_XSPI_ObjectTypeDef *SalXspi, void *HALHandle
   SalXspi->Commandbase = s_commandbase;
   SalXspi->CommandExtension = 0;
   SalXspi->PhyLink = PHY_LINK_1S1S1S;
+#if defined(EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG)
+  SalXspi->ManufacturerId = 0u;
+  SalXspi->ReadWipCommand = 0u;
+  SalXspi->ReadWelCommand = 0u;
+#endif /* EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG */
 
 #if defined (USE_HAL_XSPI_REGISTER_CALLBACKS) && (USE_HAL_XSPI_REGISTER_CALLBACKS == 1U)
   /* Set completion call back */
@@ -301,6 +308,36 @@ HAL_StatusTypeDef SAL_XSPI_MemoryConfig(SAL_XSPI_ObjectTypeDef *SalXspi, SAL_XSP
           s_commandbase.DataMode = HAL_XSPI_DATA_1_LINE;
           s_commandbase.DataDTRMode = HAL_XSPI_DATA_DTR_DISABLE;
           s_commandbase.DummyCycles = 8;
+          s_commandbase.DQSMode = HAL_XSPI_DQS_DISABLE;
+          break;
+        }
+
+        case PHY_LINK_1S1S4S:
+        {
+          s_commandbase.InstructionMode = HAL_XSPI_INSTRUCTION_1_LINE;
+          s_commandbase.InstructionWidth = HAL_XSPI_INSTRUCTION_8_BITS;
+          s_commandbase.InstructionDTRMode = HAL_XSPI_INSTRUCTION_DTR_DISABLE;
+          s_commandbase.AddressMode = HAL_XSPI_ADDRESS_1_LINE;
+          s_commandbase.AddressDTRMode = HAL_XSPI_ADDRESS_DTR_DISABLE;
+          s_commandbase.AddressWidth = HAL_XSPI_ADDRESS_24_BITS;
+          s_commandbase.DataMode = HAL_XSPI_DATA_4_LINES;
+          s_commandbase.DataDTRMode = HAL_XSPI_DATA_DTR_DISABLE;
+          s_commandbase.DummyCycles = 6;
+          s_commandbase.DQSMode = HAL_XSPI_DQS_DISABLE;
+          break;
+        }
+
+        case PHY_LINK_1S4S4S:
+        {
+          s_commandbase.InstructionMode = HAL_XSPI_INSTRUCTION_1_LINE;
+          s_commandbase.InstructionWidth = HAL_XSPI_INSTRUCTION_8_BITS;
+          s_commandbase.InstructionDTRMode = HAL_XSPI_INSTRUCTION_DTR_DISABLE;
+          s_commandbase.AddressMode = HAL_XSPI_ADDRESS_4_LINES;
+          s_commandbase.AddressDTRMode = HAL_XSPI_ADDRESS_DTR_DISABLE;
+          s_commandbase.AddressWidth = HAL_XSPI_ADDRESS_24_BITS;
+          s_commandbase.DataMode = HAL_XSPI_DATA_4_LINES;
+          s_commandbase.DataDTRMode = HAL_XSPI_DATA_DTR_DISABLE;
+          s_commandbase.DummyCycles = 6;
           s_commandbase.DQSMode = HAL_XSPI_DQS_DISABLE;
           break;
         }
@@ -481,6 +518,16 @@ HAL_StatusTypeDef SAL_XSPI_GetSFDP(SAL_XSPI_ObjectTypeDef *SalXspi, uint32_t Add
     s_command.AddressWidth = HAL_XSPI_ADDRESS_24_BITS;
   }
 
+  if ((SalXspi->PhyLink == PHY_LINK_1S1S2S)    /*!< Physical link configured in 1S1S2S */
+      || (SalXspi->PhyLink == PHY_LINK_1S2S2S)    /*!< Physical link configured in 1S2S2S */
+      || (SalXspi->PhyLink == PHY_LINK_1S1D1D)    /*!< Physical link configured in 1S1D1D */
+      || (SalXspi->PhyLink == PHY_LINK_1S1S4S)    /*!< Physical link configured in 1S1S4S */
+      || (SalXspi->PhyLink == PHY_LINK_1S4S4S))   /*!< Physical link configured in 1S4S4S */
+  {
+    s_command.AddressMode = HAL_XSPI_ADDRESS_1_LINE;
+    s_command.DataMode    = HAL_XSPI_DATA_1_LINE;
+  }
+
   if (s_command.DataDTRMode == HAL_XSPI_DATA_DTR_ENABLE)
   {
     s_command.DQSMode = HAL_XSPI_DQS_ENABLE;
@@ -541,30 +588,9 @@ HAL_StatusTypeDef SAL_XSPI_GetId(SAL_XSPI_ObjectTypeDef *SalXspi, uint8_t *Data,
     /* This behavior is linked with ISSI memory to read ID in 4S4S4S */
     s_command.DataMode          = HAL_XSPI_DATA_4_LINES;
   }
-  else if (s_command.InstructionMode == HAL_XSPI_INSTRUCTION_8_LINES)
-  {
-    s_command.Address = 0;
-
-    /* Specific case for Macronix memories : RDID is not Data DTR  */
-    if ((Data[0] == 0xC2) && (s_command.DataDTRMode == HAL_XSPI_DATA_DTR_ENABLE))
-    {
-      s_command.DummyCycles       = 4;
-      s_command.DataDTRMode       = HAL_XSPI_DATA_DTR_DISABLE;
-    }
-    /* Specific case for GigaDevice memories : RDID has no address even in Octal mode  */
-    else if ((Data[0] == 0xC8) && (s_command.DataDTRMode == HAL_XSPI_DATA_DTR_ENABLE))
-    {
-      s_command.DummyCycles       = 8;
-      s_command.AddressMode       = HAL_XSPI_ADDRESS_NONE;
-    }
-    else
-    {
-      s_command.DummyCycles = 8;
-    }
-    /* Required behavior to be confirmed on the other memories */
-  }
   else
   {
+    /* This behavior is valid for Macromix and must be confirmed on the other memories */
     s_command.Address = 0;
     s_command.DummyCycles = 8;
   }
@@ -632,6 +658,12 @@ HAL_StatusTypeDef SAL_XSPI_Read(SAL_XSPI_ObjectTypeDef *SalXspi, uint8_t Command
       break;
   }
 
+  /* In case of DTR read of 1 byte, set data length to 2 */
+  if ((s_command.DataDTRMode == HAL_XSPI_DATA_DTR_ENABLE) && (s_command.DataLength == 1U))
+  {
+    s_command.DataLength = 2U;
+  }
+
   /* Configure the command */
   retr = HAL_XSPI_Command(SalXspi->hxspi, &s_command, SAL_XSPI_TIMEOUT_DEFAULT_VALUE);
   if (retr  != HAL_OK)
@@ -673,6 +705,12 @@ HAL_StatusTypeDef SAL_XSPI_Write(SAL_XSPI_ObjectTypeDef *SalXspi, uint8_t Comman
   s_command.DataLength        = DataSize;
   s_command.DummyCycles       = 0u;
   s_command.DQSMode           = HAL_XSPI_DQS_DISABLE;
+
+  /* In case of DTR write of 1 byte, set data length to 2 */
+  if ((s_command.DataDTRMode == HAL_XSPI_DATA_DTR_ENABLE) && (s_command.DataLength == 1U))
+  {
+    s_command.DataLength = 2U;
+  }
 
   /* Configure the command */
   retr = HAL_XSPI_Command(SalXspi->hxspi, &s_command, SAL_XSPI_TIMEOUT_DEFAULT_VALUE);
@@ -794,9 +832,19 @@ HAL_StatusTypeDef SAL_XSPI_SendReadCommand(SAL_XSPI_ObjectTypeDef *SalXspi, uint
   s_command.DataLength         = DataSize;
   s_command.DQSMode            = HAL_XSPI_DQS_DISABLE;
 
+#if defined(EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG)
+  if ((SalXspi->ManufacturerId == EXTMEM_MANUFACTURER_WINBOND)
+      && ((Command == SalXspi->ReadWipCommand) || (Command == SalXspi->ReadWelCommand))
+      && (s_command.InstructionMode == HAL_XSPI_INSTRUCTION_1_LINE)
+      && (s_command.DataMode == HAL_XSPI_DATA_4_LINES))
+  {
+    s_command.DataMode = HAL_XSPI_DATA_1_LINE;
+  }
+#endif /* EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG */
+
   if (DataSize == 0u)
   {
-    s_command.DataMode         = HAL_XSPI_DATA_NONE;
+    s_command.DataMode = HAL_XSPI_DATA_NONE;
   }
 
   /* Send the command */

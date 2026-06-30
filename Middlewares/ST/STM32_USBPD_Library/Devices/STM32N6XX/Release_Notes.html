@@ -52,14 +52,80 @@ of message transport). This includes :</p>
 <li><p>Timer server to handle GOODCRC, PRL repetition timing</p></li>
 </ul>
 <p>The USB-PD device driver is developed following the Universal Serial
-Bus Power Delivery Specification Revision 3.0, V2.0 (August 29, 2019)
+Bus Power Delivery Specification Revision 3.2, V1.1 (October, 2024)
 and Universal Serial Bus type-C Cable and Connector Specification,
 Revision 2.0 (August, 2019).</p>
 </div>
 <section id="update-history" class="col-sm-12 col-lg-8">
 <h1>Update History</h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section2" checked aria-hidden="true">
+  <input type="checkbox" id="collapse-section4" checked aria-hidden="true">
+  <label for="collapse-section4" aria-hidden="true">V1.2.0 /
+  08-May-2026</label>
+  <div>
+  <h2 id="main-changes">Main Changes</h2>
+  <table>
+  <thead>
+  <tr>
+  <th>Headline</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td>SW_Security_Level.md file added</td>
+  </tr>
+  <tr>
+  <td>FastRoleSwapReception PHY callback added</td>
+  </tr>
+  </tbody>
+  </table>
+  <h2 id="known-limitations">Known limitations</h2>
+  <p>Outstanding bugs list : None</p>
+  <p>Requirements not met or planned in a forthcoming release : None</p>
+  <h2 id="supported-devices-and-boards">Supported Devices and boards</h2>
+  <p>All STM32N6xx devices embedding USBPD IP</p>
+  <h2 id="backward-compatibility">Backward compatibility</h2>
+  <p>No compatibility break with previous version</p>
+  <h2 id="dependencies">Dependencies</h2>
+  <p>This software release is compatible with USB-C Power Delivery Core
+  Stack Library v5.4.1</p>
+  </div>
+   </div>
+  <div class="collapse">
+  <input type="checkbox" id="collapse-section3" aria-hidden="true">
+  <label for="collapse-section3" aria-hidden="true">V1.1.0 /
+  23-Jan-2026</label>
+  <div>
+  <h2 id="main-changes">Main Changes</h2>
+  <table>
+  <thead>
+  <tr>
+  <th>Headline</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td>Add support of Debug Accessory Mode (DAM) in Sink mode</td>
+  </tr>
+  <tr>
+    <td>Fix USBPD timer config value</td>
+    </tr>
+  </tbody>
+  </table>
+  <h2 id="known-limitations">Known limitations</h2>
+  <p>Outstanding bugs list : None</p>
+  <p>Requirements not met or planned in a forthcoming release : None</p>
+  <h2 id="supported-devices-and-boards">Supported Devices and boards</h2>
+  <p>All STM32N6xx devices embedding USBPD IP</p>
+  <h2 id="backward-compatibility">Backward compatibility</h2>
+  <p>No compatibility break with previous version</p>
+  <h2 id="dependencies">Dependencies</h2>
+  <p>This software release is compatible with USB-C Power Delivery Core
+  Stack Library v5.4.0</p>
+  </div>
+  </div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section2" aria-hidden="true">
 <label for="collapse-section2" aria-hidden="true">V1.0.1 /
 25-Sep-2025</label>
 <div>

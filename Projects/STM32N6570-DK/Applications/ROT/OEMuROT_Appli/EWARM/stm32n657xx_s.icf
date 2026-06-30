@@ -1,0 +1,37 @@
+/*###ICF### Section handled by ICF editor, don't touch! ****/
+/*-Editor annotation file-*/
+/* IcfEditorFile="$TOOLKIT_DIR$\config\ide\IcfEditor\cortex_v1_0.xml" */
+/*-Specials-*/
+define exported symbol CODE_S_ADDRESS = 0x34100400;    /* This define is updated automatically from OEMuROT_Boot project */
+define exported symbol CODE_S_SIZE = 0x20000;          /* This define is updated automatically from OEMuROT_Boot project */
+define exported symbol DATA_S_ADDRESS = 0x341e0000;    /* This define is updated automatically from OEMuROT_Boot project */
+define exported symbol DATA_S_SIZE = 0x10000;          /* This define is updated automatically from OEMuROT_Boot project */
+define symbol IMAGE_HEADER_SIZE = 0x400;  /* mcuboot header size */
+define symbol TRAILER_MAX_SIZE = 0x2000;  /* mcuboot trailer max size */
+
+define symbol __ICFEDIT_intvec_start__ = CODE_S_ADDRESS;
+/*-Memory Regions-*/
+define symbol __ICFEDIT_region_ROM_start__ = CODE_S_ADDRESS;
+define symbol __ICFEDIT_region_ROM_end__   = CODE_S_ADDRESS + CODE_S_SIZE - IMAGE_HEADER_SIZE - TRAILER_MAX_SIZE - 1;
+define symbol __ICFEDIT_region_RAM_start__ = DATA_S_ADDRESS;
+define symbol __ICFEDIT_region_RAM_end__   = DATA_S_ADDRESS + DATA_S_SIZE - 1;
+/*-Sizes-*/
+define symbol __ICFEDIT_size_cstack__ = 0x1000;
+define symbol __ICFEDIT_size_heap__   = 0x1000;
+/**** End of ICF editor section. ###ICF###*/
+
+define memory mem with size = 4G;
+define region ROM_region      = mem:[from __ICFEDIT_region_ROM_start__ to __ICFEDIT_region_ROM_end__];
+define region RAM_region      = mem:[from __ICFEDIT_region_RAM_start__ to __ICFEDIT_region_RAM_end__];
+
+define block CSTACK    with alignment = 8, size = __ICFEDIT_size_cstack__   { };
+define block HEAP      with alignment = 8, size = __ICFEDIT_size_heap__     { };
+
+initialize by copy { readwrite };
+do not initialize  { section .noinit };
+
+place at address mem:__ICFEDIT_intvec_start__ { readonly section .intvec };
+
+place in ROM_region   { readonly };
+place in RAM_region   { readwrite,
+                        block CSTACK, block HEAP };

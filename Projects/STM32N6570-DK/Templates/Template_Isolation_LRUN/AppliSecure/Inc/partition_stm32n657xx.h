@@ -45,7 +45,8 @@
 extern uint32_t _sNSCVeneer;
 extern uint32_t _eNSCVeneer;
 #elif defined(__ARMCC_VERSION)
-
+extern uint32_t Veneer$$CMSE$$Base;
+extern uint32_t Veneer$$CMSE$$Limit;
 #elif defined(__GNUC__)
 extern uint32_t _sNSCVeneer;
 extern uint32_t _eNSCVeneer;
@@ -105,12 +106,12 @@ extern uint32_t _eNSCVeneer;
 /*
 //     <o>Start Address <0-0xFFFFFFE0>
 */
-#define SAU_INIT_START0     0x34000000      /* start address of SAU region 0 */
+#define SAU_INIT_START0     ((uint32_t) &Veneer$$CMSE$$Base)      /* start address of SAU region 0 */
 
 /*
 //     <o>End Address <0x1F-0xFFFFFFFF>
 */
-#define SAU_INIT_END0       0x340FFFFF      /* end address of SAU region 0 */
+#define SAU_INIT_END0       ((uint32_t) &Veneer$$CMSE$$Limit)     /* end address of SAU region 0 */
 #elif defined(__GNUC__)
 /* if GCC is used, get the veneer start and end symbols from the linker script */
 /*

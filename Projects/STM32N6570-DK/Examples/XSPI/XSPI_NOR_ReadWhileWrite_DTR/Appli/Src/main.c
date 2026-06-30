@@ -500,6 +500,7 @@ void HAL_XSPI_RxCpltCallback(XSPI_HandleTypeDef *hxspi)
 
 /**
   * @brief  This function is executed in case of error occurrence.
+  * @param  None
   * @retval None
   */
 void Error_Handler(void)

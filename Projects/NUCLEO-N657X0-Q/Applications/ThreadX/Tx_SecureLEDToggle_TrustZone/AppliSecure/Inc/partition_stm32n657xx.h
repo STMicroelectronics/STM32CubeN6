@@ -1,9 +1,10 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
   * @file    partition_stm32n657xx.h
-  * @author  GPM Application Team
+  * @author  MCD Application Team
   * @brief   CMSIS STM32N657xx Device Initial Setup for Secure / Non-Secure Zones
-  *          for ARMCM55 based on CMSIS CORE V5.8.0 partition_ARMCM55.h Template.
+  *          for ARMCM55 based on CMSIS CORE V5.3.1 partition_ARMCM33.h Template.
   *
   *          This file contains:
   *           - Initialize Security Attribution Unit (SAU) CTRL register
@@ -13,37 +14,39 @@
   *
   ******************************************************************************/
 /*
- * Copyright (c) 2009-2016 ARM Limited. All rights reserved.
- * Portions Copyright (c) 2024 STMicroelectronics, all rights reserved
- *
- * SPDX-License-Identifier: Apache-2.0
- *
- * Licensed under the Apache License, Version 2.0 (the License); you may
- * not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an AS IS BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+* Copyright (c) 2009-2016 ARM Limited. All rights reserved.
+* Portions Copyright (c) 2024 STMicroelectronics, all rights reserved
+*
+* SPDX-License-Identifier: Apache-2.0
+*
+* Licensed under the Apache License, Version 2.0 (the License); you may
+* not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an AS IS BASIS, WITHOUT
+* WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+/* USER CODE END Header */
 
 #ifndef PARTITION_STM32N657XX_H
 #define PARTITION_STM32N657XX_H
-
 /*
 //-------- <<< Use Configuration Wizard in Context Menu >>> -----------------
 */
+/* USER CODE BEGIN 0 */
 #if defined(__ICCARM__)
 #pragma section="Veneer$$CMSE"
 #elif defined(__CC_ARM)
 extern uint32_t _sNSCVeneer;
 extern uint32_t _eNSCVeneer;
 #elif defined(__ARMCC_VERSION)
-
+extern uint32_t Veneer$$CMSE$$Base;
+extern uint32_t Veneer$$CMSE$$Limit;
 #elif defined(__GNUC__)
 extern uint32_t _sNSCVeneer;
 extern uint32_t _eNSCVeneer;
@@ -92,7 +95,7 @@ extern uint32_t _eNSCVeneer;
 /*
 //     <o>Start Address <0-0xFFFFFFE0>
 */
-#define SAU_INIT_START0     ((uint32_t) __sfb("Veneer$$CMSE"))     /* start address of SAU region 0 */
+#define SAU_INIT_START0     ((uint32_t) __sfb("Veneer$$CMSE"))      /* start address of SAU region 0 */
 
 /*
 //     <o>End Address <0x1F-0xFFFFFFFF>
@@ -103,12 +106,12 @@ extern uint32_t _eNSCVeneer;
 /*
 //     <o>Start Address <0-0xFFFFFFE0>
 */
-#define SAU_INIT_START0     0x34000000      /* start address of SAU region 0 */
+#define SAU_INIT_START0     ((uint32_t) &Veneer$$CMSE$$Base)      /* start address of SAU region 0 */
 
 /*
 //     <o>End Address <0x1F-0xFFFFFFFF>
 */
-#define SAU_INIT_END0       0x340FFFFF      /* end address of SAU region 0 */
+#define SAU_INIT_END0       ((uint32_t) &Veneer$$CMSE$$Limit)     /* end address of SAU region 0 */
 #elif defined(__GNUC__)
 /* if GCC is used, get the veneer start and end symbols from the linker script */
 /*
@@ -151,13 +154,11 @@ extern uint32_t _eNSCVeneer;
 /*
 //     <o>Start Address <0-0xFFFFFFE0>
 */
-#define SAU_INIT_START1     0x24100000      /* start address of SAU region 1 */
-
+#define SAU_INIT_START1       0x24100000      /* start address of SAU region 1 */
 /*
 //     <o>End Address <0x1F-0xFFFFFFFF>
 */
 #define SAU_INIT_END1       0x241FFFFF      /* end address of SAU region 1 */
-
 /*
 //     <o>Region is
 //         <0=>Non-Secure
@@ -327,7 +328,6 @@ extern uint32_t _eNSCVeneer;
 /*
 // </h>
 */
-
 /*
 // <e>Setup behaviour of Sleep and Exception Handling
 */
@@ -348,7 +348,7 @@ extern uint32_t _eNSCVeneer;
 //   <i> Value for SCB->AIRCR register bit SYSRESETREQS
 */
 #define SCB_AIRCR_SYSRESETREQS_VAL  0
-
+/* USER CODE END 0 */
 /*
 //   <o>Priority of Non-Secure exceptions is
 //     <0=> Not altered
@@ -368,7 +368,7 @@ extern uint32_t _eNSCVeneer;
 /*
 // </e>
 */
-
+/* USER CODE BEGIN 1 */
 /*
 // <e>Setup behaviour of Floating Point Unit
 */
@@ -409,7 +409,7 @@ extern uint32_t _eNSCVeneer;
 /*
 // </e>
 */
-
+/* USER CODE END 1 */
 /*
 // <h>Setup Interrupt Target
 */
@@ -418,44 +418,43 @@ extern uint32_t _eNSCVeneer;
 //   <e>Initialize ITNS 0 (Interrupts 0..31)
 */
 #define NVIC_INIT_ITNS0    1
-
 /*
 // Interrupts 0..31
-//   <o.0>  PVD_IRQn            <0=> Secure state <1=> Non-Secure state
-//   <o.1>  Reserved            <0=> Secure state <1=> Non-Secure state
-//   <o.2>  DTS_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.3>  RCC_IRQn            <0=> Secure state <1=> Non-Secure state
-//   <o.4>  LOCKUP_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.5>  CACHE_ECC_IRQn      <0=> Secure state <1=> Non-Secure state
-//   <o.6>  TCM_ECC_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.7>  BCK_ECC_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.8>  FPU_IRQn            <0=> Secure state <1=> Non-Secure state
-//   <o.9>  Reserved            <0=> Secure state <1=> Non-Secure state
-//   <o.10> RTC_S_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.11> TAMP_S_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.12> RIFSC_TAMPER_S_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.13> IAC_IRQn            <0=> Secure state <1=> Non-Secure state
-//   <o.14> Reserved            <0=> Secure state <1=> Non-Secure state
-//   <o.15> Reserved            <0=> Secure state <1=> Non-Secure state
-//   <o.16> RTC_NS_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.17> TAMP_NS_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.18> IWDG_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.19> WWDG_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.20> EXTI0_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.21> EXTI1_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.22> EXTI2_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.23> EXTI3_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.24> EXTI4_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.25> EXTI5_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.26> EXTI6_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.27> EXTI7_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.28> EXTI8_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.29> EXTI9_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.30> EXTI10_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.31> EXTI11_IRQn         <0=> Secure state <1=> Non-Secure state
+//   <o.0>  PVD_PVM_IRQn        <0=> Secure state
+//   <o.1> Reserved             <0=> Secure state
+//   <o.2>  DTS_IRQn            <0=> Secure state
+//   <o.3>  RCC_IRQn            <0=> Secure state
+//   <o.4>  LOCKUP_IRQn         <0=> Secure state
+//   <o.5>  CACHE_ECC_IRQn      <0=> Secure state
+//   <o.6>  TCM_ECC_IRQn        <0=> Secure state
+//   <o.7>  BKP_ECC_IRQn        <0=> Secure state
+//   <o.8>  FPU_IRQn            <0=> Secure state
+//   <o.9>  Reserved            <0=> Secure state
+//   <o.10> RTC_S_IRQn          <0=> Secure state
+//   <o.11> TAMP_IRQn           <0=> Secure state
+//   <o.12> RIFSC_TAMPER_IRQn   <0=> Secure state
+//   <o.13> IAC_IRQn            <0=> Secure state
+//   <o.14> RCC_S_IRQn          <0=> Secure state
+//   <o.15> Reserved            <0=> Secure state
+//   <o.16> RTC_IRQn            <0=> Secure state
+//   <o.17> Reserved            <0=> Secure state
+//   <o.18> IWDG_IRQn           <0=> Secure state
+//   <o.19> WWDG_IRQn           <0=> Secure state
+//   <o.20> EXTI0_IRQn          <0=> Secure state
+//   <o.21> EXTI1_IRQn          <0=> Secure state
+//   <o.22> EXTI2_IRQn          <0=> Secure state
+//   <o.23> EXTI3_IRQn          <0=> Secure state
+//   <o.24> EXTI4_IRQn          <0=> Secure state
+//   <o.25> EXTI5_IRQn          <0=> Secure state
+//   <o.26> EXTI6_IRQn          <0=> Secure state
+//   <o.27> EXTI7_IRQn          <0=> Secure state
+//   <o.28> EXTI8_IRQn          <0=> Secure state
+//   <o.29> EXTI9_IRQn          <0=> Secure state
+//   <o.30> EXTI10_IRQn         <0=> Secure state
+//   <o.31> EXTI11_IRQn         <0=> Secure state
 */
-#define NVIC_INIT_ITNS0_VAL     0x00000000
 
+#define NVIC_INIT_ITNS0_VAL      0x00000000
 /*
 //   </e>
 */
@@ -466,41 +465,42 @@ extern uint32_t _eNSCVeneer;
 #define NVIC_INIT_ITNS1    1
 
 /*
-// Interrupts 32..63
-//   <o.0>  EXTI12_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.1>  EXTI13_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.2>  EXTI14_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.3>  EXTI15_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.4>  SAES_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.5>  CRYP_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.6>  PKA_IRQn            <0=> Secure state <1=> Non-Secure state
-//   <o.7>  HASH_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.8>  RNG_IRQn            <0=> Secure state <1=> Non-Secure state
-//   <o.9>  SERQ_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.10> MCE1_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.11> MCE2_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.12> MCE3_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.13> MCE4_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.14> ADC1_2_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.15> CSI_IRQn            <0=> Secure state <1=> Non-Secure state
-//   <o.16> DCMIPP_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.17> R2G_RET_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.18> R2G_NPU_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.19> Reserved            <0=> Secure state <1=> Non-Secure state
-//   <o.20> Reserved            <0=> Secure state <1=> Non-Secure state
-//   <o.21> NPU_END_OF_EPOCH_IRQn  <0=> Secure state <1=> Non-Secure state
-//   <o.22> NPU_INT1_IRQn       <0=> Secure state <1=> Non-Secure state
-//   <o.23> NPU_INT2_IRQn       <0=> Secure state <1=> Non-Secure state
-//   <o.24> NPU_INT3_IRQn       <0=> Secure state <1=> Non-Secure state
-//   <o.25> NPU_CACHE_IRQn      <0=> Secure state <1=> Non-Secure state
-//   <o.26> LTDC_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.27> LTDC_ER_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.28> DMA2D_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.29> JPEG_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.30> VENC_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.31> GFXMMU_IRQn         <0=> Secure state <1=> Non-Secure state
+/ Interrupts 32..63
+//   <o.0>  EXTI12_IRQn       <0=> Secure state
+//   <o.1>  EXTI13_IRQn       <0=> Secure state
+//   <o.2>  EXTI14_IRQn       <0=> Secure state
+//   <o.3>  EXTI15_IRQn       <0=> Secure state
+//   <o.4>  SAES_IRQn          <0=> Secure state
+//   <o.5>  CRYP_IRQn   	      <0=> Secure state
+//   <o.6>  PKA_IRQn          <0=> Secure state
+//   <o.7>  HASH_IRQn         <0=> Secure state
+//   <o.8>  RNG_IRQn          <0=> Secure state
+//   <o.9>  Reserved          <0=> Secure state
+//   <o.10> MCE1_IRQn          <0=> Secure state
+//   <o.11> MCE2_IRQn          <0=> Secure state
+//   <o.12> MCE3_IRQn          <0=> Secure state
+//   <o.13> MCE4_IRQn          <0=> Secure state
+//   <o.14> ADC1_2_IRQn       <0=> Secure state
+//   <o.15> CSI_IRQn          <0=> Secure state
+//   <o.16> DCMIPP_IRQn       <0=> Secure state
+//   <o.17> Reserved          <0=> Secure state
+//   <o.18> Reserved          <0=> Secure state
+//   <o.19> Reserved          <0=> Secure state
+//   <o.20> PAHB_ERR_IRQn     <0=> Secure state
+//   <o.21> NPU0_IRQn         <0=> Secure state
+//   <o.22> NPU1_IRQn         <0=> Secure state
+//   <o.23> NPU2_IRQn         <0=> Secure state
+//   <o.24> NPU3_IRQn         <0=> Secure state
+//   <o.25> CACHEAXI_IRQn     <0=> Secure state
+//   <o.26> LTDC_LO_IRQn      <0=> Secure state
+//   <o.27> LTDC_LO_ERR_IRQn  <0=> Secure state
+//   <o.28> DMA2D_IRQn        <0=> Secure state
+//   <o.29> JPEG_IRQn         <0=> Secure state
+//   <o.30> VENC_IRQn         <0=> Secure state
+//   <o.31> GFXMMU_IRQn       <0=> Secure state
 */
-#define NVIC_INIT_ITNS1_VAL     0x00000000
+
+#define NVIC_INIT_ITNS1_VAL      0x00000000
 
 /*
 //   </e>
@@ -513,40 +513,41 @@ extern uint32_t _eNSCVeneer;
 
 /*
 // Interrupts 64..95
-//   <o.0>  GFXTIM_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.1>  GPU2D_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.2>  GPU2D_ER_IRQn       <0=> Secure state <1=> Non-Secure state
-//   <o.3>  GPU2D_CACHE_IRQn    <0=> Secure state <1=> Non-Secure state
-//   <o.4>  HPDMA1_Channel0_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.5>  HPDMA1_Channel1_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.6>  HPDMA1_Channel2_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.7>  HPDMA1_Channel3_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.8>  HPDMA1_Channel4_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.9>  HPDMA1_Channel5_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.10> HPDMA1_Channel6_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.11> HPDMA1_Channel7_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.12> HPDMA1_Channel8_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.13> HPDMA1_Channel9_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.14> HPDMA1_Channel10_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.15> HPDMA1_Channel11_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.16> HPDMA1_Channel12_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.17> HPDMA1_Channel13_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.18> HPDMA1_Channel14_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.19> HPDMA1_Channel15_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.20> GPDMA1_Channel0_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.21> GPDMA1_Channel1_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.22> GPDMA1_Channel2_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.23> GPDMA1_Channel3_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.24> GPDMA1_Channel4_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.25> GPDMA1_Channel5_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.26> GPDMA1_Channel6_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.27> GPDMA1_Channel7_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.28> GPDMA1_Channel8_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.29> GPDMA1_Channel9_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.30> GPDMA1_Channel10_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.31> GPDMA1_Channel11_IRQn <0=> Secure state <1=> Non-Secure state
+//   <o.0>  GFXTIM_IRQn               <0=> Secure state
+//   <o.1>  GPU2D_IRQn                <0=> Secure state
+//   <o.2>  GPU2D_ER_IRQn             <0=> Secure state
+//   <o.3>  ICACHE_IRQn               <0=> Secure state
+//   <o.4>  HPDMA1_Channel0_IRQn      <0=> Secure state
+//   <o.5>  HPDMA1_Channel1_IRQn      <0=> Secure state
+//   <o.6>  HPDMA1_Channel2_IRQn      <0=> Secure state
+//   <o.7>  HPDMA1_Channel3_IRQn      <0=> Secure state
+//   <o.8>  HPDMA1_Channel4_IRQn      <0=> Secure state
+//   <o.9>  HPDMA1_Channel5_IRQn      <0=> Secure state
+//   <o.10> HPDMA1_Channel6_IRQn      <0=> Secure state
+//   <o.11> HPDMA1_Channel7_IRQn      <0=> Secure state
+//   <o.12> HPDMA1_Channel8_IRQn      <0=> Secure state
+//   <o.13> HPDMA1_Channel9_IRQn      <0=> Secure state
+//   <o.14> HPDMA1_Channel10_IRQn     <0=> Secure state
+//   <o.15> HPDMA1_Channel11_IRQn     <0=> Secure state
+//   <o.16> HPDMA1_Channel12_IRQn     <0=> Secure state
+//   <o.17> HPDMA1_Channel13_IRQn     <0=> Secure state
+//   <o.18> HPDMA1_Channel14_IRQn     <0=> Secure state
+//   <o.19> HPDMA1_Channel15_IRQn     <0=> Secure state
+//   <o.20> GPDMA1_Channel0_IRQn      <0=> Secure state
+//   <o.21> GPDMA1_Channel1_IRQn      <0=> Secure state
+//   <o.22> GPDMA1_Channel2_IRQn      <0=> Secure state
+//   <o.23> GPDMA1_Channel3_IRQn      <0=> Secure state
+//   <o.24> GPDMA1_Channel4_IRQn      <0=> Secure state
+//   <o.25> GPDMA1_Channel5_IRQn      <0=> Secure state
+//   <o.26> GPDMA1_Channel6_IRQn      <0=> Secure state
+//   <o.27> GPDMA1_Channel7_IRQn      <0=> Secure state
+//   <o.28> GPDMA1_Channel8_IRQn      <0=> Secure state
+//   <o.29> GPDMA1_Channel9_IRQn      <0=> Secure state
+//   <o.30> GPDMA1_Channel10_IRQn     <0=> Secure state
+//   <o.31> GPDMA1_Channel11_IRQn     <0=> Secure state
 */
-#define NVIC_INIT_ITNS2_VAL     0x00000000
+
+#define NVIC_INIT_ITNS2_VAL      0x00000000
 
 /*
 //   </e>
@@ -556,44 +557,43 @@ extern uint32_t _eNSCVeneer;
 //   <e>Initialize ITNS 3 (Interrupts 96..127)
 */
 #define NVIC_INIT_ITNS3    1
-
 /*
 // Interrupts 96..127
-//   <o.0>  GPDMA1_Channel12_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.1>  GPDMA1_Channel13_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.2>  GPDMA1_Channel14_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.3>  GPDMA1_Channel15_IRQn <0=> Secure state <1=> Non-Secure state
-//   <o.4>  I2C1_EV_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.5>  I2C1_ER_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.6>  I2C2_EV_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.7>  I2C2_ER_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.8>  I2C3_EV_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.9>  I2C3_ER_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.10> I2C4_EV_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.11> I2C4_ER_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.12> I3C1_EV_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.13> I3C1_ER_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.14> I3C2_EV_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.15> I3C2_ER_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.16> TIM1_BRK_IRQn       <0=> Secure state <1=> Non-Secure state
-//   <o.17> TIM1_UP_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.18> TIM1_TRG_COM_IRQn   <0=> Secure state <1=> Non-Secure state
-//   <o.19> TIM1_CC_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.20> TIM2_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.21> TIM3_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.22> TIM4_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.23> TIM5_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.24> TIM6_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.25> TIM7_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.26> TIM8_BRK_IRQn       <0=> Secure state <1=> Non-Secure state
-//   <o.27> TIM8_UP_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.28> TIM8_TRG_COM_IRQn   <0=> Secure state <1=> Non-Secure state
-//   <o.29> TIM8_CC_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.30> TIM9_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.31> TIM10_IRQn          <0=> Secure state <1=> Non-Secure state
-
+//   <o.0>  GPDMA1_Channel12_IRQn   <0=> Secure state
+//   <o.1>  GPDMA1_Channel13_IRQn   <0=> Secure state
+//   <o.2>  GPDMA1_Channel14_IRQn   <0=> Secure state
+//   <o.3>  GPDMA1_Channel15_IRQn   <0=> Secure state
+//   <o.4>  I2C1_EV_IRQn            <0=> Secure state
+//   <o.5>  I2C1_ER_IRQn            <0=> Secure state
+//   <o.6>  I2C2_EV_IRQn            <0=> Secure state
+//   <o.7>  I2C2_ER_IRQn            <0=> Secure state
+//   <o.8>  I2C3_EV_IRQn            <0=> Secure state
+//   <o.9>  I2C3_ER_IRQn            <0=> Secure state
+//   <o.10> I2C4_EV_IRQn            <0=> Secure state
+//   <o.11> I2C4_ER_IRQn            <0=> Secure state
+//   <o.12> I3C1_EV_IRQn            <0=> Secure state
+//   <o.13> I3C1_ER_IRQn            <0=> Secure state
+//   <o.14> I3C2_EV_IRQn            <0=> Secure state
+//   <o.15> I3C2_ER_IRQn            <0=> Secure state
+//   <o.16> TIM1_BRK_IRQn           <0=> Secure state
+//   <o.17> TIM1_UP_IRQn            <0=> Secure state
+//   <o.18> TIM1_TRG_COM_IRQn       <0=> Secure state
+//   <o.19> TIM1_CC_IRQn            <0=> Secure state
+//   <o.20> TIM2_IRQn               <0=> Secure state
+//   <o.21> TIM3_IRQn               <0=> Secure state
+//   <o.22> TIM4_IRQn               <0=> Secure state
+//   <o.23> TIM5_IRQn               <0=> Secure state
+//   <o.24> TIM6_IRQn               <1=> Non-Secure state
+//   <o.25> TIM7_IRQn               <0=> Secure state
+//   <o.26> TIM8_BRK_IRQn           <0=> Secure state
+//   <o.27> TIM8_UP_IRQn            <0=> Secure state
+//   <o.28> TIM8_TRG_COM_IRQn       <0=> Secure state
+//   <o.29> TIM8_CC_IRQn            <0=> Secure state
+//   <o.30> TIM9_IRQn               <0=> Secure state
+//   <o.31> TIM10_IRQn              <0=> Secure state
 */
-#define NVIC_INIT_ITNS3_VAL     0x00000000
+
+#define NVIC_INIT_ITNS3_VAL      0x01000000
 
 /*
 //   </e>
@@ -603,43 +603,42 @@ extern uint32_t _eNSCVeneer;
 //   <e>Initialize ITNS 4 (Interrupts 128..159)
 */
 #define NVIC_INIT_ITNS4    1
-
 /*
 // Interrupts 128..159
-//   <o.0>  TIM11_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.1>  TIM12_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.2>  TIM13_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.3>  TIM14_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.4>  TIM15_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.5>  TIM16_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.6>  TIM17_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.7>  TIM18_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.8>  LPTIM1_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.9>  LPTIM2_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.10> LPTIM3_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.11> LPTIM4_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.12> LPTIM5_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.13> ADF1_FLT0_IRQn      <0=> Secure state <1=> Non-Secure state
-//   <o.14> MDF1_FLT0_IRQn      <0=> Secure state <1=> Non-Secure state
-//   <o.15> MDF1_FLT1_IRQn      <0=> Secure state <1=> Non-Secure state
-//   <o.16> MDF1_FLT2_IRQn      <0=> Secure state <1=> Non-Secure state
-//   <o.17> MDF1_FLT3_IRQn      <0=> Secure state <1=> Non-Secure state
-//   <o.18> MDF1_FLT4_IRQn      <0=> Secure state <1=> Non-Secure state
-//   <o.19> MDF1_FLT5_IRQn      <0=> Secure state <1=> Non-Secure state
-//   <o.20> SAI1_A_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.21> SAI1_B_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.22> SAI2_A_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.23> SAI2_B_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.24> SPDIFRX_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.25> SPI1_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.26> SPI2_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.27> SPI3_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.28> SPI4_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.29> SPI5_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.30> SPI6_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.31> USART1_IRQn         <0=> Secure state <1=> Non-Secure state
-
+//   <o.0>  TIM11_IRQn        <0=> Secure state
+//   <o.1>  TIM12_IRQn        <0=> Secure state
+//   <o.2>  TIM13_IRQn        <0=> Secure state
+//   <o.3>  TIM14_IRQn        <0=> Secure state
+//   <o.4>  TIM15_IRQn        <0=> Secure state
+//   <o.5>  TIM16_IRQn        <0=> Secure state
+//   <o.6>  TIM17_IRQn        <0=> Secure state
+//   <o.7>  TIM18_IRQn        <0=> Secure state
+//   <o.8>  LPTIM1_IRQn       <0=> Secure state
+//   <o.9>  LPTIM2_IRQn       <0=> Secure state
+//   <o.10> LPTIM3_IRQn       <0=> Secure state
+//   <o.11> LPTIM4_IRQn       <0=> Secure state
+//   <o.12> LPTIM5_IRQn       <0=> Secure state
+//   <o.13> ADF1_FLT0_IRQn    <0=> Secure state
+//   <o.14> MDF1_FLT0_IRQn    <0=> Secure state
+//   <o.15> MDF1_FLT1_IRQn    <0=> Secure state
+//   <o.16> MDF1_FLT2_IRQn    <0=> Secure state
+//   <o.17> MDF1_FLT3_IRQn    <0=> Secure state
+//   <o.18> MDF1_FLT4_IRQn    <0=> Secure state
+//   <o.19> MDF1_FLT5_IRQn    <0=> Secure state
+//   <o.20> SAI1_A_IRQn       <0=> Secure state
+//   <o.21> SAI1_B_IRQn       <0=> Secure state
+//   <o.22> SAI2_A_IRQn       <0=> Secure state
+//   <o.23> SAI2_B_IRQn       <0=> Secure state
+//   <o.24> SPDIFRX1_IRQn     <0=> Secure state
+//   <o.25> SPI1_IRQn         <0=> Secure state
+//   <o.26> SPI2_IRQn         <0=> Secure state
+//   <o.27> SPI3_IRQn         <0=> Secure state
+//   <o.28> SPI4_IRQn         <0=> Secure state
+//   <o.29> SPI5_IRQn         <0=> Secure state
+//   <o.30> SPI6_IRQn         <0=> Secure state
+//   <o.31> USART1_IRQn       <0=> Secure state
 */
+
 #define NVIC_INIT_ITNS4_VAL      0x00000000
 
 /*
@@ -650,44 +649,60 @@ extern uint32_t _eNSCVeneer;
 //   <e>Initialize ITNS 5 (Interrupts 160..191)
 */
 #define NVIC_INIT_ITNS5    1
-
 /*
 // Interrupts 160..191
-//   <o.0>  USART2_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.1>  USART3_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.2>  UART4_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.3>  UART5_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.4>  USART6_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.5>  UART7_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.6>  UART8_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.7>  UART9_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.8>  USART10_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.9>  LPUART1_IRQn        <0=> Secure state <1=> Non-Secure state
-//   <o.10> OCTOSPI1_IRQn       <0=> Secure state <1=> Non-Secure state
-//   <o.11> OCTOSPI2_IRQn       <0=> Secure state <1=> Non-Secure state
-//   <o.12> OCTOSPI3_IRQn       <0=> Secure state <1=> Non-Secure state
-//   <o.13> FMC_IRQn            <0=> Secure state <1=> Non-Secure state
-//   <o.14> SDMMC1_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.15> SDMMC2_IRQn         <0=> Secure state <1=> Non-Secure state
-//   <o.16> UCPD1_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.17> USB2_OTG_FS_IRQn    <0=> Secure state <1=> Non-Secure state
-//   <o.18> USB1_OTG_HS_IRQn    <0=> Secure state <1=> Non-Secure state
-//   <o.19> ETH1_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.20> FDCAN1_IT0_IRQn     <0=> Secure state <1=> Non-Secure state
-//   <o.21> FDCAN1_IT1_IRQn     <0=> Secure state <1=> Non-Secure state
-//   <o.22> FDCAN2_IT0_IRQn     <0=> Secure state <1=> Non-Secure state
-//   <o.23> FDCAN2_IT1_IRQn     <0=> Secure state <1=> Non-Secure state
-//   <o.24> FDCAN3_IT0_IRQn     <0=> Secure state <1=> Non-Secure state
-//   <o.25> FDCAN3_IT1_IRQn     <0=> Secure state <1=> Non-Secure state
-//   <o.26> FDCAN_CU_IRQn       <0=> Secure state <1=> Non-Secure state
-//   <o.27> MDIOS_IRQn          <0=> Secure state <1=> Non-Secure state
-//   <o.28> PSSI_IRQn           <0=> Secure state <1=> Non-Secure state
-//   <o.29> WAKEUP_PIN_IRQn     <0=> Secure state <1=> Non-Secure state
-//   <o.30> CTI_INT0_IRQn       <0=> Secure state <1=> Non-Secure state
-//   <o.31> CTI_INT1_IRQn       <0=> Secure state <1=> Non-Secure state
+//   <o.0>  USART2_IRQn         <0=> Secure state
+//   <o.1>  USART3_IRQn         <0=> Secure state
+//   <o.2>  UART4_IRQn          <0=> Secure state
+//   <o.3>  UART5_IRQn          <0=> Secure state
+//   <o.4>  USART6_IRQn         <0=> Secure state
+//   <o.5>  UART7_IRQn          <0=> Secure state
+//   <o.6>  UART8_IRQn          <0=> Secure state
+//   <o.7>  UART9_IRQn          <0=> Secure state
+//   <o.8>  USART10_IRQn        <0=> Secure state
+//   <o.9>  LPUART1_IRQn        <0=> Secure state
+//   <o.10> XSPI1_IRQn          <0=> Secure state
+//   <o.11> XSPI2_IRQn          <0=> Secure state
+//   <o.12> XSPI3_IRQn          <0=> Secure state
+//   <o.13> FMC_IRQn            <0=> Secure state
+//   <o.14> SDMMC1_IRQn         <0=> Secure state
+//   <o.15> SDMMC2_IRQn         <0=> Secure state
+//   <o.16> UCPD1_IRQn          <0=> Secure state
+//   <o.17> USB1_OTG_HS_IRQn    <0=> Secure state
+//   <o.18> USB2_OTG_HS_IRQn    <0=> Secure state
+//   <o.19> ETH1_IRQn           <0=> Secure state
+//   <o.20> FDCAN1_IT0_IRQn     <0=> Secure state
+//   <o.21> FDCAN1_IT1_IRQn     <0=> Secure state
+//   <o.22> FDCAN2_IT0_IRQn     <0=> Secure state
+//   <o.23> FDCAN2_IT1_IRQn     <0=> Secure state
+//   <o.24> FDCAN3_IT0_IRQn     <0=> Secure state
+//   <o.25> FDCAN3_IT1_IRQn     <0=> Secure state
+//   <o.26> FDCAN_CU_IRQn       <0=> Secure state
+//   <o.27> MDIOS_IRQn          <0=> Secure state
+//   <o.28> DCMI_PSSI_IRQn      <0=> Secure state
+//   <o.29> WAKEUP_PIN_IRQn     <0=> Secure state
+//   <o.30> CTI_INT0_IRQn       <0=> Secure state
+//   <o.31> CTI_INT1_IRQn       <0=> Secure state
+*/
+
+#define NVIC_INIT_ITNS5_VAL      0x00000000
+
+/*
+//   </e>
+*/
+
+/*
+//   <e>Initialize ITNS 6 (Interrupts 192..223)
+*/
+#define NVIC_INIT_ITNS6    1
+/*
+// Interrupts 192..223
+//   <o.0>  USART2_IRQn         <0=> Secure state
+//   <o.1>  USART3_IRQn         <0=> Secure state
+//   <o.2>  UART4_IRQn          <0=> Secure state
 
 */
-#define NVIC_INIT_ITNS5_VAL      0x00000000
+#define NVIC_INIT_ITNS6_VAL      0x00000000
 
 /*
 //   </e>
@@ -697,7 +712,7 @@ extern uint32_t _eNSCVeneer;
 // </h>
 */
 
-
+/* USER CODE BEGIN 2 */
 
 /*
     max 8 SAU regions.
@@ -756,7 +771,6 @@ __STATIC_INLINE void TZ_SAU_Setup (void)
 
 #endif /* defined (__SAUREGION_PRESENT) && (__SAUREGION_PRESENT == 1U) */
 
-
   #if defined (SAU_INIT_CTRL) && (SAU_INIT_CTRL == 1U)
     SAU->CTRL = ((SAU_INIT_CTRL_ENABLE << SAU_CTRL_ENABLE_Pos) & SAU_CTRL_ENABLE_Msk) |
                 ((SAU_INIT_CTRL_ALLNS  << SAU_CTRL_ALLNS_Pos)  & SAU_CTRL_ALLNS_Msk)   ;
@@ -810,6 +824,10 @@ __STATIC_INLINE void TZ_SAU_Setup (void)
     NVIC->ITNS[5] = NVIC_INIT_ITNS5_VAL;
   #endif
 
-}
+  #if defined (NVIC_INIT_ITNS6) && (NVIC_INIT_ITNS6 == 1U)
+    NVIC->ITNS[6] = NVIC_INIT_ITNS6_VAL;
+  #endif
 
+}
+/* USER CODE END 2 */
 #endif  /* PARTITION_STM32N657XX_H */

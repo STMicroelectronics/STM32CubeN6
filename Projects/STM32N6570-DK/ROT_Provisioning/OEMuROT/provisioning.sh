@@ -2,6 +2,7 @@
 
 # Getting the CubeProgammer_CLI path
 source ../env.sh
+source img_config.sh
 
 # Absolute path to this script
 if [ $# -ge 1 ] && [ -d $1 ]; then
@@ -84,10 +85,16 @@ image_generation()
   echo
   read -p "" -n1 -s
 
-  echo "    * Application firmware image generation (MCUboot format)"
-  echo "        Open the OEMuROT_Appli project with preferred toolchain and rebuild all files."
-  echo "        Build must be done in this order Secure > NonSecure in case of trust zone application."
-  echo "        ./$oemurot_appli_path_project/Binary/rot_tz_xx_app_enc_sign.bin is generated at this step"
+  if [ "$app_full_secure" == "1" ]; then
+    echo "    * Application firmware image generation (MCUboot format^)"
+    echo "        Open the OEMuROT_Appli project with preferred toolchain and rebuild all files."
+    echo "        ./$oemurot_appli_path_project/Binary/rot_tz_xx_app_enc_sign.bin is generated at this step"
+  else
+    echo "    * Application firmware image generation (MCUboot format)"
+    echo "        Open the OEMuROT_Appli project with preferred toolchain and rebuild all files."
+    echo "        Build must be done in this order Secure > NonSecure in case of trust zone application."
+    echo "        ./$oemurot_appli_path_project/Binary/rot_tz_xx_app_enc_sign.bin is generated at this step"
+  fi
 	echo "        Press any key to continue..."
   echo
   read -p "" -n1 -s

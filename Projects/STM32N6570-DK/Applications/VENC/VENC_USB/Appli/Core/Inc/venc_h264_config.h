@@ -91,7 +91,7 @@ uint8_t * GetInputFrame(uint32_t * framSize);
  * @brief  Return whether hardware handshake (slice/stream) mode is active.
  * @retval bool true if hw handshake mode enabled.
  */
-bool IsHwHandshakeMode(void);
+bool IsHwHanshakeMode(void);
 
 /**
  * @brief  Get DCMIPP pixel packer format id used by the pipeline.

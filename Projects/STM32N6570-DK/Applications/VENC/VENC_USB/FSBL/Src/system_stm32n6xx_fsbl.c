@@ -167,7 +167,7 @@ extern uint32_t __region_DTCM_end__;
 extern void *__Vectors;
 #define INTVECT_START ((uint32_t) &__Vectors)
 #define DTCM_START    ((uint32_t *) 0x30000000)
-#define DTCM_END      ((uint32_t *) 0x30040000)
+#define DTCM_END      ((uint32_t *) 0x30020000)
 #elif defined(__GNUC__)
 extern void *g_pfnVectors;
 extern uint32_t _sDTCM;

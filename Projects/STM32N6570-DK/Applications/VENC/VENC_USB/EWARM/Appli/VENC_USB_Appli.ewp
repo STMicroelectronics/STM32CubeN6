@@ -228,6 +228,7 @@
                 <option>
                     <name>CCDefines</name>
                     <state>TX_INCLUDE_USER_DEFINE_FILE</state>
+                    <state>TX_EXECUTION_PROFILE_ENABLE</state>
                     <state>UX_INCLUDE_USER_DEFINE_FILE</state>
                     <state>UX_STANDALONE</state>
                     <state>STM32N657xx</state>
@@ -376,6 +377,7 @@
                     <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/usbx/common/usbx_device_classes/inc/</state>
                     <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/common/inc/</state>
                     <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/iar/inc/</state>
+                    <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\threadx\utility\execution_profile_kit</state>
                     <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_USBPD_Library/Core/inc</state>
                     <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_USBPD_Library/Devices/STM32N6XX/inc</state>
                     <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\Third_Party\VideoEncoder\inc</state>
@@ -566,6 +568,7 @@
                 <option>
                     <name>ADefines</name>
                     <state>TX_SINGLE_MODE_SECURE</state>
+                    <state>TX_EXECUTION_PROFILE_ENABLE</state>
                 </option>
                 <option>
                     <name>AList</name>
@@ -1161,6 +1164,9 @@
                     <name>$PROJ_DIR$\..\..\Appli\Core\Src\dcmipp_app.c</name>
                 </file>
                 <file>
+                    <name>$PROJ_DIR$\..\..\Appli\Core\Src\frame_rb.c</name>
+                </file>
+                <file>
                     <name>$PROJ_DIR$\..\..\Appli\Core\Src\main.c</name>
                 </file>
                 <file>
@@ -1182,12 +1188,6 @@
                     <name>$PROJ_DIR$\..\..\Appli\Core\Src\SystemClock_Config_800MHz.c</name>
                 </file>
                 <file>
-                    <name>$PROJ_DIR$\..\..\Appli\Core\Src\time_monitor.c</name>
-                    <excluded>
-                        <configuration>VENC_USB_Debug</configuration>
-                    </excluded>
-                </file>
-                <file>
                     <name>$PROJ_DIR$\..\..\Appli\Core\Src\tx_initialize_low_level.S</name>
                 </file>
                 <file>
@@ -1195,6 +1195,27 @@
                 </file>
                 <file>
                     <name>$PROJ_DIR$\..\..\Appli\Core\Src\venc_h264_config.c</name>
+                </file>
+            </group>
+            <group>
+                <name>Monitoring</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\Appli\Core\Src\st_monitor.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\Appli\Core\Src\st_monitor_bitrate.c</name>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\Appli\Core\Src\st_monitor_cpu_threadx.c</name>
+                    <excluded>
+                        <configuration>VENC_USB_Debug</configuration>
+                    </excluded>
+                </file>
+                <file>
+                    <name>$PROJ_DIR$\..\..\Appli\Core\Src\time_monitor.c</name>
+                    <excluded>
+                        <configuration>VENC_USB_Debug</configuration>
+                    </excluded>
                 </file>
             </group>
             <group>
@@ -2046,6 +2067,12 @@
                     <name>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\threadx\ports\cortex_m55\iar\src\txe_thread_secure_stack_free.c</name>
                 </file>
             </group>
+            <group>
+                <name>Utilities</name>
+                <file>
+                    <name>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\threadx\utility\execution_profile_kit\tx_execution_profile.c</name>
+                </file>
+            </group>
         </group>
         <group>
             <name>USBX</name>
@@ -2510,6 +2537,7 @@
                         <option>
                             <name>CCDefines</name>
                             <state>TX_INCLUDE_USER_DEFINE_FILE</state>
+                            <state>TX_EXECUTION_PROFILE_ENABLE</state>
                             <state>UX_INCLUDE_USER_DEFINE_FILE</state>
                             <state>UX_STANDALONE</state>
                             <state>STM32N657xx</state>
@@ -2658,6 +2686,7 @@
                             <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/usbx/common/usbx_device_classes/inc/</state>
                             <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/common/inc/</state>
                             <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/iar/inc/</state>
+                            <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\ST\threadx\utility\execution_profile_kit</state>
                             <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_USBPD_Library/Core/inc</state>
                             <state>$PROJ_DIR$/../../../../../../../Middlewares/ST/STM32_USBPD_Library/Devices/STM32N6XX/inc</state>
                             <state>$PROJ_DIR$\..\..\..\..\..\..\..\Middlewares\Third_Party\VideoEncoder\inc</state>

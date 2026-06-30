@@ -36,6 +36,7 @@ extern "C" {
 /** @addtogroup POWER
   * @{
   */
+
 #ifndef STM32N6XX_NUCLEO_USBPD_PWR_H
 /** @defgroup POWER_Exported_Types Exported Types
   * @{
@@ -169,7 +170,9 @@ typedef void USBPD_PWR_VBUSDetectCallbackFunc(uint32_t Instance,
 /**
   * @}
   */
+
 #endif /* STM32N6XX_NUCLEO_USBPD_PWR_H */
+
 /** @defgroup POWER_Exported_Functions Exported Functions
   * @{
   */

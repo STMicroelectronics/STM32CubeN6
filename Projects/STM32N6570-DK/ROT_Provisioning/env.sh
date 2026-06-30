@@ -68,7 +68,9 @@ fi
 # Select application project below
 oemurot_boot_path_project=Applications/ROT/OEMuROT_Boot
 oemurot_appli_path_project=Applications/ROT/OEMuROT_Appli_Isolation
-#oemurot_appli_path_project=Templates/ROT/OEMuROT_Appli_Isolation
+#oemurot_appli_path_project=Applications/ROT/OEMuROT_Appli
+#oemurot_appli_path_project=Templates_ROT/OEMuROT_Appli_Isolation
+#oemurot_appli_path_project=Templates_ROT/OEMuROT_Appli
 #==============================================================================
 
 #==============================================================================

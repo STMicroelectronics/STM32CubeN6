@@ -115,6 +115,11 @@ typedef enum
 #define SFDP_BASIC_PARAMETER_TABLE_LSB    0x00U
 
 /**
+  * @brief Maximum Flash size reachable by 24-bit addressing
+  */
+#define SFDP_24B_ADDRESS_MAX_FLASH_SIZE   24U
+
+/**
   * @brief DEBUG macro string
   */
 #if EXTMEM_DRIVER_NOR_SFDP_DEBUG_LEVEL > 3 && defined(EXTMEM_MACRO_DEBUG)
@@ -1739,7 +1744,7 @@ SFDP_StatusTypeDef SFDP_BuildGenericDriver(EXTMEM_DRIVER_NOR_SFDP_ObjectTypeDef 
          Flag Status Register bit definitions: bit[7]: Program or erase controller status (0=busy; 1=ready)*/
       Object->sfdp_private.DriverInfo.ReadWIPCommand = 0x70;
       Object->sfdp_private.DriverInfo.WIPPosition = 7u;
-      Object->sfdp_private.DriverInfo.WIPBusyPolarity = 0u;
+      Object->sfdp_private.DriverInfo.WIPBusyPolarity = 1u;
     }
     else
     {
@@ -1747,6 +1752,11 @@ SFDP_StatusTypeDef SFDP_BuildGenericDriver(EXTMEM_DRIVER_NOR_SFDP_ObjectTypeDef 
       goto error;
     }
   }
+
+#if defined(EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG)
+  Object->sfdp_private.SALObject.ReadWipCommand = Object->sfdp_private.DriverInfo.ReadWIPCommand;
+  Object->sfdp_private.SALObject.ReadWelCommand = Object->sfdp_private.DriverInfo.ReadWELCommand;
+#endif /* EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG */
 
   /* Set default value for Read instruction */
   Object->sfdp_private.DriverInfo.ReadInstruction     = SFDP_DRIVER_READ_COMMAND;
@@ -1808,6 +1818,34 @@ SFDP_StatusTypeDef SFDP_BuildGenericDriver(EXTMEM_DRIVER_NOR_SFDP_ObjectTypeDef 
         Object->sfdp_private.DriverInfo.SpiPhyLink = PHY_LINK_4S4S4S;
 
         retr = JEDEC_Basic_Manage4S4S4SEnableSequence(Object);
+        if (retr != EXTMEM_SFDP_OK)
+        {
+          goto error;
+        }
+      }
+      else if (JEDEC_Basic.Params.Param_DWORD.D1.Support_1S4S4SFastRead != 0u)
+      {
+        dummyCycles = JEDEC_Basic.Params.Param_DWORD.D3._1S4S4S_DummyClock
+                      + JEDEC_Basic.Params.Param_DWORD.D3._1S4S4S_ModeClock;
+        Object->sfdp_private.DriverInfo.ReadInstruction =
+          (uint8_t)JEDEC_Basic.Params.Param_DWORD.D3._1S4S4S_FastReadInstruction;
+        Object->sfdp_private.DriverInfo.SpiPhyLink = PHY_LINK_1S4S4S;
+
+        retr = JEDEC_Basic_ManageQuadEnableRequirement(Object);
+        if (retr != EXTMEM_SFDP_OK)
+        {
+          goto error;
+        }
+      }
+      else if (JEDEC_Basic.Params.Param_DWORD.D1.Support_1S1S4SFastRead != 0u)
+      {
+        dummyCycles = JEDEC_Basic.Params.Param_DWORD.D3._1S1S4S_DummyClock
+                      + JEDEC_Basic.Params.Param_DWORD.D3._1S1S4S_ModeClock;
+        Object->sfdp_private.DriverInfo.ReadInstruction =
+          (uint8_t)JEDEC_Basic.Params.Param_DWORD.D3._1S1S4S_FastReadInstruction;
+        Object->sfdp_private.DriverInfo.SpiPhyLink = PHY_LINK_1S1S4S;
+
+        retr = JEDEC_Basic_ManageQuadEnableRequirement(Object);
         if (retr != EXTMEM_SFDP_OK)
         {
           goto error;
@@ -1967,8 +2005,16 @@ SFDP_StatusTypeDef SFDP_BuildGenericDriver(EXTMEM_DRIVER_NOR_SFDP_ObjectTypeDef 
     goto error;
   }
 
-  if ((Object->sfdp_private.Sfdp_table_mask & (uint32_t)SFDP_PARAMID_4BYTE_ADDRESS_INSTRUCTION) ==
-      (uint32_t)SFDP_PARAMID_4BYTE_ADDRESS_INSTRUCTION)
+  /* When provided, JEDEC 4-Byte Address instructions Table is analyzed only if present, and if
+     Flash size is > 128Mbits (16 Mbytes, i.e. limit of 24 bits addressing area).
+     This check has been added after noticing that Macronix MX25R6435F Flash (64Mbits) embeds a
+     4-byte Address Instruction Parameter Table in SFDP objects, but Enter 4-Byte Addressing and
+     Enter 4-Byte Addressing values in D16 of JEDEC Basic Flash Parameter Table only contains default values
+     (0xFF ans 0x3FF) */
+  if (((Object->sfdp_private.Sfdp_table_mask & (uint32_t)SFDP_PARAMID_4BYTE_ADDRESS_INSTRUCTION) ==
+       (uint32_t)SFDP_PARAMID_4BYTE_ADDRESS_INSTRUCTION)
+      && (Object->sfdp_private.FlashSize > SFDP_24B_ADDRESS_MAX_FLASH_SIZE)
+      && (JEDEC_Basic.Params.Param_DWORD.D16.Enter4ByteAddressing != 0xFFU))
   {
     if (0u == flag4byteAddress)
     {
@@ -2272,6 +2318,29 @@ EXTMEM_DRIVER_NOR_SFDP_StatusTypeDef driver_check_FlagBUSY(EXTMEM_DRIVER_NOR_SFD
   SFDP_DEBUG_STR((uint8_t *)__func__)
   if (0u != SFDPObject->sfdp_private.DriverInfo.ReadWIPCommand)
   {
+#if defined(EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG)
+    uint8_t status_reg[2] = {0u, 0u};
+    uint32_t tickstart = HAL_GetTick();
+    uint8_t match_value = (uint8_t)(SFDPObject->sfdp_private.DriverInfo.WIPBusyPolarity
+                                    << SFDPObject->sfdp_private.DriverInfo.WIPPosition);
+    uint8_t match_mask = (uint8_t)(1u << SFDPObject->sfdp_private.DriverInfo.WIPPosition);
+
+    while ((HAL_GetTick() - tickstart) <= Timeout)
+    {
+      if (HAL_OK != SAL_XSPI_SendReadCommand(&SFDPObject->sfdp_private.SALObject,
+                                             SFDPObject->sfdp_private.DriverInfo.ReadWIPCommand,
+                                             status_reg, sizeof(status_reg)))
+      {
+        goto error;
+      }
+
+      if (((status_reg[0] & match_mask) == match_value) && ((status_reg[1] & match_mask) == match_value))
+      {
+        retr = EXTMEM_DRIVER_NOR_SFDP_OK;
+        return retr;
+      }
+    }
+#else
     /* check that the WIP flag is not set */
     if (HAL_OK == SAL_XSPI_CheckStatusRegister(&SFDPObject->sfdp_private.SALObject,
                                                SFDPObject->sfdp_private.DriverInfo.ReadWIPCommand,
@@ -2283,7 +2352,11 @@ EXTMEM_DRIVER_NOR_SFDP_StatusTypeDef driver_check_FlagBUSY(EXTMEM_DRIVER_NOR_SFD
     {
       retr = EXTMEM_DRIVER_NOR_SFDP_OK;
     }
+#endif /* EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG */
   }
+#if defined(EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG)
+error:
+#endif /* EXTMEM_DRIVER_NOR_SFDP_DUAL_CONFIG */
   return retr;
 }
 

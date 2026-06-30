@@ -93,13 +93,16 @@ int boot_retrieve_public_key_hash(uint8_t image_index,
 #endif /* MCUBOOT_S_DATA_IMAGE_NUMBER == 1 */
       memcpy(public_key_hash, Secure_Authentication_Public_Key_HASH, *key_hash_size);
     break;
-
+#if (MCUBOOT_APP_IMAGE_NUMBER == 2)
     case FLASH_AREA_1_ID:
+#endif
 #if (MCUBOOT_NS_DATA_IMAGE_NUMBER == 1)
     case FLASH_AREA_5_ID:
-#endif /* MCUBOOT_NS_DATA_IMAGE_NUMBER == 1 */
-      memcpy(public_key_hash, NonSecure_Authentication_Public_Key_HASH, *key_hash_size);
-    break;
+#endif
+#if (MCUBOOT_APP_IMAGE_NUMBER == 2) || (MCUBOOT_NS_DATA_IMAGE_NUMBER == 1)
+        memcpy(public_key_hash, NonSecure_Authentication_Public_Key_HASH, *key_hash_size);
+        break;
+#endif
 
     default:
       status = 1;

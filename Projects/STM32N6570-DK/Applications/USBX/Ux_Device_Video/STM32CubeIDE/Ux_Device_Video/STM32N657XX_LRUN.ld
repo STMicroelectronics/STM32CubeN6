@@ -188,12 +188,12 @@ SECTIONS
     . = ALIGN(8);
   } >RAM
 
-  .usbx_data 0x341FD000 (NOLOAD):
+  .usbx_data 0x341FA000 (NOLOAD):
   {
     *(.UsbHpcdSection)
   } >RAM
 
-  .usbx_bss 0x341FE000 (NOLOAD):
+  .usbx_bss 0x341FB000 (NOLOAD):
   {
     *(.UsbxPoolSection)
   } >RAM

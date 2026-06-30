@@ -58,6 +58,7 @@ At the end, Controller is informed at fully reception of Get CCC element through
 At this step, Controller compute the data receive through aRxBuffer and print it through Terminal I/O through DisplayCCCValue().
 
 Terminal I/O watch the list of Get Command Code sent by Controller and associated Target data with IDE in debug mode.
+
 Depending of IDE, to watch content of Terminal I/O note that:
 
  - When resorting to EWARM IAR IDE:
@@ -68,10 +69,16 @@ Depending of IDE, to watch content of Terminal I/O note that:
 
  - When resorting to STM32CubeIDE:
    Command Code is displayed on debugger as follows: Window--> Show View--> Console.
-   In Debug configuration :
-   - Window\Debugger, select the Debug probe : ST-LINK(OpenOCD)
-   - Window\Startup,add the command "monitor arm semihosting enable"
-
+   
+   In the Debug configuration, there are two possible options:
+   
+   - Option 1:
+      - Window\Debugger, select the Debug probe : ST-LINK(OpenOCD)
+      - Window\Debugger, select the Semihosting: "mon gdb_breakpoint_override hard" and "monitor arm semihosting enable"
+   - Option 2:
+      - Window\Debugger, select the Debug probe : ST-LINK(ST-LINK GDB server)
+      - Window\Startup,add the following commands: Enable terminal mode 
+	  
 At next USER push-button press, the Controller switch to sending the first then all Set CCC element of the aSet_CCCList
 through HAL_I3C_Ctrl_TransmitCCC_DMA() to I3C Target which receive the Command and treat it by receiving the associated data.
 At the end, Controller is informed at fully transmission of Set CCC element through HAL_I3C_CtrlTxCpltCallback().
@@ -81,7 +88,9 @@ NUCLEO-N657X0-Q's LEDs can be used to monitor the transfer status:
  - LED2 is toggle slowly when there is an error in Command Code process.
 
 Terminal I/O watch the list of Get Command Code sent by Controller and associated Target data with IDE in debug mode.
-Depending of IDE, to watch content of Terminal I/O note that
+
+Depending of IDE, to watch content of Terminal I/O note that:
+
  - When resorting to EWARM IAR IDE:
    Command Code is displayed on debugger as follows: View --> Terminal I/O
 
@@ -90,10 +99,16 @@ Depending of IDE, to watch content of Terminal I/O note that
 
  - When resorting to STM32CubeIDE:
    Command Code is displayed on debugger as follows: Window--> Show View--> Console.
-   In Debug configuration :
-   - Window\Debugger, select the Debug probe : ST-LINK(OpenOCD)
-   - Window\Startup,add the command "monitor arm semihosting enable"
 
+   In the Debug configuration, there are two possible options:
+   
+   - Option 1:
+      - Window\Debugger, select the Debug probe : ST-LINK(OpenOCD)
+      - Window\Debugger, select the Semihosting: "mon gdb_breakpoint_override hard" and "monitor arm semihosting enable"
+   - Option 2:
+      - Window\Debugger, select the Debug probe : ST-LINK(ST-LINK GDB server)
+      - Window\Startup,add the following commands: Enable terminal mode 
+      
 #### <b>Notes</b>
 
   1. Care must be taken when using HAL_Delay(), this function provides accurate delay (in milliseconds)

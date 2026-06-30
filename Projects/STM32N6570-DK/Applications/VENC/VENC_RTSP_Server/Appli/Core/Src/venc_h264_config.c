@@ -20,24 +20,34 @@
 #include "stm32n6xx_hal.h"
 #include "venc_h264_config.h"
 
+#define FULL_1080P_SLICE               1U
+#define FULL_1080P_FRAME               2U
+#define FULL_720P_SLICE                3U
+#define FULL_720P_SLICE_INTER_RAM_ONLY 4U
+#define FULL_720P_FRAME                5U
+#define FULL_480P_SLICE                6U
+#define FULL_480P_FRAME                7U
 
 
 /* Select target frame configuration */
-#define FULL_720P_FRAME
+#ifndef H264_CONFIG
+#define H264_CONFIG FULL_720P_FRAME
+#endif
 
-#if defined(FULL_1080P_SLICE)
+
+#if H264_CONFIG == FULL_1080P_SLICE
 #include "venc_h264_config_1080p_Slice.h"
-#elif defined(FULL_1080P_FRAME)
+#elif  H264_CONFIG == FULL_1080P_FRAME
 #include "venc_h264_config_1080p_Frame.h"
-#elif defined(FULL_720P_SLICE)
+#elif  H264_CONFIG == FULL_720P_SLICE
 #include "venc_h264_config_720p_Slice.h"
-#elif defined(FULL_720P_SLICE_INTER_RAM_ONLY)
+#elif  H264_CONFIG == FULL_720P_SLICE_INTER_RAM_ONLY
 #include "venc_h264_config_720p_Slice_noPSRAM.h"
-#elif defined(FULL_720P_FRAME)
+#elif  H264_CONFIG == FULL_720P_FRAME
 #include "venc_h264_config_720p_Frame.h"
-#elif defined(FULL_480P_SLICE)
+#elif  H264_CONFIG == FULL_480P_SLICE
 #include "venc_h264_config_480p_Slice.h"
-#elif defined(FULL_480P_FRAME)
+#elif  H264_CONFIG == FULL_480P_FRAME
 #include "venc_h264_config_480p_Frame.h"
 #else
 #error "Undefined VENC configuration"
@@ -58,10 +68,16 @@
 /* Pitch depends on chosen pixel packer format */
 #if DCMIPP_FORMAT == DCMIPP_PIXEL_PACKER_FORMAT_YUV422_1
 #define DCMIPP_PITCH  (2U * VENC_WIDTH)
+#define INPUT_FRAME_SIZE_FACTOR_NUMERATOR    (2U)
+#define INPUT_FRAME_SIZE_FACTOR_DENOMINATOR  (1U)
 #elif DCMIPP_FORMAT == DCMIPP_PIXEL_PACKER_FORMAT_YUV420_2
 #define DCMIPP_PITCH  (VENC_WIDTH)
+#define INPUT_FRAME_SIZE_FACTOR_NUMERATOR    (3U)
+#define INPUT_FRAME_SIZE_FACTOR_DENOMINATOR  (2U)
 #elif DCMIPP_FORMAT == DCMIPP_PIXEL_PACKER_FORMAT_YUV420_3
 #define DCMIPP_PITCH  (VENC_WIDTH)
+#define INPUT_FRAME_SIZE_FACTOR_NUMERATOR    (3U)
+#define INPUT_FRAME_SIZE_FACTOR_DENOMINATOR  (2U)
 #else
 #error "DCMIPP_FORMAT is not correct"
 #endif
@@ -72,13 +88,13 @@
 #if (VENC_HW_MODE_ENABLE == 1U)
 #define CAM_NB_BUFFERS          (2U)
 #define VENC_LINE_BUF_DEPTH     (2U) /* 2 lines of 16-pixel macroblocks */
-#define INPUT_FRAME_SIZE        ((uint32_t)(VENC_WIDTH * CAM_MACROBLOCK_HEIGHT * CAM_NB_BUFFERS * VENC_LINE_BUF_DEPTH * DCMIPP_BYTES_PER_PIXELS))
+#define INPUT_FRAME_SIZE        ((uint32_t)((VENC_WIDTH * CAM_MACROBLOCK_HEIGHT * CAM_NB_BUFFERS * VENC_LINE_BUF_DEPTH * INPUT_FRAME_SIZE_FACTOR_NUMERATOR) / INPUT_FRAME_SIZE_FACTOR_DENOMINATOR))
 #define VIEW_MODE               H264ENC_BASE_VIEW_SINGLE_BUFFER
 #define NB_INPUT_FRAME          (1U)
 #else /* Frame mode */
 #define CAM_NB_BUFFERS          (1U) 
 #define VENC_LINE_BUF_DEPTH     (1U)
-#define INPUT_FRAME_SIZE        ((uint32_t)(VENC_WIDTH * VENC_HEIGHT * CAM_NB_BUFFERS * DCMIPP_BYTES_PER_PIXELS))
+#define INPUT_FRAME_SIZE        ((uint32_t)((VENC_WIDTH * VENC_HEIGHT * CAM_NB_BUFFERS * INPUT_FRAME_SIZE_FACTOR_NUMERATOR) / INPUT_FRAME_SIZE_FACTOR_DENOMINATOR))
 #define VIEW_MODE               H264ENC_BASE_VIEW_DOUBLE_BUFFER
 #define NB_INPUT_FRAME          (2U)
 #endif
@@ -134,7 +150,6 @@ venc_h264_cfg_t hVencH264Instance = {
     .cfgH264Main.scaledHeight                 = 0,                                   /* Optional down-scaled output picture height,multiple of 2. [96..height] */
     .cfgH264Main.refFrameAmount               = 1,                                   /* Amount of reference frame buffers, [1..2],1 = only last frame buffered, 2 = last and long term frames buffered */
     .cfgH264Main.refFrameCompress             = 0,                                   /* frame compress: 0=disable; 1=enable */
-    .cfgH264Main.refFrameCompress             = 0,                                   /* reference frame compress: 0=disable; 1=enable */
     .cfgH264Main.rfcLumBufLimit               = 0,                                   /* Limit of luma RFC buffer in percent of original reference frame size. */
     .cfgH264Main.rfcChrBufLimit               = 0,                                   /* Limit of chroma RFC buffer in percent of original reference frame size. */
     .cfgH264Main.svctLevel                    = 0,                                   /* [0~3] Max Layers number SVC Temporal Scalable Coding. */
@@ -170,7 +185,6 @@ venc_h264_cfg_t hVencH264Instance = {
     .cfgH264Coding.adaptiveRoi                = 0,                                   /* [-51..0] QP delta value for adaptive ROI */
     .cfgH264Coding.adaptiveRoiColor           = 0,                                   /*  [-10..10] Color temperature sensitivity* for adaptive ROI skin detection.* -10 = 2000K, 0=3000K, 10=5000K. */
     .cfgH264Coding.roiMapEnable               = 0,                                   /*  ROI map status, 0=disable, 1=enable. */
-    .cfgH264Coding.roiMapEnable               = 0,                                   /*  ROI map status, 0=disable, 1=enable. */
     .cfgH264Coding.fieldOrder                 = 0,                                   /* Field order for interlaced coding,0 = bottom field first, 1 = top field first. */
     .cfgH264Coding.gdrDuration                = 0,                                   /* how many pictures it will take to do GDR, if 0, not do GDR. */
     .cfgH264Coding.svctLevel                  = 0,                                   /* [0~3] Max Layers number SVC Temporal Scalable Coding. */
@@ -182,8 +196,8 @@ venc_h264_cfg_t hVencH264Instance = {
     .cfgH264Coding.inputLineBufDepth          = VENC_LINE_BUF_DEPTH,                 /* input buffer depth in mb lines( 1 = 1 macro block ( ie. 16 pixels) */
     .cfgH264Coding.inputLineBufHwModeEn       = VENC_HW_MODE_ENABLE,                 /* w handshake. */
     .cfgH264Coding.nBaseLayerPID              = 0,                                   /*  priority_id of base temporal layer */
-    .cfgH264Coding.level                      = 0,                                   /*  ?????????????????????? */
-    .cfgH264Coding.enableSVC                  = 0,                                   /*  ?????????????????????? */
+    .cfgH264Coding.level                      = 0,                                   /* Reserved vendor SVC control field; kept disabled in this configuration. */
+    .cfgH264Coding.enableSVC                  = 0,                                   /* Reserved vendor SVC enable flag; kept disabled in this configuration. */
     .cfgH264Rate.pictureRc                    = 1,                                   /* QP between pictures, [0,1] */
     .cfgH264Rate.mbRc                         = 1,                                   /* QP inside picture, [0,1] */
     .cfgH264Rate.pictureSkip                  = 0,                                   /* pictureSkip [0,1] */
@@ -266,7 +280,7 @@ uint32_t GetNbInputFrame(void)
  * @brief  Return whether hardware handshake (slice/stream) mode is enabled.
  * @retval true if HW handshake mode enabled, false otherwise.
  */
-bool IsHwHandshakeMode(void)
+bool IsHwHanshakeMode(void)
 {
 #if (VENC_HW_MODE_ENABLE == 1U)
     return true;
@@ -297,7 +311,7 @@ HAL_StatusTypeDef GetDCMIPPLinesConfig(uint32_t *pWarpLines, uint32_t *pIrqLines
     uint32_t nbLinesCaptured = VENC_LINE_BUF_DEPTH * CAM_MACROBLOCK_HEIGHT;
     HAL_StatusTypeDef ret = HAL_OK;
 
-    if (!IsHwHandshakeMode())
+    if (!IsHwHanshakeMode())
     {
         return HAL_ERROR;
     }
@@ -335,7 +349,7 @@ HAL_StatusTypeDef GetDCMIPPLinesConfig(uint32_t *pWarpLines, uint32_t *pIrqLines
 uint32_t GetDCMIPPNbLinesCaptured(void)
 {
     /* In hardware handshake mode, capture N lines within a 2*N buffer */
-    if (IsHwHandshakeMode())
+    if (IsHwHanshakeMode())
     {
         return (uint32_t)(2U * VENC_LINE_BUF_DEPTH * CAM_MACROBLOCK_HEIGHT);
     }

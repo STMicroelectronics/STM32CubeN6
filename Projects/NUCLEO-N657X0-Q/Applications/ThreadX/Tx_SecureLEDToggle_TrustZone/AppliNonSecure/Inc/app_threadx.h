@@ -21,10 +21,10 @@
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __APP_THREADX_H
 #define __APP_THREADX_H
-
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
+
 /* Includes ------------------------------------------------------------------*/
 #include "tx_api.h"
 
@@ -53,8 +53,8 @@ extern "C" {
 /* USER CODE END EC */
 
 /* Private defines -----------------------------------------------------------*/
-#define TX_APP_STACK_SIZE                        512
-#define TX_APP_THREAD_PRIO                       5
+#define TX_APP_STACK_SIZE                       512
+#define TX_APP_THREAD_PRIO                      5
 
 /* USER CODE BEGIN PD */
 

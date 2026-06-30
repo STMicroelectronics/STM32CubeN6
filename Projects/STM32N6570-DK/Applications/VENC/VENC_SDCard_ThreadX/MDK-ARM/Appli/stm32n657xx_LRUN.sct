@@ -1,0 +1,126 @@
+#! armclang -E --target=arm-arm-none-eabi -mcpu=cortex-m55 -xc
+
+
+/*--------------------- ROM Configuration ----------------------------------
+; <h> ROM Configuration
+;   <o0> ROM Base Address <0x0-0xFFFFFFFF:8>
+;   <o1> ROM Size (in Bytes) <0x0-0xFFFFFFFF:8>
+; </h>
+ *----------------------------------------------------------------------------*/
+#define __ROM_BASE      0x34000400
+#define __ROM_SIZE      0x0007D000  // 500 KBytes
+
+/*--------------------- Embedded RAM Configuration ---------------------------
+; <h> RAM Configuration
+;   <o0> RAM Base Address    <0x0-0xFFFFFFFF:8>
+;   <o1> RAM Size (in Bytes) <0x0-0xFFFFFFFF:8>
+; </h>
+ *----------------------------------------------------------------------------*/
+#define __RAM_BASE      0x3407D400
+#define __RAM_SIZE      0x0008E800  // 570 KBytes
+#define __NOCACHE_BASE  0x3410BC00
+#define __NOCACHE_SIZE  0x002B4400  // 2769 KBytes
+
+/*--------------------- Stack / Heap Configuration ---------------------------
+; <h> Stack / Heap Configuration
+;   <o0> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
+;   <o1> Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
+; </h>
+ *----------------------------------------------------------------------------*/
+#define __STACK_SIZE    0x00001000  // 4 KBytes
+#define __HEAP_SIZE     0x00025800  // 150 KBytes
+
+#define __DTCM_BASE     0x30000000
+#define __DTCM_SIZE     0x20000      // 128 KBytes
+
+#define __PSRAM_BASE    0x90000000
+#define __PSRAM_SIZE    0x02000000  // 32768 KBytes (32 MBytes)
+
+/*
+// <h> NOINIT Data Configuration
+//   <i> specify the size of the section which holds the uninitialized data
+//   <o0>  NOINIT Size (in Bytes) <0x0-0xFFFFFFFF:32>
+// </h>
+ */
+#define __NOINIT_SIZE        0x00000000  // 0 KBytes
+
+/*
+// <h> CMSE Veneer Configuration
+//   <o0>  CMSE Veneer Size (in Bytes) <0x0-0xFFFFFFFF:32>
+// </h>
+ */
+#define __CMSEVENEER_SIZE    0x00002000  // 8 KBytes
+
+
+/*
+// <<< end of configuration section >>>
+ */
+
+#define __STACKSEAL_SIZE   ( 8 )
+
+/*----------------------------------------------------------------------------
+  User Stack & Heap boundary definition
+ *----------------------------------------------------------------------------*/
+#define __STACK_TOP  ( __DTCM_BASE+ __DTCM_SIZE - __STACKSEAL_SIZE )  /* starts at end of RAM - 8 byte stack seal */
+#define __HEAP_BASE    (AlignExpr(+0, 128))           /* starts after RW_RAM section, 8 byte aligned */
+
+
+
+/*----------------------------------------------------------------------------
+  Scatter File Definitions definition
+ *----------------------------------------------------------------------------*/
+#define __RO_BASE       __ROM_BASE
+#define __RO_SIZE       __ROM_SIZE
+
+#define __CV_BASE          ( __ROM_BASE + __ROM_SIZE - __CMSEVENEER_SIZE )
+#define __CV_SIZE          ( __CMSEVENEER_SIZE )
+
+#define __LR_BASE          ( __ROM_BASE )
+#define __LR_SIZE          ( __ROM_SIZE - __CV_SIZE )
+
+#define __RW_BASE       __RAM_BASE
+#define __RW_SIZE          ( __RAM_SIZE - __STACK_SIZE - __HEAP_SIZE - __NOINIT_SIZE - __STACKSEAL_SIZE )
+#define __NOCACHE_DATA_SIZE ( __NOCACHE_SIZE - 4 )
+#define __NOCACHE_END_MARKER_BASE ( __NOCACHE_BASE + __NOCACHE_DATA_SIZE )
+
+#define __ER_BASE       __RW_BASE + __RW_SIZE
+#define __ER_SIZE       0x10000      // 64 KBytes
+
+
+
+
+
+LR_IROM1 0x34000400 0x0007D000{    ; load region size_region (500 KBytes)
+  ER_IROM1 0x34000400 0x0007D000{  ; load address = execution address (500 KBytes)
+   *.o (RESET, +First)
+   *(InRoot$$Sections)
+   .ANY (+RO)
+   .ANY (+XO)
+  }
+
+  RW_IRAM1 0x3407D400 0x0008E800  {  ; RW data (570 KBytes)
+   .ANY (+RW +ZI)
+  }
+  
+  RW_NONCACHEABLEBUFFER 0x3410BC00 __NOCACHE_DATA_SIZE {  ; RW non-cacheable data (~2769 KBytes, marker reserves the last 4 bytes)
+   .ANY (.noncacheable)
+  }
+  
+  NOCACHE_REGION_END_MARKER __NOCACHE_END_MARKER_BASE EMPTY 4 {
+  }
+  
+#if __HEAP_SIZE > 0
+  ARM_LIB_HEAP  __HEAP_BASE EMPTY  __HEAP_SIZE  {   ; Reserve empty region for heap
+  }
+#endif
+
+  ARM_LIB_STACK __STACK_TOP EMPTY -__STACK_SIZE {   ; Reserve empty region for stack
+  }  
+}
+
+RW_PSRAM 0x90000000 0x02000000   {  ; External PSRAM (32768 KBytes / 32 MBytes)
+  NO_INIT_SECTION 0x90000000 UNINIT 0x02000000  {
+   *(.bss.NoInit)
+     }
+}
+

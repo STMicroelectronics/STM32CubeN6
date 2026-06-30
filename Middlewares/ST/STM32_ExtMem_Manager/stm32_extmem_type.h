@@ -85,6 +85,7 @@ extern "C" {
 #define EXTMEM_MANUFACTURER_MACRONIX    (0xC2U)   /*!< JEDEC ID for Macronix */
 #define EXTMEM_MANUFACTURER_GIGADEVICE  (0xC8U)   /*!< JEDEC ID for GigaDevice */
 #define EXTMEM_MANUFACTURER_ISSI        (0x9DU)   /*!< JEDEC ID for ISSI */
+#define EXTMEM_MANUFACTURER_WINBOND     (0xEFU)   /*!< JEDEC ID for Winbond */
 /**
   * @}
   */

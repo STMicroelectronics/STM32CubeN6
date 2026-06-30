@@ -2,7 +2,7 @@
 ******************************************************************************
 * @file    main.c
 * @author  MCD Application Team
-* @brief   This project is a HAL template project for STM32N6xx devices.
+* @brief   VENC SDCard bare-metal application for STM32N6xx devices.
 ******************************************************************************
 * @attention
 *
@@ -68,10 +68,10 @@
 
 uint16_t * pipe_buffer[2];
 volatile uint8_t buf_index_changed = 0;
-H264EncIn encIn= {0};
-H264EncOut encOut= {0};
-H264EncInst encoder= {0};
-H264EncConfig cfg= {0};
+H264EncIn encIn;
+H264EncOut encOut;
+H264EncInst encoder;
+H264EncConfig cfg;
 uint32_t output_size = 0;
 uint32_t img_addr = 0;
 
@@ -232,19 +232,22 @@ int main(void)
   BSP_LED_Init(LED1);
   BSP_LED_Init(LED2);
 
-  TRACE_MAIN("CPU frequency    : %d\n", HAL_RCC_GetCpuClockFreq() / 1000000);
-  TRACE_MAIN("sysclk frequency : %d\n", HAL_RCC_GetSysClockFreq() / 1000000);
-  TRACE_MAIN("pclk5 frequency  : %d\n", HAL_RCC_GetPCLK5Freq() / 1000000);
+  TRACE_MAIN("CPU frequency    : %lu\n", (unsigned long)(HAL_RCC_GetCpuClockFreq() / 1000000U));
+  TRACE_MAIN("sysclk frequency : %lu\n", (unsigned long)(HAL_RCC_GetSysClockFreq() / 1000000U));
+  TRACE_MAIN("pclk5 frequency  : %lu\n", (unsigned long)(HAL_RCC_GetPCLK5Freq() / 1000000U));
 
   /* initialize ext flash interface and driver */
 #if USE_SD_AS_OUTPUT
   if (BSP_SD_Init(0) != BSP_ERROR_NONE){
-    TRACE_MAIN("error initializing NOR flash\n");
+    TRACE_MAIN("error initializing SD card\n");
     Error_Handler();
   }
   BSP_SD_CardInfo card_info;
   BSP_SD_GetCardInfo(0, &card_info);
-  TRACE_MAIN("SD card info : \nblock Nbr : %d\nblock size : %d\ncard speed : %d\n", card_info.BlockNbr, card_info.BlockSize, card_info.CardSpeed);
+  TRACE_MAIN("SD card info : \nblock Nbr : %lu\nblock size : %lu\ncard speed : %lu\n",
+             (unsigned long)card_info.BlockNbr,
+             (unsigned long)card_info.BlockSize,
+             (unsigned long)card_info.CardSpeed);
 
 #endif
    /* Initialize camera */
@@ -376,7 +379,7 @@ static int encoder_prepare(uint32_t width, uint32_t height, uint32_t * output_bu
     TRACE_MAIN("error saving stream\n");
     return -1;
   }
-  TRACE_MAIN("stream started. saved %d bytes\n", encOut.streamSize);
+  TRACE_MAIN("stream started. saved %lu bytes\n", (unsigned long)encOut.streamSize);
   output_size+= encOut.streamSize;
   return 0;
 }
@@ -430,7 +433,10 @@ static int Encode_frame(){
 
 static int encoder_end(void){
   int ret = H264EncStrmEnd(encoder, &encIn, &encOut);
-  TRACE_MAIN("done encoding %d frames. size : %d - Blocks : %d\n",frame_nb ,output_size, (output_size+511)/512);
+  TRACE_MAIN("done encoding %d frames. size : %lu - Blocks : %lu\n",
+             frame_nb,
+             (unsigned long)output_size,
+             (unsigned long)((output_size + 511U) / 512U));
   if (ret != H264ENC_OK)
   {
     return -1;

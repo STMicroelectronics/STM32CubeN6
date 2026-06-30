@@ -20,6 +20,10 @@ None.
 
 ### <b>Notes</b>
 
+- In main(), power domains are enabled early using:
+  HAL_PWREx_EnableVddA(), HAL_PWREx_EnableVddIO2(), HAL_PWREx_EnableVddIO3(),
+  HAL_PWREx_EnableVddIO4(), HAL_PWREx_EnableVddIO5() and HAL_PWREx_EnableVddUSB().
+  This helps ensure required analog/IO/USB supplies are available before peripheral initialization.
 
 #### <b>ThreadX usage hints</b>
 
@@ -43,7 +47,7 @@ None.
         LDR r1, =|Image$$RW_IRAM1$$ZI$$Limit|
 	```
     + For STM32CubeIDE add the following section into the .ld file:
-	``` 
+	```
     ._threadx_heap :
       {
          . = ALIGN(8);
@@ -51,14 +55,14 @@ None.
          . = . + 64K;
          . = ALIGN(8);
        } >RAM_D1 AT> RAM_D1
-	``` 
-	
+	```
+
        The simplest way to provide memory for ThreadX is to define a new section, see ._threadx_heap above.
        In the example above the ThreadX heap size is set to 64KBytes.
-       The ._threadx_heap must be located between the .bss and the ._user_heap_stack sections in the linker script.	 
-       Caution: Make sure that ThreadX does not need more than the provided heap memory (64KBytes in this example).	 
+       The ._threadx_heap must be located between the .bss and the ._user_heap_stack sections in the linker script.
+       Caution: Make sure that ThreadX does not need more than the provided heap memory (64KBytes in this example).
        Read more in STM32CubeIDE User Guide, chapter: "Linker script".
-	  
+
     + The "tx_initialize_low_level.s" should be also modified to enable the "USE_DYNAMIC_MEMORY_ALLOCATION" flag.
 
 #### <b>USBX usage hints</b>
@@ -75,7 +79,7 @@ Connectivity, USBPD, ThreadX, UART/USART, USB_PD_Lib, UCPD, Type C, USBPD
 
 - STM32N6570-DK Set-up
     - Connect ST-Link cable to the PC USB port to display data on the CubeMx Monitor.
-	
+
   - **EWARM** : To monitor a variable in the live watch window, you must proceed as follow :
     - Start a debugging session.
     - Open the View > Images.

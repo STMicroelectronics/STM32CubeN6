@@ -1,0 +1,16 @@
+
+
+/* Called once after the target application is downloaded. */
+execUserSetup()
+{
+
+    /* Re-load image partially erased by IAR reset */
+    __loadImage("$EXE_DIR$\\$TARGET_FNAME$", 0, 0);
+
+    __restoreSoftwareBreakpoints();
+
+     #PC = __readMemory32(0x34180404, "Memory");
+
+     #SP = 0x341FFD00;
+
+}

@@ -142,7 +142,7 @@ static UINT         _nx_driver_hardware_capability_set(NX_IP_DRIVER *driver_req_
 /*    DATE              NAME                      DESCRIPTION             */
 /*                                                                        */
 /*  05-19-2020     Yuxin Zhou               Initial Version 6.0           */
-/*  xx-xx-xxxx     Yuxin Zhou               Modified comment(s),          */
+/*  04-21-2026     STMicroelectronics       Comment updates only,         */
 /*                                            resulting in version 6.1    */
 /*                                                                        */
 /**************************************************************************/
@@ -2005,6 +2005,10 @@ static UINT  _nx_driver_hardware_packet_send_distribute(NX_PACKET *packet_ptr, U
 
   int retry = 0;
   uint32_t err = 0;
+  /* Retry is a workaround for NetX not signaling packet drop                                                  */
+  /* This workaround is not satisfactory because the inter-retry interval limits bandwidth                     */
+  /* If this situation occurs, transfer optimization possibilities should be explored                          */
+  /* For example: increase the number of RX/TX buffers, separate buffer pools, and  optimize buffer placement  */
   do
   {
     err = HAL_ETH_Transmit_IT(&eth_handle, &TxPacketCfg);
@@ -2019,6 +2023,11 @@ static UINT  _nx_driver_hardware_packet_send_distribute(NX_PACKET *packet_ptr, U
       }
     }
   } while ((err & HAL_ETH_ERROR_BUSY) && retry < 10);
+  
+  if (retry)
+  {
+     printf("HAL_ETH_Transmit_IT failed %d times\n", retry);
+  }
   
   if (err)
   {

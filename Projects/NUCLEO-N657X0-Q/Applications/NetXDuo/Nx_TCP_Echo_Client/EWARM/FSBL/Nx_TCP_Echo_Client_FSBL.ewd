@@ -60,7 +60,7 @@
                 </option>
                 <option>
                     <name>CExtraOptions</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>CFpuProcessor</name>
@@ -68,7 +68,7 @@
                 </option>
                 <option>
                     <name>OCDDFArgumentProducer</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>OCDownloadSuppressDownload</name>
@@ -104,7 +104,7 @@
                 </option>
                 <option>
                     <name>MacFile2</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>CDevice</name>
@@ -112,7 +112,7 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
@@ -120,7 +120,7 @@
                 </option>
                 <option>
                     <name>OCImagesPath1</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck2</name>
@@ -128,7 +128,7 @@
                 </option>
                 <option>
                     <name>OCImagesPath2</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck3</name>
@@ -136,7 +136,7 @@
                 </option>
                 <option>
                     <name>OCImagesPath3</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>OverrideDefFlashBoard</name>
@@ -148,11 +148,11 @@
                 </option>
                 <option>
                     <name>OCImagesOffset2</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>OCImagesOffset3</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>OCImagesUse1</name>
@@ -184,15 +184,15 @@
                 </option>
                 <option>
                     <name>OCMulticoreWorkspace</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>OCMulticoreSlaveProject</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>OCMulticoreSlaveConfiguration</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>OCDownloadExtraImage</name>
@@ -216,7 +216,7 @@
                 </option>
                 <option>
                     <name>OCMulticoreSessionFile</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>OCTpiuBaseOption</name>
@@ -228,7 +228,7 @@
                 </option>
                 <option>
                     <name>OCOverrideSlavePath</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>C_32_64Device</name>
@@ -244,11 +244,11 @@
                 </option>
                 <option>
                     <name>AuthSdmManifest</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>AuthSdmExplicitLib</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>AuthEnforce</name>
@@ -277,7 +277,7 @@
                 </option>
                 <option>
                     <name>OCSimPspConfigFile</name>
-                    <state></state>
+                    <state />
                 </option>
             </data>
         </settings>
@@ -294,7 +294,7 @@
                 </option>
                 <option>
                     <name>Fast Model</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>CCADILogFileCheck</name>
@@ -461,7 +461,7 @@
                 </option>
                 <option>
                     <name>OCProbeConfig</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>CMSISDAPProbeConfigRadio</name>
@@ -473,7 +473,7 @@
                 </option>
                 <option>
                     <name>ICpuName</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>OCJetEmuParams</name>
@@ -481,7 +481,7 @@
                 </option>
                 <option>
                     <name>CCCMSISDAPUsbSerialNo</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>CCCMSISDAPUsbSerialNoSelect</name>
@@ -502,7 +502,7 @@
                 </option>
                 <option>
                     <name>CE2UsbSerialNo</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>CE2IdCodeEditB</name>
@@ -735,7 +735,7 @@
                 </option>
                 <option>
                     <name>OCProbeConfig</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>IjetProbeConfigRadio</name>
@@ -755,7 +755,7 @@
                 </option>
                 <option>
                     <name>ICpuName</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>OCJetEmuParams</name>
@@ -781,7 +781,7 @@
                 </option>
                 <option>
                     <name>CCIjetUsbSerialNo</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>CCIjetUsbSerialNoSelect</name>
@@ -1004,7 +1004,7 @@
                 </option>
                 <option>
                     <name>CCJLinkUsbSerialNo</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>CCTcpIpAlt</name>
@@ -1013,7 +1013,7 @@
                 </option>
                 <option>
                     <name>CCJLinkTcpIpSerialNo</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>CCCpuClockEdit</name>
@@ -1074,7 +1074,7 @@
                 </option>
                 <option>
                     <name>CCLmiftdiUsbSerialNo</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>CCLmiftdiUsbSerialNoSelect</name>
@@ -1159,7 +1159,7 @@
                 </option>
                 <option>
                     <name>CCCpuClockEdit</name>
-                    <state>80.0</state>
+                    <state>75.0</state>
                 </option>
                 <option>
                     <name>CCSwoClockAuto</name>
@@ -1227,7 +1227,7 @@
                 </option>
                 <option>
                     <name>CCSTLinkUsbSerialNo</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>CCSTLinkUsbSerialNoSelect</name>
@@ -1495,7 +1495,7 @@
                 </option>
                 <option>
                     <name>CCXds100UsbSerialNo</name>
-                    <state></state>
+                    <state />
                 </option>
                 <option>
                     <name>CCXds100UsbSerialNoSelect</name>

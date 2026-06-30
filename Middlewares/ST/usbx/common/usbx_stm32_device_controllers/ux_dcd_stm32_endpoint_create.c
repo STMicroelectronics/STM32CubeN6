@@ -78,7 +78,8 @@ UINT  _ux_dcd_stm32_endpoint_create(UX_DCD_STM32 *dcd_stm32, UX_SLAVE_ENDPOINT *
 
 UX_DCD_STM32_ED     *ed;
 ULONG               stm32_endpoint_index;
-
+ULONG               endpoint_bInterval;
+UINT                endpoint_type;
 
     /* The endpoint index in the array of the STM32 must match the endpoint number.  */
     stm32_endpoint_index =  endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress & ~UX_ENDPOINT_DIRECTION;
@@ -89,12 +90,31 @@ ULONG               stm32_endpoint_index;
     if (ed == UX_NULL)
         return(UX_NO_ED_AVAILABLE);
 
+    endpoint_type = (endpoint -> ux_slave_endpoint_descriptor.bmAttributes & UX_MASK_ENDPOINT_TYPE);
+
+    endpoint_bInterval = endpoint -> ux_slave_endpoint_descriptor.bInterval;
+
+    /* Reject invalid ISO bInterval values.  */
+    if (endpoint_type == UX_ISOCHRONOUS_ENDPOINT)
+    {
+        UX_ASSERT((endpoint_bInterval >= 1U) && (endpoint_bInterval <= 16U));
+        if ((endpoint_bInterval < 1U) || (endpoint_bInterval > 16U))
+            return(UX_DESCRIPTOR_CORRUPTED);
+    }
+
     /* Check the endpoint status, if it is free, reserve it. If not reject this endpoint.  */
     if ((ed -> ux_dcd_stm32_ed_status & UX_DCD_STM32_ED_STATUS_USED) == 0)
     {
 
         /* We can use this endpoint.  */
         ed -> ux_dcd_stm32_ed_status |=  UX_DCD_STM32_ED_STATUS_USED;
+
+        if (endpoint_type == UX_ISOCHRONOUS_ENDPOINT)
+        {
+#if defined(USBD_HAL_ISOINCOMPLETE_CALLBACK)
+            _ux_dcd_stm32_iso_endpoint_state_reset(endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress);
+#endif /* defined(USBD_HAL_ISOINCOMPLETE_CALLBACK) */
+        }
 
         /* Keep the physical endpoint address in the endpoint container.  */
         endpoint -> ux_slave_endpoint_ed =  (VOID *) ed;
@@ -116,6 +136,13 @@ ULONG               stm32_endpoint_index;
             HAL_PCD_EP_Open(dcd_stm32 -> pcd_handle, endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress,
                             endpoint -> ux_slave_endpoint_descriptor.wMaxPacketSize,
                             endpoint -> ux_slave_endpoint_descriptor.bmAttributes & UX_MASK_ENDPOINT_TYPE);
+
+            /* Check for isochronous endpoints.  */
+            if (endpoint_type == UX_ISOCHRONOUS_ENDPOINT)
+            {
+                ed -> ux_stm32_ed_interval_mask = (1UL << (endpoint_bInterval - 1U)) - 1U;
+                ed -> ux_stm32_ed_interval_position = 0U;
+            }
         }
 
         /* Return successful completion.  */
@@ -125,4 +152,3 @@ ULONG               stm32_endpoint_index;
     /* Return an error.  */
     return(UX_NO_ED_AVAILABLE);
 }
-

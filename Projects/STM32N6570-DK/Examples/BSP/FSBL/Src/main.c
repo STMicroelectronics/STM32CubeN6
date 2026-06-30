@@ -66,7 +66,7 @@ int main(void)
   /* Configure the MPU attributes as Write Through */
   MPU_Config();
 
-  /* STM32Nxx HAL library initialization:
+    /* STM32N6xx HAL library initialization:
        - Systick timer is configured by default as source of time base, but user
          can eventually implement his proper time base source (a general purpose
          timer for example or other time source), keeping in mind that Time base

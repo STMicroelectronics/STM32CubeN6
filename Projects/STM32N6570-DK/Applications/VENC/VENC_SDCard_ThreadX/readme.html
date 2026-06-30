@@ -22,7 +22,7 @@
 <body>
 <h2 id="venc_sdcard_threadx-description"><b>VENC_SDCard_ThreadX Description</b></h2>
 <p>This project demonstrates the use of the STM32N6 video encoder and the camera pipeline.</p>
-<p>It is targeted to run on STM32N657xx device on STM32N6570-DK board from STMicroelectronics.</p>
+<p>It is targeted to run on STM32N657xx devices on the STM32N6570-DK board from STMicroelectronics.</p>
 <p>It allows easy testing of the following use cases:</p>
 <ul>
 <li>Frame mode</li>
@@ -30,12 +30,12 @@
 </ul>
 <p>This application is meant to run in internal SRAM via the Load &amp; Run method.</p>
 <p>The application is stored in external flash and then loaded in internal RAM for execution.<br></p>
-<p>It can also be run in dev_mode debug.</p>
+<p>It can also be run in development-mode debug.</p>
 <p>For information on those modes, see the “How to use” section.</p>
 <h3 id="example-behaviour"><b> Example behaviour </b></h3>
 <p>This example takes a camera (IMX335) input and transfers it to the video encoder through the camera pipeline.</p>
 <p>The camera image is also displayed on the board’s LCD screen for user feedback of what is being recorded.</p>
-<p>The video encoder output stream is saved to the SD car.</p>
+<p>The video encoder output stream is saved to the SD card.</p>
 <p>For information on how to get data from the SD card after the execution of the example, see the “How to use” section.</p>
 <p>This example uses ThreadX for its RTOS functionality.</p>
 <p>The ewl_conf.h file is set up accordingly to take advantage of ThreadX’s memory management and synchronization features within the video encoder software.</p>
@@ -105,9 +105,9 @@
 - Appli/Core/Inc/fx_user.h                      FileX user config</code></pre>
 <h3 id="hardware-and-software-environment"><b>Hardware and Software environment</b></h3>
 <ul>
-<li><p>This template runs on STM32N6 devices.</p></li>
-<li><p>This template has been tested with STMicroelectronics STM32N6570-DK (MB1939) board and can be easily tailored to any other supported device and development board.</p></li>
-<li><p>This application uses USART1 to display logs, the hyperterminal configuration is as follows:</p>
+<li><p>This application runs on STM32N6 devices.</p></li>
+<li><p>This application has been tested with STMicroelectronics STM32N6570-DK (MB1939) board and can be easily tailored to any other supported device and development board.</p></li>
+<li><p>This application uses USART1 to display logs. The HyperTerminal configuration is as follows:</p>
 <ul>
 <li>BaudRate = 115200 baud</li>
 <li>Word Length = 8 Bits</li>
@@ -127,7 +127,7 @@
 <p>Make sure that BOOT1 switch position is 1-3. BOOT0 position does not matter. Then, plug in your board via the ST-LINK USB port.</p>
 <p>Select the “Appli” tab in IAR and select the “DK_debug” configuration. This enables the development mode configuration.<br> Then, simply click the execute button and the program will run in debug mode.</p>
 <h4 id="load-run"><b> Load &amp; Run </b></h4>
-<p>This mode enables execution without having to connect through an IDE. The application will be stored in external memory and therefore will no require any external tools once loaded onto the board.</p>
+<p>This mode enables execution without having to connect through an IDE. The application will be stored in external memory and therefore will not require any external tools once loaded onto the board.</p>
 <p>It is expected that a command line environment is configured with the CubeProgrammer in its PATH.</p>
 <ul>
 <li>Compile the FSBL project and the Appli project</li>
@@ -138,8 +138,12 @@
 <li>Press the reset button</li>
 <li>The example should execute</li>
 </ul>
-<p><strong>Note</strong>: 2 scripts are provided as example for signing and flashing IAR or CubeIDE builds VENC_SDCard_ThreadX/Tools/flash_IAR.sh VENC_SDCard_ThreadX/Tools/flash_cubeIDE.sh</p>
-<p>Please adapt the scripts to your environment</p>
+<p><strong>Note</strong>: 2 scripts are provided as examples for signing and flashing IAR or CubeIDE builds:</p>
+<ul>
+<li>VENC_SDCard_ThreadX/Tools/flash_IAR.sh</li>
+<li>VENC_SDCard_ThreadX/Tools/flash_cubeIDE.sh</li>
+</ul>
+<p>Please adapt the scripts to your environment.</p>
 <h4 id="after-execution"><b> After execution </b></h4>
 <p>After each 600 frames of video have been encoded, a new xxx.h264 file is completed. To play them back, the SD card should be plugged into a computer, and the xxx.h264 files should appear.</p>
 <p>To read back encoded video, it can be converted from raw bytestream to mp4 using <strong>ffmpeg</strong> with the following command : <code>ffmpeg -f h264 -framerate 30 -i xxxx.h264 -c copy xxx.mp4</code></p>

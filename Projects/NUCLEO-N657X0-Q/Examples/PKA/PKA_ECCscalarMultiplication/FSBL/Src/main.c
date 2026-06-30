@@ -59,7 +59,6 @@ void SystemClock_Config(void);
 static void MX_RNG_Init(void);
 static void MX_PKA_Init(void);
 /* USER CODE BEGIN PFP */
-static void MX_ICACHE_Init(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -113,7 +112,6 @@ int main(void)
   MX_RNG_Init();
   MX_PKA_Init();
   /* USER CODE BEGIN 2 */
-  MX_ICACHE_Init();
    /* Set input parameters */
   in.modulusSize =     prime256v1_Prime_len;
   in.coefSign =        prime256v1_A_sign;
@@ -360,41 +358,11 @@ static void MX_RNG_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-/**
-  * @brief ICACHE Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_ICACHE_Init(void)
-{
-
-  /* USER CODE BEGIN ICACHE_Init 0 */
-
-  /* USER CODE END ICACHE_Init 0 */
-
-  /* USER CODE BEGIN ICACHE_Init 1 */
-
-  /* USER CODE END ICACHE_Init 1 */
-
-  /** Enable instruction cache in 1-way (direct mapped cache)
-  */
-  if (HAL_ICACHE_ConfigAssociativityMode(ICACHE_1WAY) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  if (HAL_ICACHE_Enable() != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN ICACHE_Init 2 */
-
-  /* USER CODE END ICACHE_Init 2 */
-
-}
 /* USER CODE END 4 */
 
 /**
   * @brief  This function is executed in case of error occurrence.
+  * @param  None
   * @retval None
   */
 void Error_Handler(void)

@@ -51,6 +51,8 @@ RNG_HandleTypeDef hrng;
 uint32_t aRandom32bit[8];
 __IO uint8_t    ubUserButtonClickEvent = RESET;  /* Event detection: Set after User Button interrupt */
 __IO uint32_t    RNGStatus = 0;
+/* Used to counter the random numbers */
+__IO uint32_t counter = 0;
 
 /* USER CODE END PV */
 
@@ -77,7 +79,6 @@ int main(void)
   /* USER CODE BEGIN 1 */
   RNG_ConfigTypeDef Conf;
   RNG_ConfigTypeDef Conf_read;
-  uint32_t counter = 0;
 
   
   /* STM32N6xx HAL library initialization:
@@ -163,7 +164,7 @@ int main(void)
     }
     /* Reset variable for next loop iteration */
     ubUserButtonClickEvent = RESET;
-
+    counter = 0;
     /* Generate eigh.t 32-bit long random numbers */
     for (counter = 0; counter < 8; counter++)
     {
@@ -173,6 +174,7 @@ int main(void)
         Error_Handler();
       }
     }
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -331,6 +333,7 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 
 /**
   * @brief  This function is executed in case of error occurrence.
+  * @param  None
   * @retval None
   */
 void Error_Handler(void)
@@ -346,8 +349,7 @@ void Error_Handler(void)
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

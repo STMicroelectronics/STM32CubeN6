@@ -90,8 +90,8 @@ int main(void)
   MX_GPDMA1_Init();
 
   TRACE_MAIN("VENC_RTSP_Server\n");
-  TRACE_MAIN("CPU frequency    : %ld MHz\n", HAL_RCC_GetCpuClockFreq() / 1000000);
-  TRACE_MAIN("sysclk frequency : %ld MHz\n", HAL_RCC_GetSysClockFreq() / 1000000);
+  TRACE_MAIN("CPU frequency    : %lu MHz\n", (unsigned long)(HAL_RCC_GetCpuClockFreq() / 1000000UL));
+  TRACE_MAIN("sysclk frequency : %lu MHz\n", (unsigned long)(HAL_RCC_GetSysClockFreq() / 1000000UL));
 
   /* Start OS*/
   MX_ThreadX_Init();
@@ -265,6 +265,21 @@ static void MPU_CheckAndConfig( MPU_Region_InitTypeDef * region_config)
 } 
 
 /* Get regions boundaries (exported from link files)*/
+#if defined(__ARMCC_VERSION)
+extern uint32_t Image$$ER_IROM1$$Base;
+extern uint32_t Image$$RW_IRAM1$$Base;
+extern uint32_t Image$$RW_NONCACHEABLEBUFFER$$Base;
+  extern uint32_t Image$$NOCACHE_REGION_END_MARKER$$ZI$$Limit;
+
+#define RO_REGION_START       ((uint32_t)&Image$$ER_IROM1$$Base)
+  #define RO_REGION_END         ((uint32_t)&Image$$RW_IRAM1$$Base)
+#define RW_REGION_START       ((uint32_t)&Image$$RW_IRAM1$$Base)
+  #define RW_REGION_END         ((uint32_t)&Image$$RW_NONCACHEABLEBUFFER$$Base)
+#define NOCACHE_REGION_START  ((uint32_t)&Image$$RW_NONCACHEABLEBUFFER$$Base)
+  #define NOCACHE_REGION_END    ((uint32_t)&Image$$NOCACHE_REGION_END_MARKER$$ZI$$Limit)
+#define PSRAM_REGION_START    (0x90000000U)
+#define PSRAM_REGION_END      (0x92000000U)
+#else
 extern int __ro_region_start__;
 extern int __ro_region_end__;
 
@@ -276,6 +291,16 @@ extern int __nocache_region_end__;
 
 extern int __psram_region_start__;
 extern int __psram_region_end__;
+
+#define RO_REGION_START       ((uint32_t)&__ro_region_start__)
+#define RO_REGION_END         ((uint32_t)&__ro_region_end__)
+#define RW_REGION_START       ((uint32_t)&__rw_region_start__)
+#define RW_REGION_END         ((uint32_t)&__rw_region_end__)
+#define NOCACHE_REGION_START  ((uint32_t)&__nocache_region_start__)
+#define NOCACHE_REGION_END    ((uint32_t)&__nocache_region_end__)
+#define PSRAM_REGION_START    ((uint32_t)&__psram_region_start__)
+#define PSRAM_REGION_END      ((uint32_t)&__psram_region_end__)
+#endif
 
 
 /**
@@ -308,8 +333,8 @@ static void MPU_Config(void)
   mpu_config.Enable           = MPU_REGION_ENABLE;
   mpu_config.Number           = region_number++;
   mpu_config.AttributesIndex  = CACHED_ATTRIBUTE; /*Cached*/
-  mpu_config.BaseAddress      = (uint32_t)&__ro_region_start__;
-  mpu_config.LimitAddress     = (uint32_t)&__ro_region_end__ - 1;
+  mpu_config.BaseAddress      = RO_REGION_START;
+  mpu_config.LimitAddress     = RO_REGION_END - 1;
   mpu_config.AccessPermission = MPU_REGION_ALL_RO;
   mpu_config.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
   mpu_config.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
@@ -319,8 +344,8 @@ static void MPU_Config(void)
   mpu_config.Enable           = MPU_REGION_ENABLE;
   mpu_config.Number           = region_number++;
   mpu_config.AttributesIndex  = UNCACHED_ATTRIBUTE;  /*uncached*/
-  mpu_config.BaseAddress      = (uint32_t)&__nocache_region_start__;
-  mpu_config.LimitAddress     = (uint32_t)&__nocache_region_end__ - 1;
+  mpu_config.BaseAddress      = NOCACHE_REGION_START;
+  mpu_config.LimitAddress     = NOCACHE_REGION_END - 1;
   mpu_config.AccessPermission = MPU_REGION_ALL_RW;
   mpu_config.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
   mpu_config.IsShareable      = MPU_ACCESS_INNER_SHAREABLE | MPU_ACCESS_OUTER_SHAREABLE;
@@ -330,8 +355,8 @@ static void MPU_Config(void)
   mpu_config.Enable           = MPU_REGION_ENABLE;
   mpu_config.Number           = region_number++;
   mpu_config.AttributesIndex  = CACHED_ATTRIBUTE;  /*Cached*/
-  mpu_config.BaseAddress      = (uint32_t)&__rw_region_start__;
-  mpu_config.LimitAddress     = (uint32_t)&__rw_region_end__ - 1;
+  mpu_config.BaseAddress      = RW_REGION_START;
+  mpu_config.LimitAddress     = RW_REGION_END - 1;
   mpu_config.AccessPermission = MPU_REGION_ALL_RW;
   mpu_config.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
   mpu_config.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
@@ -341,8 +366,8 @@ static void MPU_Config(void)
   mpu_config.Enable           = MPU_REGION_ENABLE;
   mpu_config.Number           = region_number++;
   mpu_config.AttributesIndex  = UNCACHED_ATTRIBUTE;  /*Uncached*/
-  mpu_config.BaseAddress      = (uint32_t)&__psram_region_start__;
-  mpu_config.LimitAddress     = (uint32_t)&__psram_region_end__ - 1;
+  mpu_config.BaseAddress      = PSRAM_REGION_START;
+  mpu_config.LimitAddress     = PSRAM_REGION_END - 1;
   mpu_config.AccessPermission = MPU_REGION_ALL_RW;
   mpu_config.DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE;
   mpu_config.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;

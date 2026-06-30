@@ -249,11 +249,14 @@
     <ClInclude Include="..\..\framework\tests\include\test\asn1_helpers.h" />
     <ClInclude Include="..\..\framework\tests\include\test\bignum_codepath_check.h" />
     <ClInclude Include="..\..\framework\tests\include\test\bignum_helpers.h" />
+    <ClInclude Include="..\..\framework\tests\include\test\build_info.h" />
     <ClInclude Include="..\..\framework\tests\include\test\constant_flow.h" />
     <ClInclude Include="..\..\framework\tests\include\test\fake_external_rng_for_test.h" />
+    <ClInclude Include="..\..\framework\tests\include\test\fork_helpers.h" />
     <ClInclude Include="..\..\framework\tests\include\test\helpers.h" />
     <ClInclude Include="..\..\framework\tests\include\test\macros.h" />
     <ClInclude Include="..\..\framework\tests\include\test\memory.h" />
+    <ClInclude Include="..\..\framework\tests\include\test\pk_helpers.h" />
     <ClInclude Include="..\..\framework\tests\include\test\psa_crypto_helpers.h" />
     <ClInclude Include="..\..\framework\tests\include\test\psa_exercise_key.h" />
     <ClInclude Include="..\..\framework\tests\include\test\psa_helpers.h" />
@@ -276,6 +279,7 @@
     <ClInclude Include="..\..\framework\tests\include\test\drivers\signature.h" />
     <ClInclude Include="..\..\framework\tests\include\test\drivers\test_driver.h" />
     <ClInclude Include="..\..\framework\tests\include\test\drivers\test_driver_common.h" />
+    <ClInclude Include="..\..\framework\tests\include\test\drivers\xof.h" />
     <ClInclude Include="..\..\library\aesce.h" />
     <ClInclude Include="..\..\library\aesni.h" />
     <ClInclude Include="..\..\library\alignment.h" />
@@ -323,6 +327,7 @@
     <ClInclude Include="..\..\library\psa_crypto_its.h" />
     <ClInclude Include="..\..\library\psa_crypto_mac.h" />
     <ClInclude Include="..\..\library\psa_crypto_pake.h" />
+    <ClInclude Include="..\..\library\psa_crypto_random.h" />
     <ClInclude Include="..\..\library\psa_crypto_random_impl.h" />
     <ClInclude Include="..\..\library\psa_crypto_rsa.h" />
     <ClInclude Include="..\..\library\psa_crypto_se.h" />
@@ -337,6 +342,7 @@
     <ClInclude Include="..\..\library\ssl_misc.h" />
     <ClInclude Include="..\..\library\ssl_tls13_invasive.h" />
     <ClInclude Include="..\..\library\ssl_tls13_keys.h" />
+    <ClInclude Include="..\..\library\threading_internal.h" />
     <ClInclude Include="..\..\library\x509_internal.h" />
     <ClInclude Include="..\..\framework\tests\programs\query_config.h" />
     <ClInclude Include="..\..\3rdparty\everest\include\everest\everest.h" />
@@ -414,6 +420,7 @@
     <ClCompile Include="..\..\library\psa_crypto_hash.c" />
     <ClCompile Include="..\..\library\psa_crypto_mac.c" />
     <ClCompile Include="..\..\library\psa_crypto_pake.c" />
+    <ClCompile Include="..\..\library\psa_crypto_random.c" />
     <ClCompile Include="..\..\library\psa_crypto_rsa.c" />
     <ClCompile Include="..\..\library\psa_crypto_se.c" />
     <ClCompile Include="..\..\library\psa_crypto_slot_management.c" />
@@ -457,7 +464,9 @@
     <ClCompile Include="..\..\framework\tests\src\bignum_codepath_check.c" />
     <ClCompile Include="..\..\framework\tests\src\bignum_helpers.c" />
     <ClCompile Include="..\..\framework\tests\src\fake_external_rng_for_test.c" />
+    <ClCompile Include="..\..\framework\tests\src\fork_helpers.c" />
     <ClCompile Include="..\..\framework\tests\src\helpers.c" />
+    <ClCompile Include="..\..\framework\tests\src\pk_helpers.c" />
     <ClCompile Include="..\..\framework\tests\src\psa_crypto_helpers.c" />
     <ClCompile Include="..\..\framework\tests\src\psa_crypto_stubs.c" />
     <ClCompile Include="..\..\framework\tests\src\psa_exercise_key.c" />
@@ -477,6 +486,7 @@
     <ClCompile Include="..\..\framework\tests\src\drivers\test_driver_mac.c" />
     <ClCompile Include="..\..\framework\tests\src\drivers\test_driver_pake.c" />
     <ClCompile Include="..\..\framework\tests\src\drivers\test_driver_signature.c" />
+    <ClCompile Include="..\..\framework\tests\src\drivers\xof.c" />
     <ClCompile Include="..\..\3rdparty\everest\library\everest.c" />
     <ClCompile Include="..\..\3rdparty\everest\library\Hacl_Curve25519_joined.c" />
     <ClCompile Include="..\..\3rdparty\everest\library\x25519.c" />

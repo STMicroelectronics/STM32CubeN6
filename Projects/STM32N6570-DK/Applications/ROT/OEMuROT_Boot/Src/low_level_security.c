@@ -614,90 +614,6 @@ const MPU_Region_Config_t mpu_region_cfg_appli_s[] __attribute__((section(".BL2_
 #if defined(__ICCARM__)
 #pragma location=".BL2_Jump_Data"
 #endif
-const MPU_Region_Config_t mpu_region_cfg_appli_ns[] __attribute__((section(".BL2_Jump_Data"))) = {
-  /* Region 0: Allows RW access to peripherals */
-  {
-    {
-      .Enable           = MPU_REGION_ENABLE,
-      .Number           = MPU_REGION_NUMBER0,
-      .AttributesIndex  = MPU_ATTRIBUTE_DEVICE,
-      .BaseAddress      = PERIPH_BASE_NS,
-      .LimitAddress     = PERIPH_BASE_NS + 0xFFFFFFF,
-      .AccessPermission = MPU_REGION_PRIV_RW,
-      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
-      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
-      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
-    },
-#ifdef FLOW_CONTROL
-    FLOW_STEP_MPU_NS_A_EN_R0,
-    FLOW_CTRL_MPU_NS_A_EN_R0,
-    FLOW_STEP_MPU_NS_A_CH_R0,
-    FLOW_CTRL_MPU_NS_A_CH_R0,
-#endif /* FLOW_CONTROL */
-  },
-  /* Region 1: Allows execution of application non secure */
-  {
-    {
-      .Enable           = MPU_REGION_ENABLE,
-      .Number           = MPU_REGION_NUMBER1,
-      .AttributesIndex  = MPU_ATTRIBUTE_CODE,
-      .BaseAddress      = NS_CODE_START,
-      .LimitAddress     = NS_CODE_LIMIT,
-      .AccessPermission = MPU_REGION_PRIV_RO,
-      .DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE,
-      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_ENABLE,
-      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
-    },
-#ifdef FLOW_CONTROL
-    FLOW_STEP_MPU_NS_A_EN_R1,
-    FLOW_CTRL_MPU_NS_A_EN_R1,
-    FLOW_STEP_MPU_NS_A_CH_R1,
-    FLOW_CTRL_MPU_NS_A_CH_R1,
-#endif /* FLOW_CONTROL */
-  },
-  /* Region 2: Allows RW access on application non secure DATA area */
-  {
-    {
-      .Enable           = MPU_REGION_ENABLE,
-      .Number           = MPU_REGION_NUMBER2,
-      .AttributesIndex  = MPU_ATTRIBUTE_DATA,
-      .BaseAddress      = NS_DATA_START,
-      .LimitAddress     = NS_DATA_LIMIT,
-      .AccessPermission = MPU_REGION_PRIV_RW,
-      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
-      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
-      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
-    },
-#ifdef FLOW_CONTROL
-    FLOW_STEP_MPU_NS_A_EN_R2,
-    FLOW_CTRL_MPU_NS_A_EN_R2,
-    FLOW_STEP_MPU_NS_A_CH_R2,
-    FLOW_CTRL_MPU_NS_A_CH_R2,
-#endif /* FLOW_CONTROL */
-  },
-#if (MCUBOOT_NS_DATA_IMAGE_NUMBER == 1)
-  /* Region 3: Allows reading of non secure DATA */
-  {
-    {
-      .Enable           = MPU_REGION_ENABLE,
-      .Number           = MPU_REGION_NUMBER3,
-      .AttributesIndex  = MPU_ATTRIBUTE_DATANOCACHE,
-      .BaseAddress      = NS_DATA2_START,
-      .LimitAddress     = NS_DATA2_LIMIT,
-      .AccessPermission = MPU_REGION_PRIV_RO,
-      .DisableExec      = MPU_INSTRUCTION_ACCESS_DISABLE,
-      .DisablePrivExec  = MPU_PRIV_INSTRUCTION_ACCESS_DISABLE,
-      .IsShareable      = MPU_ACCESS_NOT_SHAREABLE,
-    },
-#ifdef FLOW_CONTROL
-    FLOW_STEP_MPU_NS_A_EN_R3,
-    FLOW_CTRL_MPU_NS_A_EN_R3,
-    FLOW_STEP_MPU_NS_A_CH_R3,
-    FLOW_CTRL_MPU_NS_A_CH_R3,
-#endif /* FLOW_CONTROL */
-  },
-#endif /* MCUBOOT_NS_DATA_IMAGE_NUMBER == 1 */
-};
 
 #if (OEMUROT_TAMPER_ENABLE == INTERNAL_TAMPER_ONLY)
 static const RTC_SecureStateTypeDef TamperSecureConf = {
@@ -735,11 +651,14 @@ extern volatile uint32_t TamperEventCleared;
   * @{
   */
 static void sau_init_cfg(void);
-static void rif_init_cfg(void);
 static void mpu_init_cfg(void);
 static void mpu_appli_cfg(void);
 
+#if MCUBOOT_APP_IMAGE_NUMBER == 2
+static void rif_init_cfg(void);
 static int8_t RIF_RISAF_CheckRegionConfig(RISAF_TypeDef *RISAFx, uint32_t Region, const RISAF_BaseRegionConfig_t *pConfig);
+#endif
+
 #ifdef OEMUROT_MPU_PROTECTION
 static int8_t MPU_CheckRegion(MPU_Type *MPUx, const MPU_Region_InitTypeDef *MPU_Init);
 static int8_t MPU_CheckMemoryAttributes(MPU_Type *MPUx, const MPU_Attributes_InitTypeDef *pMPU_AttributesInit);
@@ -765,8 +684,10 @@ void LL_SECU_ApplyRunTimeProtections(void)
   /* Configure and enable SAU */
   sau_init_cfg();
 
+#if MCUBOOT_APP_IMAGE_NUMBER == 2
   /* Configure and enable RIF */
   rif_init_cfg();
+#endif
 
   /* Set MPU to forbid execution outside of immutable code  */
   mpu_init_cfg();
@@ -926,6 +847,7 @@ static void sau_init_cfg(void)
 }
 
 
+#if MCUBOOT_APP_IMAGE_NUMBER == 2
 /**
   * @brief  RIF initialization
   * @param  None
@@ -970,6 +892,7 @@ static void rif_init_cfg(void)
     }
   }
 }
+#endif
 
 /**
   * @brief  MPU cleaning
@@ -1019,9 +942,6 @@ static void mpu_init_cfg(void)
     HAL_MPU_Enable(MPU_HARDFAULT_NMI);
     FLOW_CONTROL_STEP(uFlowProtectValue, FLOW_STEP_MPU_S_I_EN, FLOW_CTRL_MPU_S_I_EN);
 
-    /* Enable non secure MPU */
-    HAL_MPU_Enable_NS(MPU_HARDFAULT_NMI);
-    FLOW_CONTROL_STEP(uFlowProtectValue, FLOW_STEP_MPU_NS_I_EN, FLOW_CTRL_MPU_NS_I_EN);
   }
   /* Verification stage */
   else
@@ -1059,18 +979,11 @@ static void mpu_init_cfg(void)
       FLOW_CONTROL_STEP(uFlowProtectValue, FLOW_STEP_MPU_S_I_CH, FLOW_CTRL_MPU_S_I_CH);
     }
 
-    if (MPU_NS->CTRL != (MPU_HARDFAULT_NMI | MPU_CTRL_ENABLE_Msk))
-    {
-      Error_Handler();
-    }
-    else
-    {
-      FLOW_CONTROL_STEP(uFlowProtectValue, FLOW_STEP_MPU_NS_I_CH, FLOW_CTRL_MPU_NS_I_CH);
-    }
   }
 #endif /* OEMUROT_MPU_PROTECTION */
 }
 
+#if MCUBOOT_APP_IMAGE_NUMBER == 2
 static int8_t RIF_RISAF_CheckRegionConfig(RISAF_TypeDef *RISAFx, uint32_t Region, const RISAF_BaseRegionConfig_t *pConfig)
 {
   uint32_t cidcfgr = 0, cfgr = 0;
@@ -1101,6 +1014,7 @@ static int8_t RIF_RISAF_CheckRegionConfig(RISAF_TypeDef *RISAFx, uint32_t Region
 
   return -1;
 }
+#endif
 
 /* Place code in a specific section */
 #if defined(__ICCARM__)
@@ -1129,14 +1043,6 @@ static void mpu_appli_cfg(void)
       FLOW_CONTROL_STEP(uFlowProtectValue, mpu_region_cfg_appli_s[i].flow_step_enable,
                                            mpu_region_cfg_appli_s[i].flow_ctrl_enable);
     }
-
-    /* Configure non secure MPU regions */
-    for (i = 0; i < ARRAY_SIZE(mpu_region_cfg_appli_ns); i++)
-    {
-      HAL_MPU_ConfigRegion_NS(&mpu_region_cfg_appli_ns[i].MPU_Region);
-      FLOW_CONTROL_STEP(uFlowProtectValue, mpu_region_cfg_appli_ns[i].flow_step_enable,
-                                           mpu_region_cfg_appli_ns[i].flow_ctrl_enable);
-    }
   }
   /* Verification stage */
   else
@@ -1152,20 +1058,6 @@ static void mpu_appli_cfg(void)
       {
         FLOW_CONTROL_STEP(uFlowProtectValue, mpu_region_cfg_appli_s[i].flow_step_check,
                                              mpu_region_cfg_appli_s[i].flow_ctrl_check);
-      }
-    }
-
-    /* Check non-secure MPU regions */
-    for (i = 0; i < ARRAY_SIZE(mpu_region_cfg_appli_ns); i++)
-    {
-      if (MPU_CheckRegion(MPU_NS, &mpu_region_cfg_appli_ns[i].MPU_Region) != 0)
-      {
-        Error_Handler();
-      }
-      else
-      {
-        FLOW_CONTROL_STEP(uFlowProtectValue, mpu_region_cfg_appli_ns[i].flow_step_check,
-                                             mpu_region_cfg_appli_ns[i].flow_ctrl_check);
       }
     }
   }

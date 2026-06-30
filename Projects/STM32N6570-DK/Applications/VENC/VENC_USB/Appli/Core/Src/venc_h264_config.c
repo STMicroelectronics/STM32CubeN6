@@ -18,22 +18,31 @@
 #include "stm32n6xx_hal.h"
 #include "venc_h264_config.h"
 
+#define FULL_1080P_SLICE               1U
+#define FULL_1080P_FRAME               2U
+#define FULL_720P_SLICE                3U
+#define FULL_720P_SLICE_INTER_RAM_ONLY 4U
+#define FULL_720P_FRAME                5U
+#define FULL_480P_SLICE                6U
+#define FULL_480P_FRAME                7U
 
 
 /* Select target frame configuration */
-#define FULL_720P_FRAME
+#ifndef H264_CONFIG
+#define H264_CONFIG FULL_720P_FRAME
+#endif
 
-#if defined(FULL_1080P_SLICE)
+#if H264_CONFIG == FULL_1080P_SLICE
 #include "venc_h264_config_1080p_Slice.h"
-#elif defined (FULL_1080P_FRAME )
+#elif H264_CONFIG == FULL_1080P_FRAME
 #include "venc_h264_config_1080p_Frame.h"
-#elif defined (FULL_720P_SLICE)
+#elif H264_CONFIG == FULL_720P_SLICE
 #include "venc_h264_config_720p_Slice.h"
-#elif defined (FULL_720P_FRAME)
+#elif H264_CONFIG == FULL_720P_FRAME
 #include "venc_h264_config_720p_Frame.h"
-#elif defined (FULL_480P_SLICE)
+#elif H264_CONFIG == FULL_480P_SLICE
 #include "venc_h264_config_480p_Slice.h"
-#elif defined (FULL_480P_FRAME)
+#elif H264_CONFIG == FULL_480P_FRAME
 #include "venc_h264_config_480p_Frame.h"
 #else
 #error "Undefined VENC configuration"
@@ -178,8 +187,8 @@ venc_h264_cfg_t hVencH264Instance={
     .cfgH264Coding.inputLineBufDepth          = VENC_LINE_BUF_DEPTH,                 /* input buffer depth in mb lines( 1 = 1 macro block ( ie. 16 pixels) */
     .cfgH264Coding.inputLineBufHwModeEn       = VENC_HW_MODE_ENABLE,                 /* w handshake. */
     .cfgH264Coding.nBaseLayerPID              = 0,                                   /*  priority_id of base temporal layer */
-    .cfgH264Coding.level                      = 0,                                   /*  ?????????????????????? */
-    .cfgH264Coding.enableSVC                  = 0,                                   /*  ?????????????????????? */
+    .cfgH264Coding.level                      = 0,                                   /* Reserved vendor SVC control field; kept disabled in this configuration. */
+    .cfgH264Coding.enableSVC                  = 0,                                   /* Reserved vendor SVC enable flag; kept disabled in this configuration. */
     .cfgH264Rate.pictureRc                    = 1,                                   /* QP between pictures, [0,1] */
     .cfgH264Rate.mbRc                         = 1,                                   /* QP inside picture, [0,1] */
     .cfgH264Rate.pictureSkip                  = 0,                                   /* pictureSkip [0,1] */
@@ -262,7 +271,7 @@ uint32_t GetNbInputFrame(void)
  * @brief  Return whether hardware handshake (slice/stream) mode is enabled.
  * @retval true if HW handshake mode enabled, false otherwise.
  */
-bool IsHwHandshakeMode(void)
+bool IsHwHanshakeMode(void)
 {
 #if (VENC_HW_MODE_ENABLE == 1U)
     return true;
@@ -293,7 +302,7 @@ HAL_StatusTypeDef GetDCMIPPLinesConfig(uint32_t *pWarpLines, uint32_t *pIrqLines
     uint32_t nbLinesCaptured = VENC_LINE_BUF_DEPTH * CAM_MACROBLOCK_HEIGHT;
     HAL_StatusTypeDef ret = HAL_OK;
 
-    if (!IsHwHandshakeMode())
+    if (!IsHwHanshakeMode())
     {
         return HAL_ERROR;
     }
@@ -331,7 +340,7 @@ HAL_StatusTypeDef GetDCMIPPLinesConfig(uint32_t *pWarpLines, uint32_t *pIrqLines
 uint32_t GetDCMIPPNbLinesCaptured(void)
 {
     /* In hardware handshake mode, capture N lines within a 2*N buffer */
-    if (IsHwHandshakeMode())
+    if (IsHwHanshakeMode())
     {
         return (uint32_t)(2U * VENC_LINE_BUF_DEPTH * CAM_MACROBLOCK_HEIGHT);
     }

@@ -67,6 +67,19 @@ void VENC_APP_EncodingStart(void);
 INT VENC_APP_GetData(UCHAR **data, ULONG *size);
 
 /**
+ * @brief  Peek the saved H264 stream-start blob (typically SPS/PPS).
+ * @param  data  Output pointer to the blob buffer.
+ * @param  size  Output pointer to the blob size.
+ * @retval INT   0 if a blob is available, -1 otherwise.
+ */
+INT VENC_APP_PeekStreamStartBlob(UCHAR **data, ULONG *size);
+
+/**
+ * @brief  Mark the saved H264 stream-start blob as consumed.
+ */
+void VENC_APP_ClearStreamStartBlob(void);
+
+/**
  * @brief  Stop the video encoding pipeline and release resources.
  * @retval UINT Status code
  */

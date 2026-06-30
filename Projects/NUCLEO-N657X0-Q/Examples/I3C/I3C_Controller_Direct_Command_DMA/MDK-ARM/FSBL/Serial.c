@@ -14,7 +14,7 @@
  * Copyright (c) 2019 Keil - An ARM Company. All rights reserved.
  *----------------------------------------------------------------------------*/
 
-#include <stm32n6xx.h>                  /* STM32u5xx Definitions              */
+#include <stm32n6xx.h>                  /* STM32n6xx Definitions              */
 #include "Serial.h"
 
 volatile int ITM_RxBuffer = ITM_RXBUFFER_EMPTY;  /*  CMSIS Debug Input        */

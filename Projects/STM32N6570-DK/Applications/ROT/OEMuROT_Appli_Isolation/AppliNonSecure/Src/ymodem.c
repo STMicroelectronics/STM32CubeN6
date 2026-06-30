@@ -242,6 +242,8 @@ COM_StatusTypeDef Ymodem_Receive(uint32_t *puSize, uint32_t uFlashDestination)
               else
               {
                     Serial_PutByte(ACK);
+                    /* End of file transfer : send 'C' for compatibility reason */
+                    Serial_PutByte(CRC16);
                     *puSize = filesize;
                     file_done = 1U;
               }
@@ -250,7 +252,13 @@ COM_StatusTypeDef Ymodem_Receive(uint32_t *puSize, uint32_t uFlashDestination)
               /* Normal packet */
               if (m_aPacketData[PACKET_NUMBER_INDEX] != (packets_received & 0xff))
               {
-                /*             Serial_PutByte(NAK);*/
+                /* If first packet, do the ACK + C again (Side effect with Minicom) */
+                if (m_aPacketData[PACKET_NUMBER_INDEX] == 0)
+                {
+                    Serial_PutByte(ACK);
+                    COM_Flush();
+                    Serial_PutByte(CRC16);
+                }
               }
               else
               {
@@ -288,7 +296,6 @@ COM_StatusTypeDef Ymodem_Receive(uint32_t *puSize, uint32_t uFlashDestination)
                     /* Header packet received callback call*/
                     if ((*puSize) && (Ymodem_HeaderPktRxCpltCallback(uFlashDestination, (uint32_t) filesize) == HAL_OK))
                     {
-
                       Serial_PutByte(ACK);
                       COM_Flush();
                       Serial_PutByte(CRC16);

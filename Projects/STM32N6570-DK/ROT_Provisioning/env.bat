@@ -19,8 +19,12 @@ set imgtool=%stm32tool_path%\Utilities\Windows\imgtool.exe
 :: ==============================================================================
 :: Select application project below
 set oemurot_boot_path_project=Applications\ROT\OEMuROT_Boot
+
+::set oemurot_appli_path_project=Applications\ROT\OEMuROT_Appli
 set oemurot_appli_path_project=Applications\ROT\OEMuROT_Appli_Isolation
+::set oemurot_appli_path_project=Templates\ROT\OEMuROT_Appli
 ::set oemurot_appli_path_project=Templates\ROT\OEMuROT_Appli_Isolation
+
 :: ==============================================================================
 ::               !!!! DOT NOT EDIT --- UPDATED AUTOMATICALLY !!!!
 :: ==============================================================================

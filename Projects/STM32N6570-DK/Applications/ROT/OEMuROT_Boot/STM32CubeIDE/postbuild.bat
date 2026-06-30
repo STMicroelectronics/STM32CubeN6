@@ -5,6 +5,7 @@ pushd "%projectdir%\..\..\..\..\ROT_Provisioning"
 set provisioningdir=%cd%
 popd
 call "%provisioningdir%\env.bat"
+set "img_config=%provisioningdir%\OEMuROT\img_config.bat"
 
 :: Enable delayed expansion
 setlocal EnableDelayedExpansion
@@ -13,18 +14,41 @@ setlocal EnableDelayedExpansion
 set current_log_file=%projectdir%postbuild.log
 echo. > %current_log_file%
 
-:: Check if Python is installed
-python3 --version >nul 2>&1
+::=================================================================================================
+:: Check if Python V3 is installed
+::-------------------------------------------------------------------------------------------------
+python --version >nul 2>&1
 if %errorlevel% neq 0 (
- python --version >nul 2>&1
- if !errorlevel! neq 0 (
+  echo.
+  echo Python installation missing. Refer to Utilities\PC_Software\ROT_AppliConfig\README.md
+  echo.
+  set "command=Python installation"
+  goto :error
+)
+set "python=python "
+:: If found, capture version string removing "Python "
+for /f "tokens=2 delims= " %%A in ('python --version 2^>^&1') do (
+    set "full_version=%%A"
+)
+:: extract version details
+for /F "tokens=1,2,3 delims=." %%A in ("!full_version!") do (
+  set MAJOR_VER=%%A
+  set MINOR_VER=%%B
+  set PATCH_VER=%%C
+)
+:: is v3
+if not "%MAJOR_VER%" == "3" (
+  python3 --version >nul 2>&1
+  if !errorlevel! neq 0 (
+    echo.
     echo Python installation missing. Refer to Utilities\PC_Software\ROT_AppliConfig\README.md
+    echo.
+    set "command=Python installation"
     goto :error
- )
-  set "python=python "
-) else (
+  )
   set "python=python3 "
 )
+::=================================================================================================
 
 :: Environment variable for AppliCfg
 set "applicfg=%cube_fw_path%\Utilities\PC_Software\ROT_AppliConfig\AppliCfg.py"
@@ -66,12 +90,38 @@ set provisioning=%provisioningdir%\OEMuROT\provisioning.bat
 set flash_programming=%provisioningdir%\OEMuROT\flash_programming.bat
 
 set appli_flash_layout=%appli_dir%\Secure_nsclib\appli_flash_layout.h
+set appli_region_def=%appli_dir%\Secure_nsclib\appli_region_def.h
 
+:Update img_config
+set "command=%python%%applicfg% flash --layout %preprocess_bl2_file% -b app_image_number -m RE_APP_IMAGE_NUMBER --decimal %img_config% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% flash --layout %preprocess_bl2_file% -b s_data_image_number -m RE_S_DATA_IMAGE_NUMBER --decimal %img_config% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% flash --layout %preprocess_bl2_file% -b ns_data_image_number -m RE_NS_DATA_IMAGE_NUMBER --decimal %img_config% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% flash --layout %preprocess_bl2_file% -b app_full_secure -m  RE_OEMUROT_APPLI_FULL_SECURE --decimal %img_config% --vb >> %current_log_file% 2>>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+call %img_config%
+
+IF "%app_full_secure%" == "1" (
+set appli_s_main_file=%appli_dir%\Src\main.c
+set appli_s_linker_file=%appli_dir%\STM32CubeIDE\stm32n657xx_s.ld
+set appli_s_system_file=%appli_dir%\Src\system_stm32n6xx_s.c
+) else (
 set appli_s_linker_file=%appli_dir%\STM32CubeIDE\AppliSecure\stm32n657xx_s.ld
 set appli_s_system_file=%appli_dir%\AppliSecure\Src\system_stm32n6xx_s.c
 set appli_s_main_file=%appli_dir%\AppliSecure\Src\main.c
 set appli_ns_linker_file=%appli_dir%\STM32CubeIDE\AppliNonSecure\stm32n657xx_ns.ld
 set appli_ns_system_file=%appli_dir%\AppliNonSecure\Src\system_stm32n6xx_ns.c
+)
 
 set s_code_init_xml=%provisioningdir%\OEMuROT\Images\OEMuROT_S_Code_Init_Image.xml
 set ns_code_init_xml=%provisioningdir%\OEMuROT\Images\OEMuROT_NS_Code_Init_Image.xml
@@ -84,7 +134,7 @@ set s_data_xml=%provisioningdir%\OEMuROT\Images\OEMuROT_S_Data_Image.xml
 set ns_data_xml=%provisioningdir%\OEMuROT\Images\OEMuROT_NS_Data_Image.xml
 
 :imagesigning
-set command="%stm32signingtoolcli%" -bin "%binary_file%" %scmd% %enccmd% %optionflag% -o "%trusted_binary_file%" -hv 2.3 -s
+set command="%stm32signingtoolcli%" -bin "%binary_file%" %scmd% %enccmd% %optionflag% -o "%trusted_binary_file%" -hv 2.3 -s -align
 %command% > %current_log_file% 2>&1
 IF !errorlevel! NEQ 0 goto :error
 
@@ -276,9 +326,12 @@ set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE
 %command%
 IF !errorlevel! NEQ 0 goto :error
 
-set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_APPLI_NS_ADDRESS -n VTOR_TABLE_NS_START_ADDR %appli_s_main_file% --vb >> %current_log_file% 2>&1"
-%command%
-IF !errorlevel! NEQ 0 goto :error
+IF "%app_full_secure%" EQU "0" goto run_definevalue
+goto :flash_layout
+
+:run_definevalue
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_APPLI_NS_ADDRESS -n VTOR_TABLE_NS_START_ADDR %appli_s_main_file% --vb"
+%command% >> "%current_log_file%" 2>&1
 
 :appli_ns
 set "command=%python%%applicfg% linker --layout %preprocess_bl2_file% -m RE_APPLI_NS_ADDRESS -n CODE_NS_ADDRESS %appli_ns_linker_file% --vb >> %current_log_file% 2>&1"
@@ -370,6 +423,80 @@ set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE
 IF !errorlevel! NEQ 0 goto :error
 
 set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_FLASH_AREA_7_SIZE -n NS_DATA_PARTITION_SIZE %appli_flash_layout% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+if not exist %appli_region_def% goto :exit
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_APPLI_S_ADDRESS -n S_CODE_START %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_FLASH_S_PARTITION_SIZE -n S_CODE_SIZE %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_DATA_S_ADDRESS -n S_RAM_START %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_S_CODE_START -n S_CODE_START %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_NS_CODE_START -n NS_CODE_START %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_S_CODE_LIMIT -n S_CODE_LIMIT %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_NS_CODE_LIMIT -n NS_CODE_LIMIT %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_S_CODE_SIZE -n S_CODE_SIZE %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_NS_CODE_SIZE -n NS_CODE_SIZE %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_DATA_S_ADDRESS -n S_RAM_START %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_DATA_S_SIZE -n S_RAM_SIZE %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_DATA_NS_ADDRESS -n NS_RAM_START %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_NS_DATA_START -n NS_DATA_START %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_NS_DATA_SIZE -n NS_DATA_SIZE %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_NS_DATA_LIMIT -n NS_DATA_LIMIT %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_NS_DATA2_START -n NS_DATA2_START %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_NS_DATA2_SIZE -n NS_DATA2_SIZE %appli_region_def% --vb >> %current_log_file% 2>&1"
+%command%
+IF !errorlevel! NEQ 0 goto :error
+
+set "command=%python%%applicfg% definevalue --layout %preprocess_bl2_file% -m RE_NS_DATA2_LIMIT -n NS_DATA2_LIMIT %appli_region_def% --vb >> %current_log_file% 2>&1"
 %command%
 IF !errorlevel! NEQ 0 goto :error
 

@@ -73,7 +73,7 @@ uint8_t encoder_jpeg_init(uint32_t type,int32_t width,int32_t height, void *pOut
 //   pOutpout  = allocated st_os_mem_alloc(st_os_mem_type_from_name("JPEG"),szPool);
   if(pOutpout == NULL)
   {
-    printf("Jpeg alloc %d\n", szOutpout);
+    printf("Jpeg alloc %lu\n", (unsigned long)szOutpout);
     return 0;
   }
   ret = JpegEncInit(&hVencJpegPluginInstance.cfgJpeg, &jpegInstance);

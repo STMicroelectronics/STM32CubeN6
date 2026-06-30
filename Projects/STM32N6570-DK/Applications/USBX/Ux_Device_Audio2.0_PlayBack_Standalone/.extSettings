@@ -1,0 +1,9 @@
+[ProjectFiles]
+HeaderPath=../../../../../../Drivers/BSP/STM32N6570-DK;../../../../../../Drivers/BSP/Components/tcpp0203;../../../../../../Drivers/BSP/Components/wm8904
+[Others]
+Define=TCPP0203_SUPPORT;USE_AUDIO_CODEC_WM8904
+HALModule=I2C;UART
+[Groups]
+Drivers/BSP/STM32N6570-DK=../../../../../../Drivers/BSP/STM32N6570-DK/stm32n6570_discovery.c;../../../../../../Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_usbpd_pwr.c;../../../../../../Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_bus.c;../../../../../../Drivers/BSP/STM32N6570-DK/stm32n6570_discovery_audio.c
+Drivers/BSP/Components=../../../../../../Drivers/BSP/Components/tcpp0203/tcpp0203.c;../../../../../../Drivers/BSP/Components/tcpp0203/tcpp0203_reg.c;../../../../../../Drivers/BSP/Components/wm8904/wm8904.c;../../../../../../Drivers/BSP/Components/wm8904/wm8904_reg.c
+Doc=../README.md;

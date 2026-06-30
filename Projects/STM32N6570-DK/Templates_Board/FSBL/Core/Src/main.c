@@ -53,15 +53,11 @@ MDF_FilterConfigTypeDef MdfFilterConfig0;
 SAI_HandleTypeDef hsai_BlockA1;
 SAI_HandleTypeDef hsai_BlockB1;
 
-#if USE_SD_CARD
 SD_HandleTypeDef hsd2;
-#endif
 
 UART_HandleTypeDef huart1;
 
-#if USE_USB
 HCD_HandleTypeDef hhcd_USB_OTG_HS2;
-#endif
 
 XSPI_HandleTypeDef hxspi1;
 XSPI_HandleTypeDef hxspi2;
@@ -72,23 +68,18 @@ XSPI_HandleTypeDef hxspi2;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_MDF1_Init(void);
 static void MX_SAI1_Init(void);
-#if USE_SD_CARD
 static void MX_SDMMC2_SD_Init(void);
-#endif
-#if USE_USBPD
 static void MX_UCPD1_Init(void);
-#endif
 static void MX_USART1_UART_Init(void);
-#if USE_USB
 static void MX_USB1_OTG_HS_HCD_Init(void);
 static void MX_USB2_OTG_HS_HCD_Init(void);
-#endif
 static void MX_XSPI1_Init(void);
 static void MX_XSPI2_Init(void);
 /* USER CODE BEGIN PFP */
@@ -131,6 +122,9 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
+  /* Configure the peripherals common clocks */
+  PeriphCommonClock_Config();
+
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
@@ -142,17 +136,11 @@ int main(void)
   MX_I2C2_Init();
   MX_MDF1_Init();
   MX_SAI1_Init();
-#if USE_SD_CARD
   MX_SDMMC2_SD_Init();
-#endif
-#if USE_USBPD
   MX_UCPD1_Init();
-#endif
   MX_USART1_UART_Init();
-#if USE_USB
   MX_USB1_OTG_HS_HCD_Init();
   MX_USB2_OTG_HS_HCD_Init();
-#endif
   MX_XSPI1_Init();
   MX_XSPI2_Init();
   /* USER CODE BEGIN 2 */
@@ -284,6 +272,24 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.IC11Selection.ClockDivider = 8;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
+/**
+  * @brief Peripherals Common Clock Configuration
+  * @retval None
+  */
+void PeriphCommonClock_Config(void)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+
+  /** Initializes the peripherals clock
+  */
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_CKPER;
+  PeriphClkInitStruct.CkperClockSelection = RCC_CLKPCLKSOURCE_HSI;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
   {
     Error_Handler();
   }
@@ -593,7 +599,6 @@ static void MX_SAI1_Init(void)
 
 }
 
-#if USE_SD_CARD
 /**
   * @brief SDMMC2 Initialization Function
   * @param None
@@ -624,9 +629,7 @@ static void MX_SDMMC2_SD_Init(void)
   /* USER CODE END SDMMC2_Init 2 */
 
 }
-#endif
 
-#if USE_USBPD
 /**
   * @brief UCPD1 Initialization Function
   * @param None
@@ -650,7 +653,6 @@ static void MX_UCPD1_Init(void)
   /* USER CODE END UCPD1_Init 2 */
 
 }
-#endif
 
 /**
   * @brief USART1 Initialization Function
@@ -700,7 +702,6 @@ static void MX_USART1_UART_Init(void)
 
 }
 
-#if USE_USB
 /**
   * @brief USB1_OTG_HS Initialization Function
   * @param None
@@ -756,7 +757,6 @@ static void MX_USB2_OTG_HS_HCD_Init(void)
   /* USER CODE END USB2_OTG_HS_Init 2 */
 
 }
-#endif
 
 /**
   * @brief XSPI1 Initialization Function
@@ -956,6 +956,7 @@ static void MX_GPIO_Init(void)
 
 /**
   * @brief  This function is executed in case of error occurrence.
+  * @param  None
   * @retval None
   */
 void Error_Handler(void)

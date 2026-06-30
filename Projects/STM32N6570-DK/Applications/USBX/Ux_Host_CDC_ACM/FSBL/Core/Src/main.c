@@ -86,11 +86,12 @@ int main(void)
 
   /* USER CODE BEGIN 1 */
   /* Power settings */
-    HAL_PWREx_EnableVddA();
+  HAL_PWREx_EnableVddA();
   HAL_PWREx_EnableVddIO2();
   HAL_PWREx_EnableVddIO3();
   HAL_PWREx_EnableVddIO4();
   HAL_PWREx_EnableVddIO5();
+  HAL_PWREx_EnableVddUSB();
   /* USER CODE END 1 */
 
   /* MPU Configuration--------------------------------------------------------*/
@@ -422,6 +423,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 /**
   * @brief  This function is executed in case of error occurrence.
+  * @param  None
   * @retval None
   */
 void Error_Handler(void)

@@ -208,7 +208,7 @@ UINT MX_FileX_Init(VOID *memory_ptr)
 /* Check the media open sd_status */
   if (sd_status != FX_SUCCESS)
   {
-    /* USER CODE BEGIN SD open error */
+     /* USER CODE BEGIN SD open error */
     while(1);
     /* USER CODE END SD open error */
   }

@@ -85,15 +85,8 @@ UINT MX_USBX_Device_Init(VOID *memory_ptr)
   /* USER CODE BEGIN MX_USBX_Device_Init 0 */
   /* USER CODE END MX_USBX_Device_Init 0 */
 
-  /* Initialize the Stack USB Device*/
-  if (MX_USBX_Device_Stack_Init() != UX_SUCCESS)
-  {
-    /* USER CODE BEGIN MAIN_INITIALIZE_STACK_ERROR */
-    return UX_ERROR;
-    /* USER CODE END MAIN_INITIALIZE_STACK_ERROR */
-  }
-
   /* USER CODE BEGIN MX_USBX_Device_Init 1 */
+
   /* USER CODE END MX_USBX_Device_Init 1 */
 
   /* Allocate the stack for device application main thread */
@@ -187,7 +180,10 @@ UINT MX_USBX_Device_Init(VOID *memory_ptr)
 }
 
 /**
-  * @brief  Application USBX Device Initialization.
+  * @brief  MX_USBX_Device_Stack_Init
+  *         Intialization of USB Device.
+  *         Initialize the device stack, register of device class stack
+  *         Register of the usb device controller
   * @param  None
   * @retval ret
   */
@@ -315,9 +311,6 @@ static VOID app_ux_device_thread_entry(ULONG thread_input)
 {
   /* USER CODE BEGIN app_ux_device_thread_entry */
 
-  /* Initialization of USB device */
-  USBX_APP_Device_Init();
-
   /* Wait for message queue to start/stop the device */
   while(1)
   {
@@ -331,14 +324,40 @@ static VOID app_ux_device_thread_entry(ULONG thread_input)
     /* Check if received message equal to USB_PCD_START */
     if (USB_Device_State_Msg == START_USB_DEVICE)
     {
+      /* USB_OTG_HS init function */
+      MX_USB1_OTG_HS_PCD_Init();
+
+      /* Initialize the Stack USB Device*/
+      if (MX_USBX_Device_Stack_Init() != UX_SUCCESS)
+      {
+        /* USER CODE BEGIN MAIN_INITIALIZE_STACK_ERROR */
+        Error_Handler();
+        /* USER CODE END MAIN_INITIALIZE_STACK_ERROR */
+      }
+
       /* Start device USB */
       HAL_PCD_Start(&hpcd_USB_OTG_HS1);
     }
     /* Check if received message equal to USB_PCD_STOP */
     else if (USB_Device_State_Msg == STOP_USB_DEVICE)
     {
+      /* Deactivate device interfaces */
+      ux_device_stack_disconnect();
+
       /* Stop device USB */
       HAL_PCD_Stop(&hpcd_USB_OTG_HS1);
+
+     /* Uninitialize the Stack USB Device*/
+     if (MX_USBX_Device_Stack_DeInit() != UX_SUCCESS)
+     {
+       /* USER CODE BEGIN MAIN_UNINITIALIZE_STACK_ERROR */
+       Error_Handler();
+       /* USER CODE END MAIN_UNINITIALIZE_STACK_ERROR */
+     }
+
+     /* USB_OTG_HS deinit function */
+     HAL_PCD_DeInit(&hpcd_USB_OTG_HS1);
+
     }
     /* Else Error */
     else
@@ -351,11 +370,11 @@ static VOID app_ux_device_thread_entry(ULONG thread_input)
 }
 
 /**
-  * @brief MX_USBX_Device_Stack_DeInit
-  *        Unitialization of USB Device.
-  * uninitialize the device stack, unregister of device class stack
-  * unregister of the usb device controller
-  * @retval None
+  * @brief  MX_USBX_Device_Stack_DeInit
+  *         Unitialization of USB Device.
+  *         uninitialize the device stack, unregister of device class stack
+  *         unregister of the usb device controller
+  * @retval ret
   */
 UINT MX_USBX_Device_Stack_DeInit(void)
 {
@@ -401,48 +420,6 @@ UINT MX_USBX_Device_Stack_DeInit(void)
 }
 
 /* USER CODE BEGIN 1 */
-
-/**
-  * @brief  USBX_APP_Device_Init
-  *         Initialization of USB device.
-  * @param  none
-  * @retval none
-  */
-VOID USBX_APP_Device_Init(VOID)
-{
-  /* USER CODE BEGIN USB_Device_Init_PreTreatment_0 */
-
-  /* USER CODE END USB_Device_Init_PreTreatment_0 */
-
-  /* USB_OTG_HS init function */
-  MX_USB1_OTG_HS_PCD_Init();
-
-  /* USER CODE BEGIN USB_Device_Init_PreTreatment_1 */
-
-  /* Set Rx FIFO */
-  HAL_PCDEx_SetRxFiFo(&hpcd_USB_OTG_HS1, 0x200);
-
-  /* Set Tx FIFO 0 */
-  HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_HS1, 0, 0x10);
-
-  /* Set Tx FIFO 2 */
-  HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_HS1, 1, 0x10);
-
-  /* Set Tx FIFO 3 */
-  HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_HS1, 2, 0x80);
-
-  /* Set Tx FIFO 4 */
-  HAL_PCDEx_SetTxFiFo(&hpcd_USB_OTG_HS1, 3, 0x20);
-
-  /* USER CODE END USB_Device_Init_PreTreatment_1 */
-
-  /* Initialize and link controller HAL driver */
-  ux_dcd_stm32_initialize((ULONG)&hpcd_USB_OTG_HS1, (ULONG)&hpcd_USB_OTG_HS1);
-
-  /* USER CODE BEGIN USB_Device_Init_PostTreatment */
-
-  /* USER CODE END USB_Device_Init_PostTreatment */
-}
 
 /**
   * @brief  USBX_APP_UART_Init

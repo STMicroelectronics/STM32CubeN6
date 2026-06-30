@@ -50,7 +50,7 @@ extern "C" {
 #ifndef VENC_OUTPUT_BUFFER_SIZE
 #define VENC_OUTPUT_BUFFER_SIZE     (4U * 500U * 1024U)
 #endif
-
+  
 #ifdef __cplusplus
 }
 #endif

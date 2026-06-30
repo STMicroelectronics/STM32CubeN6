@@ -31,6 +31,179 @@
 #include "ux_device_stack.h"
 #include "ux_utility.h"
 
+#if defined(USBD_HAL_ISOINCOMPLETE_CALLBACK)
+static volatile UCHAR   iso_in_retry_pending[UX_DCD_STM32_MAX_ED];
+static volatile UCHAR   iso_out_retry_pending[UX_DCD_STM32_MAX_ED];
+static volatile UCHAR   iso_in_slot_locked[UX_DCD_STM32_MAX_ED];
+static volatile UCHAR   iso_out_slot_locked[UX_DCD_STM32_MAX_ED];
+static VOID _ux_dcd_stm32_iso_sof_gated_scheduler(VOID);
+static VOID _ux_dcd_stm32_iso_slot_locked_set(UCHAR ep_addr);
+static VOID _ux_dcd_stm32_iso_sof_gated_submit(UX_DCD_STM32 *dcd_stm32, UX_DCD_STM32_ED *ed,
+                                               volatile UCHAR *iso_retry_pending, ULONG schedule_frame,
+                                               UCHAR endpoint_direction);
+#endif /* defined(USBD_HAL_ISOINCOMPLETE_CALLBACK) */
+
+#if defined(USBD_HAL_ISOINCOMPLETE_CALLBACK)
+VOID _ux_dcd_stm32_iso_submit_pending_set(UCHAR ep_addr)
+{
+UX_INTERRUPT_SAVE_AREA
+UCHAR ep_index;
+
+    ep_index = ep_addr & 0x0FU;
+
+    if (ep_index >= UX_DCD_STM32_MAX_ED)
+        return;
+
+    UX_DISABLE
+    if ((ep_addr & (UCHAR)UX_ENDPOINT_DIRECTION) == (UCHAR)UX_ENDPOINT_IN)
+    {
+        iso_in_retry_pending[ep_index] = 1U;
+    }
+    else
+    {
+        iso_out_retry_pending[ep_index] = 1U;
+    }
+    UX_RESTORE
+}
+
+VOID _ux_dcd_stm32_iso_endpoint_state_reset(UCHAR ep_addr)
+{
+UX_INTERRUPT_SAVE_AREA
+UCHAR ep_index;
+
+    ep_index = ep_addr & 0x0FU;
+
+    if (ep_index >= UX_DCD_STM32_MAX_ED)
+        return;
+
+    UX_DISABLE
+    if ((ep_addr & (UCHAR)UX_ENDPOINT_DIRECTION) == (UCHAR)UX_ENDPOINT_IN)
+    {
+        iso_in_retry_pending[ep_index] = 0U;
+        iso_in_slot_locked[ep_index] = 0U;
+    }
+    else
+    {
+        iso_out_retry_pending[ep_index] = 0U;
+        iso_out_slot_locked[ep_index] = 0U;
+    }
+    UX_RESTORE
+}
+
+UCHAR _ux_dcd_stm32_iso_slot_locked_get(UCHAR ep_addr)
+{
+UX_INTERRUPT_SAVE_AREA
+UCHAR ep_index;
+UCHAR locked;
+
+    ep_index = ep_addr & 0x0FU;
+
+    if (ep_index >= UX_DCD_STM32_MAX_ED)
+        return(0U);
+
+    UX_DISABLE
+    if ((ep_addr & (UCHAR)UX_ENDPOINT_DIRECTION) == (UCHAR)UX_ENDPOINT_IN)
+    {
+        locked = iso_in_slot_locked[ep_index];
+    }
+    else
+    {
+        locked = iso_out_slot_locked[ep_index];
+    }
+    UX_RESTORE
+
+    return locked;
+}
+
+static VOID _ux_dcd_stm32_iso_slot_locked_set(UCHAR ep_addr)
+{
+UX_INTERRUPT_SAVE_AREA
+UCHAR ep_index;
+
+    ep_index = ep_addr & 0x0FU;
+
+    if (ep_index >= UX_DCD_STM32_MAX_ED)
+        return;
+
+    UX_DISABLE
+    if ((ep_addr & (UCHAR)UX_ENDPOINT_DIRECTION) == (UCHAR)UX_ENDPOINT_IN)
+    {
+        iso_in_slot_locked[ep_index] = 1U;
+    }
+    else
+    {
+        iso_out_slot_locked[ep_index] = 1U;
+    }
+    UX_RESTORE
+}
+
+static VOID _ux_dcd_stm32_iso_sof_gated_submit(UX_DCD_STM32 * dcd_stm32, UX_DCD_STM32_ED * ed,
+                                               volatile UCHAR * iso_retry_pending, ULONG schedule_frame,
+                                               UCHAR endpoint_direction)
+{
+UX_SLAVE_ENDPOINT       *endpoint;
+UX_SLAVE_TRANSFER       *transfer_request;
+ULONG                   ep_index;
+ULONG                   frame_mask;
+ULONG                   frame_position;
+
+    for (ep_index = 1U; ep_index < UX_DCD_STM32_MAX_ED; ep_index++)
+    {
+        if ((ed[ep_index].ux_dcd_stm32_ed_status & UX_DCD_STM32_ED_STATUS_USED) == 0U)
+        {
+            continue;
+        }
+
+        endpoint = ed[ep_index].ux_dcd_stm32_ed_endpoint;
+        if (endpoint == UX_NULL)
+        {
+            continue;
+        }
+
+        if ((endpoint -> ux_slave_endpoint_descriptor.bmAttributes & UX_MASK_ENDPOINT_TYPE) != UX_ISOCHRONOUS_ENDPOINT)
+        {
+            continue;
+        }
+
+        if ((endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress & UX_ENDPOINT_DIRECTION) != endpoint_direction)
+        {
+            continue;
+        }
+
+        if (iso_retry_pending[ep_index] == 0U)
+        {
+            continue;
+        }
+
+        frame_mask = ed[ep_index].ux_stm32_ed_interval_mask;
+        frame_position = ed[ep_index].ux_stm32_ed_interval_position;
+
+        /* Submit only when the upcoming frame matches the learned periodic slot.  */
+        if ((schedule_frame & frame_mask) != frame_position)
+        {
+            continue;
+        }
+
+        transfer_request = &endpoint -> ux_slave_endpoint_transfer_request;
+        if (endpoint_direction == (UCHAR)UX_ENDPOINT_IN)
+        {
+            HAL_PCD_EP_Transmit(dcd_stm32 -> pcd_handle,
+                                endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress,
+                                transfer_request -> ux_slave_transfer_request_data_pointer,
+                                transfer_request -> ux_slave_transfer_request_requested_length);
+        }
+        else
+        {
+            HAL_PCD_EP_Receive(dcd_stm32 -> pcd_handle,
+                               endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress,
+                               transfer_request -> ux_slave_transfer_request_data_pointer,
+                               transfer_request -> ux_slave_transfer_request_requested_length);
+        }
+
+        iso_retry_pending[ep_index] = 0U;
+    }
+}
+#endif /* defined(USBD_HAL_ISOINCOMPLETE_CALLBACK) */
 
 static inline void _ux_dcd_stm32_setup_in(UX_DCD_STM32_ED * ed, UX_SLAVE_TRANSFER *transfer_request)
 {
@@ -399,6 +572,10 @@ UX_DCD_STM32_ED         *ed;
 UX_SLAVE_TRANSFER       *transfer_request;
 ULONG                   transfer_length;
 UX_SLAVE_ENDPOINT       *endpoint;
+#if defined(USBD_HAL_ISOINCOMPLETE_CALLBACK)
+ULONG                   frame_number;
+UINT                    status;
+#endif
 
 
     /* Get the pointer to the DCD.  */
@@ -415,15 +592,23 @@ UX_SLAVE_ENDPOINT       *endpoint;
 #endif /* defined(UX_DEVICE_BIDIRECTIONAL_ENDPOINT_SUPPORT) */
     ed =  &dcd_stm32 -> ux_dcd_stm32_ed[epnum & 0xF];
 
+    if ((ed -> ux_dcd_stm32_ed_status & UX_DCD_STM32_ED_STATUS_USED) == 0U)
+    {
+        return;
+    }
+
+    endpoint = ed -> ux_dcd_stm32_ed_endpoint;
+    if (endpoint == UX_NULL)
+    {
+        return;
+    }
+
     /* Get the pointer to the transfer request.  */
-    transfer_request =  &(ed -> ux_dcd_stm32_ed_endpoint -> ux_slave_endpoint_transfer_request);
+    transfer_request =  &(endpoint -> ux_slave_endpoint_transfer_request);
 
     /* Endpoint 0 is different.  */
     if (epnum == 0U)
     {
-
-        /* Get the pointer to the logical endpoint from the transfer request.  */
-        endpoint =  transfer_request -> ux_slave_transfer_request_endpoint;
 
         /* Check if we need to send data again on control endpoint. */
         if (ed -> ux_dcd_stm32_ed_state == UX_DCD_STM32_ED_STATE_DATA_TX)
@@ -443,7 +628,7 @@ UX_SLAVE_ENDPOINT       *endpoint;
 
                     /* Arm a ZLP packet on IN.  */
                     HAL_PCD_EP_Transmit(hpcd,
-                            endpoint->ux_slave_endpoint_descriptor.bEndpointAddress, 0, 0);
+                            endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress, 0, 0);
 
                     /* Reset the ZLP condition.  */
                     transfer_request -> ux_slave_transfer_request_force_zlp =  UX_FALSE;
@@ -496,8 +681,8 @@ UX_SLAVE_ENDPOINT       *endpoint;
 
                 /* Transmit data.  */
                 HAL_PCD_EP_Transmit(hpcd,
-                            endpoint->ux_slave_endpoint_descriptor.bEndpointAddress,
-                            transfer_request->ux_slave_transfer_request_current_data_pointer,
+                            endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress,
+                            transfer_request -> ux_slave_transfer_request_current_data_pointer,
                             transfer_length);
             }
         }
@@ -528,6 +713,27 @@ UX_SLAVE_ENDPOINT       *endpoint;
             transfer_request -> ux_slave_transfer_request_status =  UX_TRANSFER_STATUS_COMPLETED;
             transfer_request -> ux_slave_transfer_request_actual_length =
                 transfer_request -> ux_slave_transfer_request_requested_length;
+
+#if defined(USBD_HAL_ISOINCOMPLETE_CALLBACK)
+            /* Use the first successful completion to learn the host-aligned ISO IN slot.  */
+            if ((endpoint -> ux_slave_endpoint_descriptor.bmAttributes & UX_MASK_ENDPOINT_TYPE) == UX_ISOCHRONOUS_ENDPOINT)
+            {
+                if (ed -> ux_stm32_ed_interval_mask != 0U)
+                {
+                    if (_ux_dcd_stm32_iso_slot_locked_get(endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress) == 0U)
+                    {
+                        status = _ux_dcd_stm32_frame_number_get(dcd_stm32, &frame_number);
+
+                        /* Lock the ISO slot only when the current frame number is available.  */
+                        if (status == UX_SUCCESS)
+                        {
+                            ed -> ux_stm32_ed_interval_position = frame_number & ed -> ux_stm32_ed_interval_mask;
+                            _ux_dcd_stm32_iso_slot_locked_set(endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress);
+                        }
+                    }
+                }
+            }
+#endif /* defined(USBD_HAL_ISOINCOMPLETE_CALLBACK) */
 
 #if defined(UX_DEVICE_STANDALONE)
         ed -> ux_dcd_stm32_ed_status |= UX_DCD_STM32_ED_STATUS_DONE;
@@ -595,6 +801,10 @@ UX_DCD_STM32_ED         *ed;
 UX_SLAVE_TRANSFER       *transfer_request;
 ULONG                   transfer_length;
 UX_SLAVE_ENDPOINT       *endpoint;
+#if defined(USBD_HAL_ISOINCOMPLETE_CALLBACK)
+ULONG                   frame_number;
+UINT                    status;
+#endif
 
 
     /* Get the pointer to the DCD.  */
@@ -606,8 +816,19 @@ UX_SLAVE_ENDPOINT       *endpoint;
     /* Fetch the address of the physical endpoint.  */
     ed = &dcd_stm32 -> ux_dcd_stm32_ed[epnum & 0xF];
 
+    if ((ed -> ux_dcd_stm32_ed_status & UX_DCD_STM32_ED_STATUS_USED) == 0U)
+    {
+        return;
+    }
+
+    endpoint = ed -> ux_dcd_stm32_ed_endpoint;
+    if (endpoint == UX_NULL)
+    {
+        return;
+    }
+
     /* Get the pointer to the transfer request.  */
-    transfer_request = &(ed -> ux_dcd_stm32_ed_endpoint -> ux_slave_endpoint_transfer_request);
+    transfer_request = &(endpoint -> ux_slave_endpoint_transfer_request);
 
     /* Endpoint 0 is different.  */
     if (epnum == 0U)
@@ -616,9 +837,6 @@ UX_SLAVE_ENDPOINT       *endpoint;
         /* Check if we have received something on endpoint 0 during data phase .  */
         if (ed -> ux_dcd_stm32_ed_state == UX_DCD_STM32_ED_STATE_DATA_RX)
         {
-
-            /* Get the pointer to the logical endpoint from the transfer request.  */
-            endpoint = transfer_request -> ux_slave_transfer_request_endpoint;
 
             /* Read the received data length for the Control endpoint.  */
             transfer_length = HAL_PCD_EP_GetRxCount(hpcd, epnum);
@@ -676,10 +894,29 @@ UX_SLAVE_ENDPOINT       *endpoint;
     }
     else
     {
-
-
         /* Update the length of the data sent in previous transaction.  */
         transfer_request -> ux_slave_transfer_request_actual_length =  HAL_PCD_EP_GetRxCount(hpcd, epnum);
+
+#if defined(USBD_HAL_ISOINCOMPLETE_CALLBACK)
+        /* Use the first successful completion to learn the host-aligned ISO OUT slot.  */
+        if ((endpoint -> ux_slave_endpoint_descriptor.bmAttributes & UX_MASK_ENDPOINT_TYPE) == UX_ISOCHRONOUS_ENDPOINT)
+        {
+            if (ed -> ux_stm32_ed_interval_mask != 0U)
+            {
+                if (_ux_dcd_stm32_iso_slot_locked_get(endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress) == 0U)
+                {
+                    status = _ux_dcd_stm32_frame_number_get(dcd_stm32, &frame_number);
+
+                    /* Lock the ISO slot only when the current frame number is available.  */
+                    if (status == UX_SUCCESS)
+                    {
+                        ed -> ux_stm32_ed_interval_position = frame_number & ed -> ux_stm32_ed_interval_mask;
+                        _ux_dcd_stm32_iso_slot_locked_set(endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress);
+                    }
+                }
+            }
+        }
+#endif /* defined(USBD_HAL_ISOINCOMPLETE_CALLBACK) */
 
         /* Set the completion code to no error.  */
         transfer_request -> ux_slave_transfer_request_completion_code =  UX_SUCCESS;
@@ -1036,17 +1273,93 @@ void HAL_PCD_ResumeCallback(PCD_HandleTypeDef *hpcd)
 void HAL_PCD_SOFCallback(PCD_HandleTypeDef *hpcd)
 {
 
+    UX_PARAMETER_NOT_USED(hpcd);
+
+#if defined(USBD_HAL_ISOINCOMPLETE_CALLBACK)
+    /* Run ISO SOF-gated scheduler. */
+    _ux_dcd_stm32_iso_sof_gated_scheduler();
+#endif /* defined(USBD_HAL_ISOINCOMPLETE_CALLBACK) */
+
     /* Check the status change callback.  */
     if (_ux_system_slave -> ux_system_slave_change_function != UX_NULL)
     {
-
-       /* Inform the application if a callback function was programmed.  */
+        /* Inform the application if a callback function was programmed.  */
         _ux_system_slave -> ux_system_slave_change_function(UX_DCD_STM32_SOF_RECEIVED);
     }
 }
 
-
 #if defined(USBD_HAL_ISOINCOMPLETE_CALLBACK)
+/**************************************************************************/
+/*                                                                        */
+/*  FUNCTION                                                RELEASE       */
+/*                                                                        */
+/*    _ux_dcd_stm32_iso_sof_gated_scheduler                PORTABLE C     */
+/*                                                            6.1.10      */
+/*  DESCRIPTION                                                           */
+/*                                                                        */
+/*    This function re-arms pending isochronous transfers                 */
+/*    synchronized with SOF.                                              */
+/*                                                                        */
+/*  INPUT                                                                 */
+/*                                                                        */
+/*    None                                                                */
+/*                                                                        */
+/*  OUTPUT                                                                */
+/*                                                                        */
+/*    None                                                                */
+/*                                                                        */
+/*  CALLS                                                                 */
+/*                                                                        */
+/*    _ux_dcd_stm32_frame_number_get        Get frame number              */
+/*    HAL_PCD_EP_Transmit                   Transmit data                 */
+/*    HAL_PCD_EP_Receive                    Receive data                  */
+/*                                                                        */
+/*  CALLED BY                                                             */
+/*                                                                        */
+/*    HAL_PCD_SOFCallback                                                 */
+/*                                                                        */
+/**************************************************************************/
+static VOID _ux_dcd_stm32_iso_sof_gated_scheduler(VOID)
+{
+UX_SLAVE_DCD            *dcd;
+UX_DCD_STM32            *dcd_stm32;
+ULONG                   frame_number;
+ULONG                   schedule_frame;
+UINT                    status;
+
+    dcd = &_ux_system_slave -> ux_system_slave_dcd;
+    dcd_stm32 = (UX_DCD_STM32 *) dcd -> ux_slave_dcd_controller_hardware;
+
+    if ((dcd_stm32 == UX_NULL) || (dcd_stm32 -> pcd_handle == UX_NULL))
+    {
+        return;
+    }
+
+    status = _ux_dcd_stm32_frame_number_get(dcd_stm32, &frame_number);
+    if (status != UX_SUCCESS)
+    {
+        return;
+    }
+
+    /* SOF re-arms pending transfers for the upcoming USB frame.  */
+    schedule_frame = frame_number + 1U;
+
+#if defined(UX_DEVICE_BIDIRECTIONAL_ENDPOINT_SUPPORT)
+    _ux_dcd_stm32_iso_sof_gated_submit(dcd_stm32, dcd_stm32 -> ux_dcd_stm32_ed_in,
+                                       iso_in_retry_pending, schedule_frame,
+                                       (UCHAR)UX_ENDPOINT_IN);
+#else
+    _ux_dcd_stm32_iso_sof_gated_submit(dcd_stm32, dcd_stm32 -> ux_dcd_stm32_ed,
+                                       iso_in_retry_pending, schedule_frame,
+                                       (UCHAR)UX_ENDPOINT_IN);
+#endif /* !defined(UX_DEVICE_BIDIRECTIONAL_ENDPOINT_SUPPORT) */
+
+    _ux_dcd_stm32_iso_sof_gated_submit(dcd_stm32, dcd_stm32 -> ux_dcd_stm32_ed,
+                                       iso_out_retry_pending, schedule_frame,
+                                       (UCHAR)UX_ENDPOINT_OUT);
+}
+
+
 /**************************************************************************/
 /*                                                                        */
 /*  FUNCTION                                                RELEASE       */
@@ -1091,9 +1404,11 @@ UX_SLAVE_DCD            *dcd;
 UX_DCD_STM32            *dcd_stm32;
 UX_DCD_STM32_ED         *ed;
 UX_SLAVE_ENDPOINT       *endpoint;
-
-    UX_PARAMETER_NOT_USED(epnum);
-
+UX_SLAVE_TRANSFER       *transfer_request;
+ULONG                   frame_number;
+ULONG                   next_frame;
+UINT                    status;
+    UX_PARAMETER_NOT_USED(hpcd);
     /* Get the pointer to the DCD.  */
     dcd =  &_ux_system_slave -> ux_system_slave_dcd;
 
@@ -1109,17 +1424,59 @@ UX_SLAVE_ENDPOINT       *endpoint;
     if ((ed -> ux_dcd_stm32_ed_status & UX_DCD_STM32_ED_STATUS_USED) == 0U)
         return;
 
-    endpoint = ed->ux_dcd_stm32_ed_endpoint;
+    endpoint = ed -> ux_dcd_stm32_ed_endpoint;
+    if (endpoint == UX_NULL)
+        return;
 
-    if ((endpoint->ux_slave_endpoint_descriptor.bmAttributes & UX_MASK_ENDPOINT_TYPE) == 1 &&
-        (endpoint->ux_slave_endpoint_descriptor.bEndpointAddress & UX_ENDPOINT_DIRECTION) != 0)
+    if ((endpoint -> ux_slave_endpoint_descriptor.bmAttributes & UX_MASK_ENDPOINT_TYPE) == UX_ISOCHRONOUS_ENDPOINT &&
+        (endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress & UX_ENDPOINT_DIRECTION) == UX_ENDPOINT_IN)
     {
+        transfer_request = &endpoint -> ux_slave_endpoint_transfer_request;
+        if (ed -> ux_stm32_ed_interval_mask == 0U)
+        {
+            /* Keep the immediate retry path when bInterval is 1.  */
+            HAL_PCD_EP_Transmit(dcd_stm32 -> pcd_handle,
+                                endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress,
+                                transfer_request -> ux_slave_transfer_request_data_pointer,
+                                transfer_request -> ux_slave_transfer_request_requested_length);
+            return;
+        }
+        else
+        {
+            /* Retry immediately until one successful transfer reveals the host-aligned slot.  */
+            if (_ux_dcd_stm32_iso_slot_locked_get(endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress) == 0U)
+            {
+                HAL_PCD_EP_Transmit(dcd_stm32 -> pcd_handle,
+                                    endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress,
+                                    transfer_request -> ux_slave_transfer_request_data_pointer,
+                                    transfer_request -> ux_slave_transfer_request_requested_length);
+                return;
+            }
 
-        /* Incomplete, discard data and retry.  */
-        HAL_PCD_EP_Transmit(dcd_stm32 -> pcd_handle,
-                        endpoint->ux_slave_endpoint_descriptor.bEndpointAddress,
-                        endpoint->ux_slave_endpoint_transfer_request.ux_slave_transfer_request_data_pointer,
-                        endpoint->ux_slave_endpoint_transfer_request.ux_slave_transfer_request_requested_length);
+            /* Once the slot is learned, arm now only when the next USB frame matches it.  */
+            else
+            {
+                /* Otherwise keep the request pending until the SOF scheduler reaches that slot.  */
+                status = _ux_dcd_stm32_frame_number_get(dcd_stm32, &frame_number);
+                if (status != UX_SUCCESS)
+                {
+                    _ux_dcd_stm32_iso_submit_pending_set(endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress);
+                    return;
+                }
+
+                next_frame = frame_number + 1U;
+                if ((next_frame & ed -> ux_stm32_ed_interval_mask) == ed -> ux_stm32_ed_interval_position)
+                {
+                    HAL_PCD_EP_Transmit(dcd_stm32 -> pcd_handle,
+                                        endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress,
+                                        transfer_request -> ux_slave_transfer_request_data_pointer,
+                                        transfer_request -> ux_slave_transfer_request_requested_length);
+                    return;
+                }
+            }
+
+            _ux_dcd_stm32_iso_submit_pending_set(endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress);
+        }
     }
 }
 
@@ -1168,30 +1525,74 @@ UX_SLAVE_DCD            *dcd;
 UX_DCD_STM32            *dcd_stm32;
 UX_DCD_STM32_ED         *ed;
 UX_SLAVE_ENDPOINT       *endpoint;
-
-    UX_PARAMETER_NOT_USED(epnum);
-
+UX_SLAVE_TRANSFER       *transfer_request;
+ULONG                   frame_number;
+ULONG                   next_frame;
+UINT                    status;
+    UX_PARAMETER_NOT_USED(hpcd);
     /* Get the pointer to the DCD.  */
     dcd =  &_ux_system_slave -> ux_system_slave_dcd;
 
     /* Get the pointer to the STM32 DCD.  */
     dcd_stm32 = (UX_DCD_STM32 *) dcd -> ux_slave_dcd_controller_hardware;
-
     ed =  &dcd_stm32 -> ux_dcd_stm32_ed[epnum & 0xF];
-    if ((ed -> ux_dcd_stm32_ed_status & UX_DCD_STM32_ED_STATUS_USED) == 0)
+
+    if ((ed -> ux_dcd_stm32_ed_status & UX_DCD_STM32_ED_STATUS_USED) == 0U)
         return;
 
-    endpoint = ed->ux_dcd_stm32_ed_endpoint;
+    endpoint = ed -> ux_dcd_stm32_ed_endpoint;
+    if (endpoint == UX_NULL)
+        return;
 
-    if ((endpoint->ux_slave_endpoint_descriptor.bmAttributes & UX_MASK_ENDPOINT_TYPE) == 1 &&
-        (endpoint->ux_slave_endpoint_descriptor.bEndpointAddress & UX_ENDPOINT_DIRECTION) == 0)
+    if ((endpoint -> ux_slave_endpoint_descriptor.bmAttributes & UX_MASK_ENDPOINT_TYPE) == UX_ISOCHRONOUS_ENDPOINT &&
+        (endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress & UX_ENDPOINT_DIRECTION) == UX_ENDPOINT_OUT)
     {
+        transfer_request = &endpoint -> ux_slave_endpoint_transfer_request;
+        if (ed -> ux_stm32_ed_interval_mask == 0U)
+        {
+            /* Keep the immediate retry path when bInterval is 1.  */
+            HAL_PCD_EP_Receive(dcd_stm32 -> pcd_handle,
+                               endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress,
+                               transfer_request -> ux_slave_transfer_request_data_pointer,
+                               transfer_request -> ux_slave_transfer_request_requested_length);
+            return;
+        }
+        else
+        {
+            /* Retry immediately until one successful transfer reveals the host-aligned slot.  */
+            if (_ux_dcd_stm32_iso_slot_locked_get(endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress) == 0U)
+            {
+                HAL_PCD_EP_Receive(dcd_stm32 -> pcd_handle,
+                                   endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress,
+                                   transfer_request -> ux_slave_transfer_request_data_pointer,
+                                   transfer_request -> ux_slave_transfer_request_requested_length);
+                return;
+            }
 
-        /* Incomplete, discard data and retry.  */
-        HAL_PCD_EP_Receive(dcd_stm32 -> pcd_handle,
-                        endpoint->ux_slave_endpoint_descriptor.bEndpointAddress,
-                        endpoint->ux_slave_endpoint_transfer_request.ux_slave_transfer_request_data_pointer,
-                        endpoint->ux_slave_endpoint_transfer_request.ux_slave_transfer_request_requested_length);
+            /* Once the slot is learned, arm now only when the next USB frame matches it.  */
+            else
+            {
+                /* Otherwise keep the request pending until the SOF scheduler reaches that slot.  */
+                status = _ux_dcd_stm32_frame_number_get(dcd_stm32, &frame_number);
+                if (status != UX_SUCCESS)
+                {
+                    _ux_dcd_stm32_iso_submit_pending_set(endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress);
+                    return;
+                }
+
+                next_frame = frame_number + 1U;
+                if ((next_frame & ed -> ux_stm32_ed_interval_mask) == ed -> ux_stm32_ed_interval_position)
+                {
+                    HAL_PCD_EP_Receive(dcd_stm32 -> pcd_handle,
+                                       endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress,
+                                       transfer_request -> ux_slave_transfer_request_data_pointer,
+                                       transfer_request -> ux_slave_transfer_request_requested_length);
+                    return;
+                }
+            }
+
+            _ux_dcd_stm32_iso_submit_pending_set(endpoint -> ux_slave_endpoint_descriptor.bEndpointAddress);
+        }
     }
 }
 #endif /* defined(USBD_HAL_ISOINCOMPLETE_CALLBACK) */

@@ -26,6 +26,7 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #if EXTMEM_DRIVER_CUSTOM == 1
+#include "stm32_custom_driver_type.h"
 
 /** @addtogroup CUSTOM
   * @ingroup EXTMEM_DRIVER
@@ -42,37 +43,6 @@ extern "C" {
   * @{
   */
 
-/**
-  * @brief List of error codes of the CUSTOM driver
-  */
-typedef enum
-{
-  EXTMEM_DRV_CUSTOM_OK                     =  0,          /*!< Status of Operation OK */
-  EXTMEM_DRV_CUSTOM_ERR_XSPI_INIT          = -1,          /*!< XSPI initialization error */
-  EXTMEM_DRV_CUSTOM_ERR_XSPI_DEINIT        = -2,          /*!< XSPI de-initialization error */
-  EXTMEM_DRV_CUSTOM_ERR_XSPI_TIMEOUT       = -3,          /*!< XSPI timeout error */
-  EXTMEM_DRV_CUSTOM_ERR_CLOCK_INIT         = -4,          /*!< Clock initialization error */
-  EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND        = -5,          /*!< Error setting XSPI command */
-  EXTMEM_DRV_CUSTOM_ERR_RESET_MEMORY       = -6,          /*!< Error resetting memory */
-  EXTMEM_DRV_CUSTOM_ERR_JEDEC_ID           = -7,          /*!< JEDEC ID error */
-  EXTMEM_DRV_CUSTOM_ERR_READ_REGISTER      = -8,          /*!< Error reading register */
-  EXTMEM_DRV_CUSTOM_ERR_WRITE_REGISTER     = -9,          /*!< Error writing register */
-  EXTMEM_DRV_CUSTOM_ERR_SEND_INSTRUCTION   = -10,         /*!< Error sending instruction */
-  EXTMEM_DRV_CUSTOM_ERR_WRITE_INSTRUCTION  = -11,         /*!< Error writing instruction */
-  EXTMEM_DRV_CUSTOM_ERR_CONFIG_STEP        = -12,         /*!< Configuration step error */
-  EXTMEM_DRV_CUSTOM_ERR_MEMORY_TYPE        = -13,         /*!< Memory type error */
-  EXTMEM_DRV_CUSTOM_ERR_WRITE_ENABLE       = -14,         /*!< Write enable error */
-  EXTMEM_DRV_CUSTOM_ERR_FLASH_BUSY         = -15,         /*!< Flash busy error */
-  EXTMEM_DRV_CUSTOM_ERR_READ_MEMORY        = -16,         /*!< Error reading memory */
-  EXTMEM_DRV_CUSTOM_ERR_WRITE_MEMORY       = -17,         /*!< Error writing memory */
-  EXTMEM_DRV_CUSTOM_ERR_ENABLE_MEM_MAP     = -18,         /*!< Error enabling memory-mapped mode */
-  EXTMEM_DRV_CUSTOM_ERR_DISABLE_MEM_MAP    = -19,         /*!< Error disabling memory-mapped mode */
-  EXTMEM_DRV_CUSTOM_ERR_ADDRESS_ALIGNMENT  = -20,         /*!< Address alignment error */
-  EXTMEM_DRV_CUSTOM_ERR_SECTOR_SIZE        = -21,         /*!< Sector size error */
-  EXTMEM_DRV_CUSTOM_ERR_ERASE_TIMEOUT      = -22,         /*!< Erase timeout error */
-  EXTMEM_DRV_CUSTOM_ERR                    = -128         /*!< Generic error */
-} EXTMEM_DRIVER_CUSTOM_StatusTypeDef;
-
 /* Exported functions --------------------------------------------------------*/
 /**
   * @addtogroup CUSTOM_Exported_Functions Exported functions
@@ -86,6 +56,9 @@ EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_Read(EXTMEM_DRIVER_CUSTO
                                                              uint32_t Address, uint8_t *Data, uint32_t Size);
 EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_Write(EXTMEM_DRIVER_CUSTOM_ObjectTypeDef *CustomObject,
                                                               uint32_t Address, const uint8_t *Data, uint32_t Size);
+EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_WriteInMappedMode(EXTMEM_DRIVER_CUSTOM_ObjectTypeDef
+                                                                          *CustomObject, uint32_t Address,
+                                                                          const uint8_t *Data, uint32_t Size);
 EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_EraseSector(EXTMEM_DRIVER_CUSTOM_ObjectTypeDef *CustomObject,
                                                                     uint32_t Address, uint32_t Size);
 EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_MassErase(EXTMEM_DRIVER_CUSTOM_ObjectTypeDef *CustomObject);
@@ -97,6 +70,9 @@ EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_GetMapAddress(EXTMEM_DRI
                                                                       uint32_t *BaseAddress);
 EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_GetInfo(EXTMEM_DRIVER_CUSTOM_ObjectTypeDef *CustomObject,
                                                                 EXTMEM_DRIVER_CUSTOM_MemInfoTypeDef *MemInfo);
+__weak void EXTMEM_DRIVER_CUSTOM_MemCopy(uint32_t *Destination_Address, const uint8_t *ptrData, uint32_t DataSize);
+EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_UserCallback(void *CustomObjectCtx, uint32_t UserArg0,
+                                                                     uint32_t UserArg1);
 
 /**
   * @}

@@ -1,6 +1,6 @@
 /******************************************************************************
  * @file     startup_stm32n657xx_fsbl.c
- * @brief    CMSIS-Core Device Startup File for STM32N6xx Device 
+ * @brief    CMSIS-Core Device Startup File for STM32N6xx Device
  *           after bootROM execution
  ******************************************************************************/
 /*
@@ -316,15 +316,15 @@ extern const VECTOR_TABLE_Type __VECTOR_TABLE[];
   PKA_IRQHandler,                           /*     PKA */
   HASH_IRQHandler,                          /*     HASH */
   RNG_IRQHandler,                           /*     RNG */
-  0,                                        /*     Reserved */      
+  0,                                        /*     Reserved */
   MCE1_IRQHandler,                          /*     MCE1 */
   MCE2_IRQHandler,                          /*     MCE2 */
   MCE3_IRQHandler,                          /*     MCE3 */
   MCE4_IRQHandler,                          /*     MCE4 */
   ADC1_2_IRQHandler,                        /*     MCE2 */
   CSI_IRQHandler,                           /*     MCE3 */
-  DCMIPP_IRQHandler,                        /*     MCE4 */ 
-  0,                                        /*     Reserved */  
+  DCMIPP_IRQHandler,                        /*     MCE4 */
+  0,                                        /*     Reserved */
   0,                                        /*     Reserved */
   0,                                        /*     Reserved */
   PAHB_ERR_IRQHandler,                      /*     PAHB error interrupt */
@@ -358,7 +358,7 @@ extern const VECTOR_TABLE_Type __VECTOR_TABLE[];
   HPDMA1_Channel12_IRQHandler,              /*     HPDMA1 Channel 12 */
   HPDMA1_Channel13_IRQHandler,              /*     HPDMA1 Channel 13 */
   HPDMA1_Channel14_IRQHandler,              /*     HPDMA1 Channel 14 */
-  HPDMA1_Channel15_IRQHandler,              /*     HPDMA1 Channel 15 */  
+  HPDMA1_Channel15_IRQHandler,              /*     HPDMA1 Channel 15 */
   GPDMA1_Channel0_IRQHandler,               /*     GPDMA1 Channel 0 */
   GPDMA1_Channel1_IRQHandler,               /*     GPDMA1 Channel 1 */
   GPDMA1_Channel2_IRQHandler,               /*     GPDMA1 Channel 2 */
@@ -374,7 +374,7 @@ extern const VECTOR_TABLE_Type __VECTOR_TABLE[];
   GPDMA1_Channel12_IRQHandler,              /*     GPDMA1 Channel 12 */
   GPDMA1_Channel13_IRQHandler,              /*     GPDMA1 Channel 13 */
   GPDMA1_Channel14_IRQHandler,              /*     GPDMA1 Channel 14 */
-  GPDMA1_Channel15_IRQHandler,              /*     GPDMA1 Channel 15 */                               
+  GPDMA1_Channel15_IRQHandler,              /*     GPDMA1 Channel 15 */
   I2C1_EV_IRQHandler,                       /*     I2C1 Event */
   I2C1_ER_IRQHandler,                       /*     I2C1 Error */
   I2C2_EV_IRQHandler,                       /*     I2C2 Event */
@@ -469,7 +469,7 @@ extern const VECTOR_TABLE_Type __VECTOR_TABLE[];
   CTI_INT1_IRQHandler,                      /*     CTI INT1 interrupt */
   0,                                        /*     Reserved */
   LTDC_UP_IRQHandler,                       /*     LTDC up-layer interrupt */
-  LTDC_UP_ERR_IRQHandler                    /*     LTDC up-layer error interrupt */                                     
+  LTDC_UP_ERR_IRQHandler                    /*     LTDC up-layer error interrupt */
 
 };
 

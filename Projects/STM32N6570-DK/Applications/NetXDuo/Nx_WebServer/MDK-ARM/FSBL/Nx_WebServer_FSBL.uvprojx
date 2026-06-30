@@ -17,7 +17,7 @@
           <Device>STM32N657X0HxQ</Device>
           <Vendor>STMicroelectronics</Vendor>
           <PackID>Keil.STM32N6xx_DFP.1.0.0</PackID>
-          <PackURL>http://www.keil.com/pack</PackURL>
+          <PackURL>https://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x341C0000-0x341FFFFF) IROM(0x34180400-0x341BFFFF) CLOCK(8000000) FPU3(DFPU) CPUTYPE("Cortex-M55") ELITTLE TZ DSP</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -1795,21 +1795,6 @@
           <GroupName>Middlewares/threadx/Core</GroupName>
           <Files>
             <File>
-              <FileName>tx_initialize_high_level.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Middlewares/ST/threadx/common/src/tx_initialize_high_level.c</FilePath>
-            </File>
-            <File>
-              <FileName>tx_initialize_kernel_enter.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Middlewares/ST/threadx/common/src/tx_initialize_kernel_enter.c</FilePath>
-            </File>
-            <File>
-              <FileName>tx_initialize_kernel_setup.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Middlewares/ST/threadx/common/src/tx_initialize_kernel_setup.c</FilePath>
-            </File>
-            <File>
               <FileName>tx_thread_secure_stack_initialize.S</FileName>
               <FileType>2</FileType>
               <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/ac6/src/tx_thread_secure_stack_initialize.S</FilePath>
@@ -1873,6 +1858,26 @@
               <FileName>tx_timer_interrupt.S</FileName>
               <FileType>2</FileType>
               <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/ac6/src/tx_timer_interrupt.S</FilePath>
+            </File>
+            <File>
+              <FileName>tx_initialize_high_level.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Middlewares/ST/threadx/common/src/tx_initialize_high_level.c</FilePath>
+            </File>
+            <File>
+              <FileName>tx_initialize_kernel_enter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Middlewares/ST/threadx/common/src/tx_initialize_kernel_enter.c</FilePath>
+            </File>
+            <File>
+              <FileName>tx_initialize_kernel_setup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Middlewares/ST/threadx/common/src/tx_initialize_kernel_setup.c</FilePath>
+            </File>
+            <File>
+              <FileName>txe_thread_secure_stack_allocate.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/src/txe_thread_secure_stack_allocate.c</FilePath>
             </File>
             <File>
               <FileName>tx_thread_stack_error_handler.c</FileName>

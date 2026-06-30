@@ -7,6 +7,24 @@
   ******************************************************************************
   */
 
+### V4.1.1 / 15-April-2026 ###
+==================================
+Main changes
+-------------
+- Correct FilterConfig.BroadcastFilter default setting (DISABLE).
+ + ethernet/nx_stm32_eth_driver.c
+
+Dependencies:
+-------------
+- Azure RTOS NetXDuo V6.4.0
+- STM32CubeH7 Ethernet HAL driver V1.11.4
+- STM32CubeH7RS Ethernet HAL driver V1.2.0
+- STM32CubeH5 Ethernet HAL driver V1.4.0
+- STM32CubeF4 Ethernet HAL driver V1.8.4
+- STM32CubeF7 Ethernet HAL driver V1.3.2
+- STM32CubeN6 Ethernet HAL driver V1.0.0
+- MX_WIFI component driver 2.3.4
+
 ### V4.1.0 / 18-June-2025 ###
 ==================================
 Main changes

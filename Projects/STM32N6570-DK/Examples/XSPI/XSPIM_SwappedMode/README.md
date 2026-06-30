@@ -2,7 +2,7 @@
 
 - This project provides a description of how to configure XSPIM IO Manager peripheral and commuinicate
   with external memories in Swapped mode.
-- This project is targeted to run on STM32H7S7xx device on STM326570-DK board from STMicroelectronics.
+- This project is targeted to run on STM32N6xx device on STM32N6570-DK board from STMicroelectronics.
   At the beginning of the main program, the HAL_Init() function is called to reset
   all the peripherals and initialize the systick used as 1ms HAL timebase.
 - The SystemClock_Config() function is used to configure the system clock (SYSCLK)to run at 600 MHz.

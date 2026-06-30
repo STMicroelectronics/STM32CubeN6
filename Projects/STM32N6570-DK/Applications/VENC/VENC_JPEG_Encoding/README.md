@@ -1,15 +1,15 @@
 ## <b>VENC_JPEG_Encoding Description</b>
 
-This project demonstrates the use of the STM32N6 video encoder peripheral for JPEG encoding.<br>It is targeted to run on STM32N657xx device on STM32N6570-DK board from STMicroelectronics.
+This project demonstrates the use of the STM32N6 video encoder peripheral for JPEG encoding.<br>It is targeted to run on STM32N657xx devices on the STM32N6570-DK board from STMicroelectronics.
 
-This application is meant to run in internal SRAM. It is provided for illustrating purposes and can only be executed in boot in development mode.<br>
+This application is meant to run in internal SRAM. It is provided for illustration purposes and can only be executed in development mode.<br>
 
 ### <b> Example behavior </b>
 
 This application demonstrates the use of the STM32N6 for encoding JPEG using the VENC peripheral. Images and streams must be placed in non-cached memory aligned to 16 bytes. 
 The application takes an image in RGB565 format using the flip row and advanced modes to generate a 16-bit BMP. 
 The full BMP is converted to C code. After encoding, the application saves the JPEG file in the current folder using standard I/O FILE functions.
-At the end the green or red lighting signals a success or error.
+At the end, the green or red LED indicates success or error.
 
 
 #### <b>Error Handling</b><br>
@@ -39,9 +39,9 @@ Graphics, VENC, Encoding, JPEG, Hardware Encoding
 
     - VENC_JPEG_Encoding/FSBL/Inc/ewl_conf.h                Video Encoder Wrapper Layer header file
     - VENC_JPEG_Encoding/FSBL/Inc/main.h                    Header for main.c module
-    - VENC_JPEG_Encoding/FSBL/Incstm32n6xx_hal_conf.h       HAL Configuration file
+    - VENC_JPEG_Encoding/FSBL/Inc/stm32n6xx_hal_conf.h      HAL configuration file
     - VENC_JPEG_Encoding/FSBL/Inc/stm32n6xx_it.h            Interrupt handlers header file
-    - VENC_JPEG_Encoding/FSBL/stm32n6570_discovery_conf.h   BSP configuration file
+    - VENC_JPEG_Encoding/FSBL/Inc/stm32n6570_discovery_conf.h BSP configuration file
     - VENC_JPEG_Encoding/FSBL/Src/main.c                    Main program
     - VENC_JPEG_Encoding/FSBL/Src/imageEncode.c             Code to encode the image
     - VENC_JPEG_Encoding/FSBL/Src/stm32n6xx_hal_msp.c       HAL MSP module
@@ -52,9 +52,9 @@ Graphics, VENC, Encoding, JPEG, Hardware Encoding
 
 ### <b>Hardware and Software environment</b>
 
-  - This template runs on STM32N6 devices.
+  - This application runs on STM32N6 devices.
 
-  - This template has been tested with STMicroelectronics STM32N6570-DK (MB1939)
+  - This application has been tested with STMicroelectronics STM32N6570-DK (MB1939)
     board and can be easily tailored to any other supported device
     and development board.
 
@@ -65,7 +65,7 @@ Graphics, VENC, Encoding, JPEG, Hardware Encoding
 
   - The example can be run only in development mode.
 
-  - **EWARM** : To monitor a variable in the live watch window, you must proceed as follow :
+  - **EWARM** : To monitor a variable in the live watch window, you must proceed as follows:
     - Start a debugging session.
     - Open the View > Images.
     - Double-click to deselect the second instance of project.out.

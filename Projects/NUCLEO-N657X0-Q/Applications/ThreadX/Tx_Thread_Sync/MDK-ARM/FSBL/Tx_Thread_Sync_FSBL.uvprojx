@@ -17,7 +17,7 @@
           <Device>STM32N657X0HxQ</Device>
           <Vendor>STMicroelectronics</Vendor>
           <PackID>Keil.STM32N6xx_DFP.1.0.0</PackID>
-          <PackURL>https://www.keil.com/pack/</PackURL>
+          <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IRAM(0x341C0000-0x341FFFFF) IROM(0x34180400-0x341BFFFF) CLOCK(8000000) FPU3(DFPU) CPUTYPE("Cortex-M55") ELITTLE TZ DSP</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -81,7 +81,7 @@
           </BeforeMake>
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
-            <RunUserProg2>0</RunUserProg2>
+            <RunUserProg2>1</RunUserProg2>
             <UserProg1Name>fromelf #L --bincombined --output=$L@L.bin</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
@@ -438,86 +438,6 @@
               <FileName>README.md</FileName>
               <FileType>5</FileType>
               <FilePath>../../README.md</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Drivers/STM32N6xx_HAL_Driver</GroupName>
-          <Files>
-            <File>
-              <FileName>stm32n6xx_hal_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_tim.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32n6xx_hal_tim_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_tim_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32n6xx_hal_cortex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_cortex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32n6xx_hal_rif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rif.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32n6xx_hal_rcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32n6xx_hal_rcc_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32n6xx_hal_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32n6xx_hal_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32n6xx_hal_dma_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32n6xx_hal_pwr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pwr.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32n6xx_hal_pwr_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pwr_ex.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32n6xx_hal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32n6xx_hal_exti.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_exti.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32n6xx_hal_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32n6xx_hal_uart_ex.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_uart_ex.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1383,6 +1303,86 @@
               <FileName>txe_timer_info_get.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../../Middlewares/ST/threadx/common/src/txe_timer_info_get.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers/STM32N6xx_HAL_Driver</GroupName>
+          <Files>
+            <File>
+              <FileName>stm32n6xx_hal_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32n6xx_hal_tim_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_tim_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32n6xx_hal_cortex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_cortex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32n6xx_hal_rif.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rif.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32n6xx_hal_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32n6xx_hal_rcc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32n6xx_hal_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32n6xx_hal_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32n6xx_hal_dma_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32n6xx_hal_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pwr.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32n6xx_hal_pwr_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pwr_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32n6xx_hal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32n6xx_hal_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32n6xx_hal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32n6xx_hal_uart_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_uart_ex.c</FilePath>
             </File>
           </Files>
         </Group>

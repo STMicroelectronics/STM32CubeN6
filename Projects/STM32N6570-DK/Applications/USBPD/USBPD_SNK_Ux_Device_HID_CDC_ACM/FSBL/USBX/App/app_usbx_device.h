@@ -63,7 +63,6 @@ UINT MX_USBX_Device_Stack_Init(void);
 UINT MX_USBX_Device_Stack_DeInit(void);
 
 /* USER CODE BEGIN EFP */
-VOID USBX_APP_Device_Init(VOID);
 VOID USBX_APP_UART_Init(UART_HandleTypeDef **huart);
 /* USER CODE END EFP */
 

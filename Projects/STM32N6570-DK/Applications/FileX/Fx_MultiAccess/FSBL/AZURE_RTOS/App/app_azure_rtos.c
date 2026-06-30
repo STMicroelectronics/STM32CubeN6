@@ -109,7 +109,6 @@ VOID tx_application_define(VOID *first_unused_memory)
     /* USER CODE END  App_ThreadX_Init_Success */
 
   }
-
   if (tx_byte_pool_create(&fx_app_byte_pool, "Fx App memory pool", fx_byte_pool_buffer, FX_APP_MEM_POOL_SIZE) != TX_SUCCESS)
   {
     /* USER CODE BEGIN FX_Byte_Pool_Error */

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspace>
-    <project>
-        <path>$WS_DIR$\Ux_Device_CDC_ECM.ewp</path>
-    </project>
-    <batchBuild />
+  <project>
+    <path>$WS_DIR$\FSBL\Ux_Device_CDC_ECM_FSBL.ewp</path>
+  </project>
+  <batchBuild />
 </workspace>

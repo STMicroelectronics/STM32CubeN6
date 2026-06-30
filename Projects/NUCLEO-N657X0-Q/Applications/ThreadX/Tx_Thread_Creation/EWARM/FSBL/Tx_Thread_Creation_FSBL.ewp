@@ -1221,19 +1221,10 @@
           <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/common/src/tx_initialize_kernel_setup.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/iar/src/tx_iar.c</name>
-        </file>
-        <file>
           <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/iar/src/tx_iar.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/iar/src/tx_thread_secure_stack_initialize.s</name>
-        </file>
-        <file>
           <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/iar/src/tx_thread_secure_stack_initialize.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/iar/src/tx_thread_secure_stack_allocate.s</name>
         </file>
         <file>
           <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/iar/src/tx_thread_secure_stack_allocate.s</name>
@@ -1242,40 +1233,10 @@
           <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/iar/src/tx_thread_secure_stack_free.s</name>
         </file>
         <file>
-          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/iar/src/tx_thread_secure_stack_free.s</name>
-        </file>
-        <file>
           <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/iar/src/txe_thread_secure_stack_free.c</name>
         </file>
         <file>
-          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/iar/src/txe_thread_secure_stack_free.c</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/iar/src/tx_thread_context_restore.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/iar/src/tx_thread_context_save.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/iar/src/tx_thread_interrupt_control.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/iar/src/tx_thread_interrupt_disable.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/iar/src/tx_thread_interrupt_restore.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/iar/src/tx_thread_schedule.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/iar/src/tx_thread_stack_build.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/iar/src/tx_thread_system_return.s</name>
-        </file>
-        <file>
-          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_M55/iar/src/tx_timer_interrupt.s</name>
+          <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/iar/src/txe_thread_secure_stack_allocate.c</name>
         </file>
         <file>
           <name>$PROJ_DIR$/../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/iar/src/tx_thread_context_restore.s</name>

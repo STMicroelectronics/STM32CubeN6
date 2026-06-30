@@ -20,8 +20,8 @@
 <div class="row">
 <div class="col-sm-12 col-lg-8">
 <h2 id="venc_sdcard-description"><b>VENC_SDCard Description</b></h2>
-<p>This project demonstrates the use of the STM32N6 video encoder and the camera pipeline.<br>It is targeted to run on STM32N657xx device on STM32N6570-DK board from STMicroelectronics.</p>
-<p>This application is meant to run in internal SRAM via the Load &amp; Run method. The application is stored in external flash and then loaded in internal RAM for execution.<br> It can also be run in dev_mode debug. For information on those modes, see the “How to use” section.</p>
+<p>This project demonstrates the use of the STM32N6 video encoder and the camera pipeline.<br>It is targeted to run on STM32N657xx devices on the STM32N6570-DK board from STMicroelectronics.</p>
+<p>This application is meant to run in internal SRAM via the Load &amp; Run method. The application is stored in external flash and then loaded in internal RAM for execution.<br> It can also be run in development-mode debug. For information on those modes, see the “How to use” section.</p>
 <h3 id="example-behaviour"><b> Example behaviour </b></h3>
 <p>This example takes a camera (OV5640) input and transfers it to the video encoder through the camera pipeline. The camera image is also displayed on the board’s LCD screen for user feedback of what is being recorded.<br> The video encoder output stream is saved to the SD card. The output is raw since no file system is used for now. For information on how to get data from the SD card after the execution of the example, see the “How to use” section.</p>
 <p>This example is ‘bare-metal’, meaning there is no use of any RTOS.</p>
@@ -49,33 +49,33 @@
 <p>Graphics, VENC, Encoding, Hardware Encoding</p>
 <h3 id="directory-contents"><b>Directory contents</b></h3>
 <h4 id="sub-project-fsbl"><b>Sub-project FSBL</b></h4>
-<pre><code>- VENC_LRUN_Example/FSBL/Inc/main.h                    Header for main.c module
-- VENC_LRUN_Example/FSBL/Inc/extmem.h                  Header for extmem.c module
-- VENC_LRUN_Example/FSBL/Inc/partition_stm32n657xx.h   SAU partition configuration
-- VENC_LRUN_Example/FSBL/Incstm32n6xx_hal_conf.h       HAL Configuration file
-- VENC_LRUN_Example/FSBL/Inc/stm32n6xx_it.h            Interrupt handlers header file
-- VENC_LRUN_Example/FSBL/stm32_extmem_conf.h           External memory manager Configuration file
-- VENC_LRUN_Example/FSBL/Src/main.c                    Main program
-- VENC_LRUN_Example/FSBL/Src/extmem.c                  code to initialize external memory
-- VENC_LRUN_Example/FSBL/Src/stm32n6xx_hal_msp.c       HAL MSP module
-- VENC_LRUN_Example/FSBL/Src/stm32n6xx_it.c            Interrupt handlers
-- VENC_LRUN_Example/FSBL/Src/system_stm32n6xx_fsbl.c   STM32N6xx system source file</code></pre>
+<pre><code>- VENC_SDCard/FSBL/Inc/main.h                    Header for main.c module
+- VENC_SDCard/FSBL/Inc/extmem.h                  Header for extmem.c module
+- VENC_SDCard/FSBL/Inc/partition_stm32n657xx.h   SAU partition configuration
+- VENC_SDCard/FSBL/Inc/stm32n6xx_hal_conf.h      HAL configuration file
+- VENC_SDCard/FSBL/Inc/stm32n6xx_it.h            Interrupt handlers header file
+- VENC_SDCard/stm32_extmem_conf.h                External memory manager configuration file
+- VENC_SDCard/FSBL/Src/main.c                    Main program
+- VENC_SDCard/FSBL/Src/extmem.c                  Code to initialize external memory
+- VENC_SDCard/FSBL/Src/stm32n6xx_hal_msp.c       HAL MSP module
+- VENC_SDCard/FSBL/Src/stm32n6xx_it.c            Interrupt handlers
+- VENC_SDCard/FSBL/Src/system_stm32n6xx_fsbl.c   STM32N6xx system source file</code></pre>
 <h4 id="sub-project-appli"><b>Sub-project Appli</b></h4>
-<pre><code>- VENC_LRUN_Example/Appli/Inc/main.h                       Header for main.c module
-- VENC_LRUN_Example/Appli/Inc/stm32n6xx_hal_conf.h         HAL Configuration file
-- VENC_LRUN_Example/Appli/Inc/stm32n6xx_it.h               Interrupt handlers header file
-- VENC_LRUN_Example/Appli/Inc/partition_stm32n657xx.h      SAU partition configuration
-- VENC_LRUN_Example/Appli/Inc/stm32_assert.h               Assert function definition
-- VENC_LRUN_Example/Appli/Inc/ewl_conf.h                   EWL configuration file
-- VENC_LRUN_Example/Appli/Inc/stm32n6570_discovery_conf.h  BSP configuration file
-- VENC_LRUN_Example/Appli/Src/main.c                       Main program
-- VENC_LRUN_Example/Appli/Src/hal_timebase_tim.c           HAL timer timebase source file
-- VENC_LRUN_Example/Appli/Src/stm32n6xx_it.c               Interrupt handlers
-- VENC_LRUN_Example/Appli/Src/system_stm32n6xx.c           STM32N6xx system source file</code></pre>
+<pre><code>- VENC_SDCard/Appli/Inc/main.h                       Header for main.c module
+- VENC_SDCard/Appli/Inc/stm32n6xx_hal_conf.h         HAL configuration file
+- VENC_SDCard/Appli/Inc/stm32n6xx_it.h               Interrupt handlers header file
+- VENC_SDCard/Appli/Inc/partition_stm32n657xx.h      SAU partition configuration
+- VENC_SDCard/Appli/Inc/stm32_assert.h               Assert function definition
+- VENC_SDCard/Appli/Inc/ewl_conf.h                   EWL configuration file
+- VENC_SDCard/Appli/Inc/stm32n6570_discovery_conf.h  BSP configuration file
+- VENC_SDCard/Appli/Src/main.c                       Main program
+- VENC_SDCard/Appli/Src/hal_timebase_tim.c           HAL timer timebase source file
+- VENC_SDCard/Appli/Src/stm32n6xx_it.c               Interrupt handlers
+- VENC_SDCard/Appli/Src/system_stm32n6xx.c           STM32N6xx system source file</code></pre>
 <h3 id="hardware-and-software-environment"><b>Hardware and Software environment</b></h3>
 <ul>
-<li><p>This template runs on STM32N6 devices.</p></li>
-<li><p>This template has been tested with STMicroelectronics STM32N6570-DK (MB1939) board and can be easily tailored to any other supported device and development board.</p></li>
+<li><p>This application runs on STM32N6 devices.</p></li>
+<li><p>This application has been tested with STMicroelectronics STM32N6570-DK (MB1939) board and can be easily tailored to any other supported device and development board.</p></li>
 <li><p>On STM32N6570-DK board, the BOOT0 mechanical slide switch must be set to SW1.</p></li>
 <li><p>The following OTP fuses are set in this template:</p>
 <ul>
@@ -83,9 +83,9 @@
 </ul></li>
 </ul>
 <p><strong>WARNING</strong></p>
-<p>When OTP fuses are set, they can not be reset. The NO_OTP_FUSE option is selected by default using the Preprocessor definition in the IDE. XSPI speed will however be limited to 50MHz. To use the full XSPI speed, delete the NO_OTP_FUSE definition.</p>
+<p>When OTP fuses are set, they cannot be reset. The NO_OTP_FUSE option is selected by default using the Preprocessor definition in the IDE. XSPI speed will however be limited to 50MHz. To use the full XSPI speed, delete the NO_OTP_FUSE definition.</p>
 <ul>
-<li><strong>EWARM</strong> : To monitor a variable in the live watch window, you must proceed as follow :
+<li><strong>EWARM</strong> : To monitor a variable in the live watch window, you must proceed as follows:
 <ul>
 <li>Start a debugging session.</li>
 <li>Open the View &gt; Images.</li>
@@ -99,7 +99,7 @@
 <p>Make sure that BOOT1 switch position is 1-3. BOOT0 position does not matter. Then, plug in your board via the ST-LINK USB port.</p>
 <p>Select the “Appli” tab in IAR and select the “DK_debug” configuration. This enables the development mode configuration.<br> Then, simply click the execute button and the program will run in debug mode.</p>
 <h4 id="load-run"><b> Load &amp; Run </b></h4>
-<p>This mode enables execution without having to connect through an IDE. The application will be stored in external memory and therefore will no require any external tools once loaded onto the board.</p>
+<p>This mode enables execution without having to connect through an IDE. The application will be stored in external memory and therefore will not require any external tools once loaded onto the board.</p>
 <p>It is expected that a command line environment is configured with the CubeProgrammer in its PATH.</p>
 <ul>
 <li>Make sure that the “Appli” project in IAR is in the “DK_LRUN” configuration</li>
@@ -111,9 +111,9 @@
 <li>Press the reset button</li>
 <li>The example should execute</li>
 </ul>
-<p>Note : when using CubeIDE, make sure to use the Debug configuration for development mode and the Release configuration for boot from flash.</p>
+<p>Note: when using CubeIDE, make sure to use the Debug configuration for development mode and the Release configuration for boot from flash.</p>
 <h4 id="after-execution"><b> After execution </b></h4>
-<p>After the red and green LED have turned off, 600 frames of video have been encoded. To play them back, the stream needs to be extracted from the SD card. After plugging the SD card into a computer, its contents can be read using the <code>dd</code> command in git bash. Example : <code>dd of=dump.bin if=[path to sd e.g. /dev/sdd1] ibs=512 obs=512 count=25000</code> to dump 66000 blocks of 512 bytes from an sd.</p>
+<p>After the red and green LED have turned off, 600 frames of video have been encoded. To play them back, the stream needs to be extracted from the SD card. After plugging the SD card into a computer, its contents can be read using the <code>dd</code> command in Git Bash. Example: <code>dd of=dump.bin if=[path to sd e.g. /dev/sdd1] ibs=512 obs=512 count=25000</code> to dump 25000 blocks of 512 bytes from an SD card.</p>
 <p>To read back encoded video, it can be converted from raw bytestream to mp4 using a tool called <a href="https://trac.ffmpeg.org/">ffmpeg</a> with the following command : <code>ffmpeg -f h264 -framerate 30 -i [extracted file] -c copy [output file]</code></p>
 <p>The file can then be read using VLC.</p>
 <h4 id="adding-a-header"><b> Adding a header </b></h4>

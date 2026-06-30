@@ -1,0 +1,4 @@
+app_image_number=1
+app_full_secure=0
+s_data_image_number=1
+ns_data_image_number=0

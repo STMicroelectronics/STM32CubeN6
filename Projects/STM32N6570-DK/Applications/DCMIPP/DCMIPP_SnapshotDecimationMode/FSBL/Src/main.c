@@ -498,6 +498,10 @@ static void IMX335_Probe(uint32_t Resolution, uint32_t PixelFormat)
       {
         Error_Handler();
       }
+      else if (IMX335_MirrorFlipConfig(&IMX335Obj, IMX335_MIRROR) != IMX335_OK)
+      {
+        Error_Handler();
+      }
       else
       {
         return;

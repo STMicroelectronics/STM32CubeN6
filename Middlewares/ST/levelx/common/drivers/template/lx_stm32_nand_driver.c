@@ -28,10 +28,13 @@
 
 /* USER CODE END EM */
 
+/* Private variables ---------------------------------------------------------*/
+
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
 /* Exported functions prototypes ---------------------------------------------*/
-
-
-
 
 static UINT  lx_nand_driver_read(ULONG block, ULONG page, ULONG *destination, ULONG words);
 static UINT  lx_nand_driver_write(ULONG block, ULONG page, ULONG *source, ULONG words);
@@ -68,8 +71,6 @@ static UINT  lx_nand_flash_driver_pages_copy(ULONG source_block, ULONG source_pa
 #ifndef CUSTOM_WORDS_PER_PHYSICAL_PAGE
 #define CUSTOM_WORDS_PER_PHYSICAL_PAGE 512
 #endif
-
-static UCHAR  nand_flash_buffer[CUSTOM_WORDS_PER_PHYSICAL_PAGE];
 
 UINT lx_stm32_nand_custom_driver_initialize(LX_NAND_FLASH *nand_flash)
 {
@@ -118,12 +119,6 @@ UINT lx_stm32_nand_custom_driver_initialize(LX_NAND_FLASH *nand_flash)
   /* USER CODE BEGIN Init_Section_2 */
 
   /*USER CODE END Init_Section_2 */
-
-  nand_flash->lx_nand_flash_page_buffer =  &nand_flash_buffer[0];
-
-  /* USER CODE BEGIN Init_Section_3 */
-
-  /*USER CODE END Init_Section_3 */
   return ret;
 
 }

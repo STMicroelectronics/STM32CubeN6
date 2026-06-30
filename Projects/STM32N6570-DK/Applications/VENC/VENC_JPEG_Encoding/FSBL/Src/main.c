@@ -1,12 +1,9 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    UART/UART_HyperTerminal_IT/Src/main.c
+  * @file    main.c
   * @author  MCD Application Team
-  * @brief   This sample code shows how to use UART HAL API to transmit
-  *          and receive a data buffer with a communication process based on
-  *          Interrupt transfer.
-  *          The communication is done with the Hyperterminal PC application.
+  * @brief   VENC JPEG encoding application entry point.
   ******************************************************************************
   * @attention
   *
@@ -213,8 +210,8 @@ int main(void)
 
   /* MCU Configuration--------------------------------------------------------*/
 
-  /* STM32N6xx HAL library initialization:
-       - Systick timer is configured by default as source of time base, but user
+    /* STM32N6xx HAL library initialization:
+      - SysTick timer is configured by default as source of time base, but user
              can eventually implement his proper time base source (a general purpose
              timer for example or other time source), keeping in mind that Time base
              duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and
@@ -300,7 +297,7 @@ int main(void)
     if(ret)
     {
       /* Save the jpeg file in the current folder */
-      snprintf(tScratch,sizeof(tScratch),"Img%03d.jpeg",cptImage++);
+      snprintf(tScratch,sizeof(tScratch),"Img%03lu.jpeg",(unsigned long)cptImage++);
       ret = save_file(tScratch,tJpegStream,szJpeg);
     }
     Led_TypeDef led = LED2;

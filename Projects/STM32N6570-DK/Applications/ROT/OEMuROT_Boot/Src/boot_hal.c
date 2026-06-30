@@ -249,10 +249,12 @@ void boot_platform_quit(struct boot_arm_vector_table *vector)
          (void *)(FLASH_DATA_S_ADDRESS), img_hdr->ih_hdr_size + img_hdr->ih_img_size);
 #endif /* MCUBOOT_S_DATA_IMAGE_NUMBER == 1 */
 
+#if (MCUBOOT_APP_IMAGE_NUMBER == 2)
   /* Get the header structure from application non-secure image */
   img_hdr = (struct image_header *)FLASH_APPLI_NS_ADDRESS;
   memcpy((void *)NS_CODE_START,
          (void *)(FLASH_APPLI_NS_ADDRESS), img_hdr->ih_hdr_size + img_hdr->ih_img_size);
+#endif
 
 #if (MCUBOOT_NS_DATA_IMAGE_NUMBER == 1)
   /* Get the header structure from data non-secure image */
@@ -432,16 +434,19 @@ bool boot_is_in_primary(uint8_t fa_id, uint32_t offset_in_flash, size_t len)
   uint32_t primary_end = FLASH_PRIMARY_AREA_LIMIT_ADDRESS;
 
   /* Check the fa_id */
-  if (fa_id == FLASH_AREA_0_ID ||
-#if (MCUBOOT_S_DATA_IMAGE_NUMBER == 1)
-      fa_id == FLASH_AREA_4_ID ||
-#endif /* MCUBOOT_S_DATA_IMAGE_NUMBER == 1 */
-#if (MCUBOOT_NS_DATA_IMAGE_NUMBER == 1)
-      fa_id == FLASH_AREA_5_ID ||
-#endif /* MCUBOOT_NS_DATA_IMAGE_NUMBER == 1 */
-      fa_id == FLASH_AREA_1_ID)
+  if (fa_id == FLASH_AREA_0_ID
+  #if (MCUBOOT_S_DATA_IMAGE_NUMBER == 1)
+      || fa_id == FLASH_AREA_4_ID
+  #endif /* MCUBOOT_S_DATA_IMAGE_NUMBER == 1 */
+  #if (MCUBOOT_NS_DATA_IMAGE_NUMBER == 1)
+      || fa_id == FLASH_AREA_5_ID
+  #endif /* MCUBOOT_NS_DATA_IMAGE_NUMBER == 1 */
+  #if (MCUBOOT_APP_IMAGE_NUMBER == 2)
+      || fa_id == FLASH_AREA_1_ID
+  #endif /* MCUBOOT_APP_IMAGE_NUMBER == 2 */
+      )
   {
-    buffer_in_flash = EXT_FLASH_BASE_ADDRESS + offset_in_flash;
+      buffer_in_flash = EXT_FLASH_BASE_ADDRESS + offset_in_flash;
   }
   else
   {

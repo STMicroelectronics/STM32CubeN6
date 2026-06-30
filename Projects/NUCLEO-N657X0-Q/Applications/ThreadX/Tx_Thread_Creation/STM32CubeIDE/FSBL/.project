@@ -942,6 +942,11 @@
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/common/src/txe_thread_resume.c</locationURI>
 		</link>
 		<link>
+			<name>Middlewares/threadx/Core/txe_thread_secure_stack_allocate.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/ports/cortex_m55/gnu/src/txe_thread_secure_stack_allocate.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/threadx/Core/txe_thread_secure_stack_free.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/ports/cortex_m55/gnu/src/txe_thread_secure_stack_free.c</locationURI>

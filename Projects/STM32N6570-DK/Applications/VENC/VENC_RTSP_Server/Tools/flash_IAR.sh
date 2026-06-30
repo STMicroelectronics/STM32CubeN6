@@ -62,7 +62,7 @@ fi
 
 echo "Boot switches must be in 1-3"
 
-waitType "1:2:3" "Select application to sign and flash (1=VENC_RTSP, 2=VENC_PCM_RTSP)> " "" "1"
+waitType "1:2:3" "Select application to sign and flash (1=VENC_RTSP, 2=VENC_PCM_RTSP, 3=VENC_OPUS_RTSP)> " "" "1"
 APP_CHOICE="$val_waitType"
 FSBL_PATH="../EWARM/FSBL/VENC_RTSP_FSBL/Exe/FSBL.bin"
 
@@ -74,6 +74,10 @@ case "$APP_CHOICE" in
 	2)
 		APP_NAME="VENC_PCM_RTSP"
 		BIN_PATH="../EWARM/Appli/VENC_PCM_RTSP_Debug/Exe/Project.bin"
+		;;
+	3)
+		APP_NAME="VENC_OPUS_RTSP"
+		BIN_PATH="../EWARM/Appli/VENC_OPUS_RTSP_Debug/Exe/Project.bin"
 		;;
 	*)
 		echo "Invalid selection."
@@ -89,12 +93,16 @@ STM32_SigningTool_CLI.exe --version
 STM32_SigningTool_CLI.exe  -s  -bin "$BIN_PATH"  -nk -of 0x80000000 -t fsbl -o tmp/firmware-trusted.bin -hv 2.3 -align -dump tmp/firmware-trusted.bin
 STM32_SigningTool_CLI.exe  -s  -bin "$FSBL_PATH" -nk -of 0x80000000 -t fsbl -o tmp/FSBL-trusted.bin     -hv 2.3 -align -dump tmp/FSBL-trusted.bin
 
-waitType "yes:no" "Do you want to flash the image? (Yes/no)> " "" "yes"
+waitType "yes:no" "Do you want to flash bootloader? (Yes/no)> " "" "yes"
 if [ "$val_waitType" == "yes" ]; then
-	echo Flashing  .....
+	echo Flashing bootloader .....
 	STM32_Programmer_CLI.exe -c port=swd -hardRst $LOADER_EXT   -d  tmp/FSBL-trusted.bin $OFFSET_FSBL
-	STM32_Programmer_CLI.exe -c port=swd -hardRst $LOADER_EXT   -d  tmp/firmware-trusted.bin $OFFSET_IMAGE
+fi
 
+waitType "yes:no" "Do you want to flash application? (Yes/no)> " "" "yes"
+if [ "$val_waitType" == "yes" ]; then
+	echo Flashing application .....
+	STM32_Programmer_CLI.exe -c port=swd -hardRst $LOADER_EXT   -d  tmp/firmware-trusted.bin $OFFSET_IMAGE
 fi
 
 

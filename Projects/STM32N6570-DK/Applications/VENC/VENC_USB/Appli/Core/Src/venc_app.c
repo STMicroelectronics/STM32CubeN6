@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stdio.h"
+#include "string.h"
 #include "ewl.h"
 #include "h264encapi.h"
 #include "venc_app.h"
@@ -30,6 +31,8 @@
 #include "utils.h"
 #include "venc_h264_config.h"
 #include "dcmipp_app.h"
+#include "frame_rb.h"
+#include "time_monitor.h"
 
 /** @addtogroup Templates
 * @{
@@ -41,15 +44,16 @@
 
 /* Private typedef -----------------------------------------------------------*/
 typedef struct {
-  uint32_t coding_type;
   uint32_t size;
   uint32_t * block_addr;
   uint32_t * aligned_block_addr;
 } venc_output_frame_t;
 /* Private define ------------------------------------------------------------*/
 /* Align and use unsigned suffixes for sizes/counts */
+#define H264_STREAM_START_MAX_SIZE 128U
 #define VENC_APP_QUEUE_SIZE        15U
 #define VENC_OUTPUT_BLOCK_NBR      4U
+#define VENC_STARTUP_INTRA_FRAME_COUNT  3U
 
 /* Private macro -------------------------------------------------------------*/
 /* Align a pointer up to 'bytes' boundary */
@@ -69,13 +73,17 @@ uint32_t frame_received = 0;
 static uint32_t last_frame_received = 0;
 static uint32_t nbLineEvent=0;
 static uint32_t outputBlockSize; 
+static uint32_t *g_curr_block = NULL;
+static uint32_t g_max_output_buffer_size = 0U;
+static uint32_t startup_intra_frames_remaining = 0U;
+static uint8_t g_stream_start_blob[H264_STREAM_START_MAX_SIZE];
+static uint32_t g_stream_start_blob_size = 0U;
 
 /* Input Frame : in internal ram */
-venc_output_frame_t enc_queue_buf[VENC_OUTPUT_BLOCK_NBR];
+venc_output_frame_t enc_queue_buf[VENC_APP_QUEUE_SIZE];
 
 TX_EVENT_FLAGS_GROUP venc_app_flags;
 TX_QUEUE enc_frame_queue;
-TX_BLOCK_POOL venc_block_pool;
 
 /* Private function prototypes -----------------------------------------------*/
 static int encoder_prepare(void);
@@ -83,7 +91,48 @@ static int encode_frame(void);
 static int encoder_end(void);
 static int encoder_start(void);
 
+/*
+ * The encoder emits two different kinds of startup data:
+ *
+ * 1. H264EncStrmStart() returns a standalone byte-stream blob containing the
+ *    sequence parameter set / picture parameter set headers needed by a fresh
+ *    decoder.
+ * 2. The first pictures returned by H264EncStrmEncode() are normal access
+ *    units and may be IDR pictures, but they are not guaranteed to repeat the
+ *    same SPS/PPS payload in the first encoded picture of the session.
+ *
+ * The current USB path therefore keeps the stream-start blob out of the normal
+ * frame queue, caches it here, and lets USBX prepend it to the first host-
+ * visible frame. This keeps the first USB-delivered access unit decodable
+ * without inventing a synthetic "header frame" in the current queue contract.
+ *
+ * The blob cache is not a substitute for startup IDRs. It only provides the
+ * codec headers. Decoder lock, transport resynchronization and host robustness
+ * are improved further by sending several startup intra pictures after the blob
+ * has been delivered.
+ */
+static void invalidate_dcache_region(const void *addr, uint32_t size)
+{
+  uintptr_t start;
+  uintptr_t end;
+  uint32_t aligned_size;
 
+  if ((addr == NULL) || (size == 0U))
+  {
+    return;
+  }
+
+  start = ((uintptr_t)addr) & ~((uintptr_t)31U);
+  end = ((uintptr_t)addr + (uintptr_t)size + 31U) & ~((uintptr_t)31U);
+  aligned_size = (uint32_t)(end - start);
+  SCB_InvalidateDCache_by_Addr((void *)start, (int32_t)aligned_size);
+}
+
+static void release_output_block(uint32_t *block_addr)
+{
+  (void)block_addr;
+  frb_free(0xFFFFFFFFU);
+}
 
 /**
   * @brief  Checks if a video buffer overflow condition has occurred.
@@ -98,7 +147,7 @@ bool IsVideoOverflow(void)
 {
     bool videoOverflow = false;
 
-    if (IsHwHandshakeMode())
+    if (IsHwHanshakeMode())
     {
         videoOverflow = (nbLineEvent != 0U);
     }
@@ -128,7 +177,8 @@ void venc_thread_func(ULONG arg)
   {
     return ;
   }
-  if(tx_queue_create(&enc_frame_queue, "ENC frame queue", sizeof(venc_output_frame_t)/4, &enc_queue_buf, sizeof(enc_queue_buf)) != TX_SUCCESS)
+    
+    if(tx_queue_create(&enc_frame_queue, "ENC frame queue", sizeof(venc_output_frame_t)/4, enc_queue_buf, sizeof(enc_queue_buf)) != TX_SUCCESS)
   {
     Error_Handler();
   }
@@ -138,8 +188,7 @@ void venc_thread_func(ULONG arg)
   outputBuffer = GetOutputBuffer(&outputBufferSize);
   outputBlockSize = outputBufferSize / VENC_OUTPUT_BLOCK_NBR;
      
-  if(tx_block_pool_create(&venc_block_pool, "venc output block pool", outputBlockSize,
-                            outputBuffer, outputBufferSize) != TX_SUCCESS)
+  if (frb_init(outputBuffer, outputBufferSize) == false)
   {
     Error_Handler();
   }
@@ -164,8 +213,6 @@ void venc_thread_func(ULONG arg)
    printf("Encoder init failed\n");
    Error_Handler();
   }
-  
-  VENC_APP_EncodingStart();
 
   while(1)
   {
@@ -280,47 +327,60 @@ static void  encoder_reset(void)
  */
 static int encoder_start(void)
 {
-  H264EncRet ret;
+    H264EncRet ret = H264ENC_OK;
   venc_output_frame_t frame_buffer = {0};
+    uint32_t buff_size = g_max_output_buffer_size ? g_max_output_buffer_size : outputBlockSize;
+    uint32_t outBufSize;
 
   if (dcmipp_config(GetInputFrame(NULL)))
   {
     return -1;
   }
 
-  if(tx_block_allocate(&venc_block_pool, (void **) &frame_buffer.block_addr, TX_NO_WAIT) != TX_SUCCESS)
+  frame_buffer.block_addr = (uint32_t *)frb_alloc(&buff_size);
+  if (frame_buffer.block_addr == NULL)
   {
     return -1;
   }
   frame_buffer.aligned_block_addr = (uint32_t *) ALIGNED((uint32_t) frame_buffer.block_addr, 8);
+  outBufSize = (buff_size > 8U) ? (buff_size - 8U) : 0U;
   encIn.pOutBuf = frame_buffer.aligned_block_addr;
   encIn.busOutBuf = (uint32_t) encIn.pOutBuf;
-  encIn.outBufSize = outputBlockSize;
+  encIn.outBufSize = outBufSize;
 
   /* create stream */
   ret = H264EncStrmStart(encoder, &encIn, &encOut);
-  if (ret != H264ENC_OK)
+  if ((ret == H264ENC_OK) && (encOut.streamSize != 0U))
   {
-    return -1;
+    invalidate_dcache_region((const void *)encIn.pOutBuf, encOut.streamSize);
+    if (encOut.streamSize <= H264_STREAM_START_MAX_SIZE)
+    {
+      (void)memcpy(g_stream_start_blob, (const void *)encIn.pOutBuf, encOut.streamSize);
+      g_stream_start_blob_size = encOut.streamSize;
+    }
+    else
+    {
+      g_stream_start_blob_size = 0U;
+      printf("[H264][strm_start] blob too large to cache: %lu\n", (unsigned long)encOut.streamSize);
+    }
   }
-  frame_buffer.size = encOut.streamSize;
-  
-  tx_block_release(frame_buffer.block_addr);
-
+  release_output_block(frame_buffer.block_addr);
   encIn.codingType = H264ENC_INTRA_FRAME;
-  return 0;
+  return ret;
 }
 
 /* Debug and instrumentation functions*/
 __weak void mark_frame(void * frame) {}
 __weak void timeMonitor(void) {};
+__weak void timeMonitorStart(void) {};
+__weak void timeMonitorStop(void) {};
 
 uint32_t nb_encoded_frame = 0;
 
 /**
  * @brief Encode a single captured frame and queue the resulting H.264 bitstream.
  *
- * - Selects coding type (intra every 30 frames, otherwise predicted).
+ * - Sends a short startup burst of intra pictures, then follows the regular GOP cadence.
  * - Maps DCMIPP capture buffer addresses to encoder input (Y/UV or Y/U/V).
  * - Allocates an output block from the ThreadX pool and runs H264EncStrmEncode.
  * - On success, enqueues the encoded chunk for USB transmission.
@@ -332,7 +392,30 @@ static int encode_frame(void)
 {
   venc_output_frame_t frame_buffer = {0};
   int ret = H264ENC_FRAME_READY;
-  if (!(frame_nb % hVencH264Instance.cfgH264Rate.gopLen))
+  uint32_t outBufSize;
+  uint32_t buff_size = g_max_output_buffer_size ? g_max_output_buffer_size : outputBlockSize;
+
+  /*
+   * Startup uses a short IDR burst for a different reason than the blob cache.
+   *
+   * The cached H264EncStrmStart() payload gives the host the SPS/PPS headers
+   * that the first encoded picture may not carry. The startup intra burst then
+   * makes the opening phase more tolerant to packet loss, late host attachment,
+   * and stream reopen timing by ensuring the first few queued pictures are all
+   * independently decodable reference points.
+   *
+   * In other words:
+   * - blob cache: guarantees parameter-set delivery at stream start
+   * - startup IDRs: improves decoder lock and reopen robustness
+   *
+   * Both mechanisms are kept because they solve different startup problems.
+   */
+  if (startup_intra_frames_remaining != 0U)
+  {
+    /* Keep the first few pictures as IDR so the host can lock quickly after stream open. */
+    encIn.codingType = H264ENC_INTRA_FRAME;
+  }
+  else if (!(frame_nb % hVencH264Instance.cfgH264Rate.gopLen))
   {
     /* if frame is the first : set as intra coded */
     encIn.codingType = H264ENC_INTRA_FRAME;
@@ -370,18 +453,18 @@ static int encode_frame(void)
   /* Water mark for debug*/
   mark_frame((void*)encIn.busLuma);
 
-  /* allocate and set output buffer */
-  if(tx_block_allocate(&venc_block_pool, (void **) &frame_buffer.block_addr, TX_WAIT_FOREVER) != TX_SUCCESS)
+  frame_buffer.block_addr = (uint32_t *)frb_alloc(&buff_size);
+  if (frame_buffer.block_addr == NULL)
   {
     printf("VENC : failed to allocate output buffer\n");
     return -1;
   }
-  
+  outBufSize = (buff_size > 8U) ? (buff_size - 8U) : 0U;
   frame_buffer.aligned_block_addr = (uint32_t *) ALIGNED((uint32_t) frame_buffer.block_addr, 8);
   
   encIn.pOutBuf    = frame_buffer.aligned_block_addr;
   encIn.busOutBuf  = (uint32_t) encIn.pOutBuf;
-  encIn.outBufSize = outputBlockSize - 8;
+  encIn.outBufSize = outBufSize;
   
   
   /* Encode Frame*/
@@ -397,26 +480,39 @@ static int encode_frame(void)
     if(encOut.streamSize == 0)
     {
       encIn.codingType = H264ENC_INTRA_FRAME;
-      tx_block_release(frame_buffer.block_addr);
+      release_output_block(frame_buffer.block_addr);
       return -1;
     }
-    frame_buffer.coding_type = (uint32_t)encIn.codingType;
+    invalidate_dcache_region((const void *)encIn.pOutBuf, encOut.streamSize);
     frame_buffer.size = encOut.streamSize;
-    if(tx_queue_send(&enc_frame_queue, (void *) &frame_buffer, TX_NO_WAIT) != TX_SUCCESS)
+    if (frame_buffer.size > g_max_output_buffer_size)
     {
-      tx_block_release(frame_buffer.block_addr);
+      g_max_output_buffer_size = frame_buffer.size;
+    }
+    if (frb_push(frame_buffer.block_addr, frame_buffer.size, 0U) == false)
+    {
+      release_output_block(frame_buffer.block_addr);
+      return -1;
+    }
+    if(tx_queue_send(&enc_frame_queue, (void *) &frame_buffer, TX_WAIT_FOREVER) != TX_SUCCESS)
+    {
+      return -1;
+    }
+    if (startup_intra_frames_remaining != 0U)
+    {
+      startup_intra_frames_remaining--;
     }
     encIn.codingType = H264ENC_PREDICTED_FRAME;
      nb_encoded_frame++;
     break;
   case H264ENC_FUSE_ERROR:
     printf("DCMIPP and VENC desync (frame#%ld), restart the video\n", frame_nb);
-    tx_block_release(frame_buffer.block_addr);
+    release_output_block(frame_buffer.block_addr);
     encoder_reset();
     break;
   default:
     printf("error encoding frame %d\n", ret);
-    tx_block_release(frame_buffer.block_addr);
+    release_output_block(frame_buffer.block_addr);
     encIn.codingType = H264ENC_INTRA_FRAME;
     return -1;
     break;
@@ -439,7 +535,8 @@ static int encoder_end(void){
     return -1;
   }
   tx_queue_flush(&enc_frame_queue);
-  tx_block_pool_delete(&venc_block_pool);
+  frb_reset();
+  g_curr_block = NULL;
   return 0;
 }
 
@@ -459,7 +556,10 @@ void BSP_CAMERA_FrameEventCallback(uint32_t instance)
   /* signal new frame */
   nbLineEvent = 0;
   frame_received++;
-  tx_event_flags_set(&venc_app_flags, FRAME_RECEIVED_FLAG, TX_OR);
+  if (TX_SUCCESS != tx_event_flags_set(&venc_app_flags, FRAME_RECEIVED_FLAG, TX_OR))
+  {
+    Error_Handler();
+  }
 
   /* Signal DCMIPP for next frame address */
   dcmipp_set_memory_address(GetNextFrame(frame_received));
@@ -489,6 +589,18 @@ void BSP_CAMERA_LineEventCallback(uint32_t instance)
  */
 void VENC_APP_EncodingStart(void)
 {
+  frb_reset();
+  tx_queue_flush(&enc_frame_queue);
+  g_curr_block = NULL;
+  g_max_output_buffer_size = 0U;
+  frame_nb = 0U;
+  frame_received = 0U;
+  last_frame_received = 0U;
+  nbLineEvent = 0U;
+  nb_encoded_frame = 0U;
+  startup_intra_frames_remaining = VENC_STARTUP_INTRA_FRAME_COUNT;
+  g_stream_start_blob_size = 0U;
+  timeMonitorStart();
   /* initialize encoder software for camera feed encoding */
   encoder_start();
   tx_event_flags_set(&venc_app_flags, VIDEO_START_FLAG, TX_OR);
@@ -507,11 +619,13 @@ void VENC_APP_EncodingStart(void)
  */
 INT VENC_APP_GetData(UCHAR **data, ULONG *size)
 {
-  static uint32_t * curr_block = NULL;
-  if(curr_block)
+  UCHAR *frb_data;
+  uint32_t frb_size;
+  uint32_t timeStamp = 0U;
+  if(g_curr_block)
   {
-    tx_block_release(curr_block);
-    curr_block = NULL;
+    frb_return_frame();
+    g_curr_block = NULL;
   }
   venc_output_frame_t frame_block;
   if(tx_queue_receive(&enc_frame_queue, (void *) &frame_block, TX_WAIT_FOREVER) != TX_SUCCESS)
@@ -520,10 +634,44 @@ INT VENC_APP_GetData(UCHAR **data, ULONG *size)
     *size = 0;
     return(-1);
   }
-  *data = (UCHAR *) frame_block.aligned_block_addr;
+  frb_size = 0U;
+  frb_data = (UCHAR *)frb_pull(&frb_size, &timeStamp);
+  if ((frb_data == NULL) || (frb_data != (UCHAR *)frame_block.block_addr) || (frb_size != frame_block.size))
+  {
+    *data = NULL;
+    *size = 0;
+    return -1;
+  }
+
+  *data = (UCHAR *)frame_block.aligned_block_addr;
   *size = frame_block.size;
-  curr_block = frame_block.block_addr;
+  g_curr_block = frame_block.block_addr;
   return(0);
+}
+
+INT VENC_APP_PeekStreamStartBlob(UCHAR **data, ULONG *size)
+{
+  if ((data == NULL) || (size == NULL) || (g_stream_start_blob_size == 0U))
+  {
+    if (data != NULL)
+    {
+      *data = NULL;
+    }
+    if (size != NULL)
+    {
+      *size = 0U;
+    }
+    return -1;
+  }
+
+  *data = g_stream_start_blob;
+  *size = g_stream_start_blob_size;
+  return 0;
+}
+
+void VENC_APP_ClearStreamStartBlob(void)
+{
+  g_stream_start_blob_size = 0U;
 }
 
 /**
@@ -536,5 +684,10 @@ UINT VENC_APP_EncodingStop(void)
   ULONG flags;
   tx_event_flags_get(&venc_app_flags, VIDEO_START_FLAG, TX_AND_CLEAR, &flags, TX_WAIT_FOREVER);
   (void) encoder_end();
+  frb_reset();
+  tx_queue_flush(&enc_frame_queue);
+  g_curr_block = NULL;
+  g_stream_start_blob_size = 0U;
+  timeMonitorStop();
   return(0);
 }

@@ -122,7 +122,7 @@ HAL_StatusTypeDef MX_DCMIPP_Init(DCMIPP_HandleTypeDef *hdcmipp)
   if (ret == HAL_OK)
   {
   /* Specific Hardware Handshake if needed*/
-    if (IsHwHandshakeMode())
+    if (IsHwHanshakeMode())
   {
     ret = dcmipp_enable_HW_Handshake(hdcmipp);
     }

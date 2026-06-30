@@ -77,8 +77,14 @@ void MPU_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-  MPU_Config();
+  HAL_PWREx_EnableVddA();
+  HAL_PWREx_EnableVddIO2();
+  HAL_PWREx_EnableVddIO3();
+  HAL_PWREx_EnableVddIO4();
+  HAL_PWREx_EnableVddIO5();
   /* USER CODE END 1 */
+
+  MPU_Config();
 
   /* Enable I-Cache---------------------------------------------------------*/
   SCB_EnableICache();

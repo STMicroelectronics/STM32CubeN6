@@ -38,14 +38,15 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-extern DMA_HandleTypeDef handle_GPDMA1_Channel3;
-extern DMA_HandleTypeDef handle_GPDMA1_Channel2;
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
 
 /* USER CODE END PM */
+extern DMA_HandleTypeDef handle_GPDMA1_Channel2 ;
+extern DMA_HandleTypeDef handle_GPDMA1_Channel3 ;
 
 /* Private variables ---------------------------------------------------------*/
 
@@ -74,7 +75,11 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  HAL_PWREx_EnableVddA();
+  HAL_PWREx_EnableVddIO2();
+  HAL_PWREx_EnableVddIO3();
+  HAL_PWREx_EnableVddIO4();
+  HAL_PWREx_EnableVddIO5();
   /* USER CODE END 1 */
 
   /* MPU Configuration--------------------------------------------------------*/
@@ -138,7 +143,7 @@ int main(void)
   */
 void SystemClock_Config(void)
 {
-  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};  
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
@@ -379,6 +384,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 /**
   * @brief  This function is executed in case of error occurrence.
+  * @param None
   * @retval None
   */
 void Error_Handler(void)

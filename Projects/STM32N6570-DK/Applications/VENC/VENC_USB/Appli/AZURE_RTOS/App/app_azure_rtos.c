@@ -25,6 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "main.h"
 #include "venc_app.h"
 /* USER CODE END Includes */
 
@@ -50,7 +51,7 @@
 #pragma data_alignment=4
 #endif
 __ALIGN_BEGIN static UCHAR tx_byte_pool_buffer[TX_APP_MEM_POOL_SIZE] __ALIGN_END;
-static TX_BYTE_POOL tx_app_byte_pool;
+TX_BYTE_POOL tx_app_byte_pool;
 
 /* USER CODE BEGIN UX_Device_Pool_Buffer */
 /* USER CODE END UX_Device_Pool_Buffer */
@@ -79,6 +80,16 @@ TX_THREAD venc_thread;
 
 /* USER CODE END PFP */
 
+__weak void monitor_thread_create(void)
+{
+  return;
+}
+
+__weak void audio_thread_create(void)
+{
+  return;
+}
+
 /**
   * @brief  Define the initial system.
   * @param  first_unused_memory : Pointer to the first unused memory
@@ -86,6 +97,7 @@ TX_THREAD venc_thread;
   */
 VOID tx_application_define(VOID *first_unused_memory)
 {
+  
   /* USER CODE BEGIN  tx_application_define_1*/
 
   /* USER CODE END  tx_application_define_1 */
@@ -115,6 +127,9 @@ VOID tx_application_define(VOID *first_unused_memory)
       Error_Handler();
       /* USER CODE END  App_ThreadX_Init_Error */
     }
+
+    /* CPU monitoring*/
+    monitor_thread_create();
 
     /* USER CODE BEGIN  App_ThreadX_Init_Success */
     void *thread_stack_pointer;

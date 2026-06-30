@@ -99,7 +99,7 @@ TIM1 Configuration: generate 1 PWM signal.
     TIM1 Channel1 duty cycle = (TIM1_CCR1/ TIM1_ARR + 1)* 100 = 50%
 
     Note:
-     SystemCoreClock variable holds HCLK frequency and is defined in system_stm32u5xx.c file.
+     SystemCoreClock variable holds HCLK frequency and is defined in system_stm32n6xx.c file.
      Each time the core clock (HCLK) changes, user had to update SystemCoreClock
      variable value. Otherwise, any configuration based on this variable will be incorrect.
      This variable is updated in three ways:

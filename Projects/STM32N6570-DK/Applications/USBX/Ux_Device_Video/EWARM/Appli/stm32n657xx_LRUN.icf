@@ -8,9 +8,9 @@ define symbol __ICFEDIT_region_ROM_start__ = 0x34000400;
 define symbol __ICFEDIT_region_ROM_end__   = 0x3407FFFF;
 define symbol __ICFEDIT_region_RAM_start__ = 0x34080000;
 define symbol __ICFEDIT_region_RAM_end__   = 0x341FFFFF;
-define symbol __ICFEDIT_region_UXDATA_start__  = 0x341FD000;
-define symbol __ICFEDIT_region_UXDATA_end__   = 0x341FDFFF;
-define symbol __ICFEDIT_region_UXDATA_POOL_start__  = 0x341FE000;
+define symbol __ICFEDIT_region_UXDATA_start__  = 0x341FA000;
+define symbol __ICFEDIT_region_UXDATA_end__   = 0x341FAFFF;
+define symbol __ICFEDIT_region_UXDATA_POOL_start__  = 0x341FB000;
 define symbol __ICFEDIT_region_UXDATA_POOL_end__   = __ICFEDIT_region_RAM_end__;
 /*-Sizes-*/
 define symbol __ICFEDIT_size_cstack__ = 0x800;

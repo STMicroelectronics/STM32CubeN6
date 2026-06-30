@@ -16,6 +16,19 @@
   ******************************************************************************
   @endverbatim
 
+
+### 30-March-2026 ###
+========================
+    + Update imgtool python script version for otfdec feature (imgtool v2.1.0.3)
+	+ improve fast wake-up performance (skipping NV counter init and MbedTLS init)
+	+ Adaptation of AES ALT implementation for STM32WL4 compatibility
+	+ Update mcuboot code for otfdec encryption feature
+	+ Add SW_Security_Level.md file
+
+### 16-February-2026 ###
+========================
+    + Update imgtool python script version (imgtool v2.1.0.2)
+
 ### 22-July-2025 ###
 ====================
     + Randomize aes buffers before a copy UPDATE

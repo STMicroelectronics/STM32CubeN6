@@ -19,7 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/** @addtogroup STM32H7RSxx_HAL_Examples
+/** @addtogroup STM32N6xx_HAL_Examples
   * @{
   */
 

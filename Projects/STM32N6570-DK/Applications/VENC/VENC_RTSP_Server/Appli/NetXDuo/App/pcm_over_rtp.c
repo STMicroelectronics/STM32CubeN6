@@ -30,11 +30,9 @@ UINT _nx_rtp_sender_session_pcm_send(NX_RTP_SESSION *session, UCHAR *frame_data,
 UINT nx_rtp_sender_session_audio_send(NX_RTP_SESSION *session, UCHAR *frame_data, ULONG frame_data_size,
                                         ULONG timestamp, ULONG ntp_msw, ULONG ntp_lsw, UINT marker)
 {
-  
-  /* This is the test control routine the NetX RTSP module.  All tests are dispatched from this routine.  */
+  /* Forward PCM audio frames to the NetX RTP helper. */
   return  _nxe_rtp_sender_session_pcm_send(session , frame_data, frame_data_size,
                                              timestamp, ntp_msw, ntp_lsw, marker);
-  
 }       
 
 /* SDP string options */

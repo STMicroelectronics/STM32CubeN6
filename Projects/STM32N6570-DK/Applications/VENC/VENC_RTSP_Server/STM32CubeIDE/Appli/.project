@@ -67,6 +67,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/dcmipp_app.c</locationURI>
 		</link>
 		<link>
+			<name>Src/frame_rb.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/frame_rb.c</locationURI>
+		</link>
+		<link>
 			<name>Src/main.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/main.c</locationURI>

@@ -63,16 +63,28 @@ typedef struct
 
   struct
   {
-    uint32_t MemorySize;                     /*!< Memory size (see @ref XSPI_MemorySize). */
-    uint32_t FreqMax;                        /*!< Maximum supported memory frequency. */
+    uint32_t MemorySize;                   /*!< Memory size (see @ref XSPI_MemorySize). */
+    uint32_t FreqMax;                      /*!< Maximum supported memory frequency. */
 
     /* Configuration */
-    uint8_t NumberOfConfig;                  /*!< Number of configuration steps; each step performs a read and write operation. */
+    uint8_t NumberOfConfig;                /*!< Number of configuration steps; each step performs a read and write operation. */
     struct
     {
-      uint8_t WriteMask;                       /*!< Mask for write operation. */
-      uint8_t WriteValue;                      /*!< Value to write. */
-      uint8_t REGAddress;                      /*!< Address of the register. */
+      uint16_t WriteMask;                  /*!< Mask for write operation.
+                                                ReadREGSize==1: only low 8 bits are used.
+                                                ReadREGSize==2:
+                                                - Default mapping (16-bit): MSB applies to first byte (buffer[0]),
+                                                                            LSB to second (buffer[1]).
+                                                - Backward compatibility: if upper byte of mask AND value are 0x00,
+                                                                          the low 8 bits apply to buffer[0] only. */
+      uint16_t WriteValue;                 /*!< Value to write.
+                                                ReadREGSize==1: only low 8 bits are used.
+                                                ReadREGSize==2:
+                                                - Default mapping (16-bit): MSB applies to first byte (buffer[0]),
+                                                                            LSB to second (buffer[1]).
+                                                - Backward compatibility: if upper byte of mask AND value are 0x00,
+                                                                          the low 8 bits apply to buffer[0] only. */
+      uint8_t REGAddress;                  /*!< Address of the register. */
     } config[PSRAM_MAX_COMMAND];
 
     /* Command REG */

@@ -32,9 +32,39 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>Src/Core/frame_rb.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/frame_rb.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Monitoring/st_monitor.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/st_monitor.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Monitoring/st_monitor_bitrate.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/st_monitor_bitrate.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Monitoring/st_monitor_cpu_threadx.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/st_monitor_cpu_threadx.c</locationURI>
+		</link>
+		<link>
+			<name>Src/Monitoring/time_monitor.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/Appli/Core/Src/time_monitor.c</locationURI>
+		</link>
+		<link>
 			<name>Drivers/BSP/stm32n6570_discovery.c</name>
 			<type>1</type>
 			<locationURI>PARENT-7-PROJECT_LOC/Drivers/BSP/STM32N6570-DK/stm32n6570_discovery.c</locationURI>
+		</link>
+		<link>
+			<name>Middlewares/ThreadX/utilities/tx_execution_profile.c</name>
+			<type>1</type>
+			<locationURI>PARENT-7-PROJECT_LOC/Middlewares/ST/threadx/utility/execution_profile_kit/tx_execution_profile.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/BSP/stm32n6570_discovery_bus.c</name>

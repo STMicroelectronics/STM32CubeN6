@@ -84,6 +84,7 @@ VOID MX_NetXDuo_Notify_Video_Frame_Ready(VOID);
 #define PAYLOAD_SIZE             1536
 /* Increase packet count for high-throughput RTP: was 16, now 64 */
 #define NX_PACKET_POOL_SIZE      (( PAYLOAD_SIZE + sizeof(NX_PACKET)) * 64)
+#define RTP_PACKET_POOL_SIZE     (( PAYLOAD_SIZE + sizeof(NX_PACKET)) * 64)
 #define QUEUE_MAX_SIZE           512
 
 #define DEFAULT_MEMORY_SIZE      1024

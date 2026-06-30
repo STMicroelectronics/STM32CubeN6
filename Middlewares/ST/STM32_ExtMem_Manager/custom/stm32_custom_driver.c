@@ -53,7 +53,7 @@
 #define DEBUG_STR_HEX(_STR_,_HEX_ )                 \
   {                                                 \
     char str[10];                                   \
-    (void)sprintf(str, "0x%x", _HEX_);              \
+    (void)sprintf(str, "0x%x", (unsigned int)_HEX_);\
     EXTMEM_MACRO_DEBUG("\t ");                      \
     EXTMEM_MACRO_DEBUG(_STR_);                      \
     EXTMEM_MACRO_DEBUG(str);                        \
@@ -65,7 +65,7 @@
 #define DEBUG_STR_INT(_STR_,_INT_ )                 \
   {                                                 \
     char str[10];                                   \
-    (void)sprintf(str, "%i", _INT_);                \
+    (void)sprintf(str, "%u", (unsigned int)_INT_);  \
     EXTMEM_MACRO_DEBUG("\t ");                      \
     EXTMEM_MACRO_DEBUG(_STR_);                      \
     EXTMEM_MACRO_DEBUG(str);                        \
@@ -165,6 +165,12 @@ static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_GetWriteInProgress(XSPI_HandleTypeD
 
 static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_GetJedecID(EXTMEM_DRIVER_CUSTOM_ObjectTypeDef *CustomObject);
 
+static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_HYPERBUS_SetCommand(EXTMEM_DRIVER_CUSTOM_ObjectTypeDef *CustomObject);
+static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_HYPERBUS_ReadRegister(EXTMEM_DRIVER_CUSTOM_ObjectTypeDef *CustomObject,
+                                                                   OptionalRegisterConfigTypeDef *RegisterConfig);
+static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_HYPERBUS_WriteRegister(EXTMEM_DRIVER_CUSTOM_ObjectTypeDef *CustomObject,
+                                                                    OptionalRegisterConfigTypeDef *RegisterConfig);
+static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_HYPERBUS_GetDeviceID(EXTMEM_DRIVER_CUSTOM_ObjectTypeDef *CustomObject);
 /** @defgroup CUSTOM_Exported_Functions Exported Functions
   * @{
   */
@@ -215,34 +221,56 @@ EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_Init(XSPI_HandleTypeDef 
     goto error;
   }
 
-  /* Init Command details, based on Startup configuration */
-  if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(&CustomObject->StartupConfig, &CustomObject->Private.Commandbase))
+  if (IS_NOT_MEMORY_HYPERBUS(CustomObject->MemType))
   {
-    retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
-    goto error;
-  }
-
-  /* Implementation of reset procedure if specified in configuration file */
-  if (CustomObject->ResetMethod != EXTMEM_CUSTOM_RESET_METHOD_UNDEFINED)
-  {
-    /* Execute Reset procedure */
-    if (CUSTOM_XSPI_OK != CUSTOM_XSPI_ResetMemory(CustomObject))
+    /* Init Command details, based on Startup configuration */
+    if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(&CustomObject->StartupConfig, &CustomObject->Private.Commandbase))
     {
-      retr = EXTMEM_DRV_CUSTOM_ERR_RESET_MEMORY;
+      retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
       goto error;
     }
-  }
 
-  /* Initialize Current NorFlash config in private structure */
-  if (CustomObject->MemType == EXTMEM_CUSTOM_NOR_FLASH)
-  {
-    CustomObject->Private.CurrentFlashConfig = &CustomObject->NorFlashConfig.Startup;
-
-    /* Get JedecID in case of NorFlash memory */
-    if (CUSTOM_XSPI_OK != CUSTOM_XSPI_GetJedecID(CustomObject))
+    /* Implementation of reset procedure if specified in configuration file */
+    if (CustomObject->ResetMethod != EXTMEM_CUSTOM_RESET_METHOD_UNDEFINED)
     {
-      retr = EXTMEM_DRV_CUSTOM_ERR_JEDEC_ID;
-      goto error;
+      /* Execute Reset procedure */
+      if (CUSTOM_XSPI_OK != CUSTOM_XSPI_ResetMemory(CustomObject))
+      {
+        retr = EXTMEM_DRV_CUSTOM_ERR_RESET_MEMORY;
+        goto error;
+      }
+    }
+
+    /* Initialize Current NorFlash config in private structure */
+    if (CustomObject->MemType == EXTMEM_CUSTOM_NOR_FLASH)
+    {
+      CustomObject->Private.CurrentFlashConfig = &CustomObject->NorFlashConfig.Startup;
+
+      /* Get JedecID in case of NorFlash memory */
+      if (CUSTOM_XSPI_OK != CUSTOM_XSPI_GetJedecID(CustomObject))
+      {
+        retr = EXTMEM_DRV_CUSTOM_ERR_JEDEC_ID;
+        goto error;
+      }
+    }
+  }
+  else
+  {
+    if (IS_MEMORY_PSRAM(CustomObject->MemType))
+    {
+      /* Init Command details, based on Startup configuration */
+      if (CUSTOM_XSPI_OK != CUSTOM_XSPI_HYPERBUS_SetCommand(CustomObject))
+      {
+        retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
+        goto error;
+      }
+
+      /* Get Device ID in case of HyperRam memory */
+      if (CUSTOM_XSPI_OK != CUSTOM_XSPI_HYPERBUS_GetDeviceID(CustomObject))
+      {
+        retr = EXTMEM_DRV_CUSTOM_ERR_DEVICEC_ID;
+        goto error;
+      }
     }
   }
 
@@ -351,10 +379,60 @@ EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_Init(XSPI_HandleTypeDef 
         }
       }
     }
+    /* Execute user callback if required */
+    else if (IS_CFGSTEP_USER_CALLBACK_TYPE(CustomObject->RegisterConfig[iConfig].ConfigStepType))
+    {
+      if (CustomObject->RegisterConfig[iConfig].CBConfigStep.Callback == NULL)
+      {
+        retr = EXTMEM_DRV_CUSTOM_ERR_USER_CALLBACK;
+        goto error;
+      }
+
+      retr = (EXTMEM_DRIVER_CUSTOM_StatusTypeDef)CustomObject->RegisterConfig[iConfig].CBConfigStep.Callback(
+               CustomObject->RegisterConfig[iConfig].CBConfigStep.UserCtx,
+               CustomObject->RegisterConfig[iConfig].CBConfigStep.Arg0,
+               CustomObject->RegisterConfig[iConfig].CBConfigStep.Arg1);
+      if (retr != EXTMEM_DRV_CUSTOM_OK)
+      {
+        goto error;
+      }
+    }
+    /* HyperBus configuration register step */
+    else if (IS_CFGSTEP_HYPERBUS_TYPE(CustomObject->RegisterConfig[iConfig].ConfigStepType))
+    {
+      /* Send Read Register command to memory */
+      if (IS_CFGSTEP_REG_R_ACCESS(CustomObject->RegisterConfig[iConfig].ConfigStepType))
+      {
+        if (CUSTOM_XSPI_OK != CUSTOM_XSPI_HYPERBUS_ReadRegister(CustomObject, &CustomObject->RegisterConfig[iConfig]))
+        {
+          retr = EXTMEM_DRV_CUSTOM_ERR_READ_REGISTER;
+          goto error;
+        }
+      }
+
+      /* Send Write Register command to memory */
+      if (IS_CFGSTEP_REG_W_ACCESS(CustomObject->RegisterConfig[iConfig].ConfigStepType))
+      {
+        if (CUSTOM_XSPI_OK != CUSTOM_XSPI_HYPERBUS_WriteRegister(CustomObject, &CustomObject->RegisterConfig[iConfig]))
+        {
+          retr = EXTMEM_DRV_CUSTOM_ERR_WRITE_REGISTER;
+          goto error;
+        }
+      }
+
+      /* Send Read Register command to memory for verification */
+      if (IS_CFGSTEP_REG_RAW_ACCESS(CustomObject->RegisterConfig[iConfig].ConfigStepType))
+      {
+        if (CUSTOM_XSPI_OK != CUSTOM_XSPI_HYPERBUS_ReadRegister(CustomObject, &CustomObject->RegisterConfig[iConfig]))
+        {
+          retr = EXTMEM_DRV_CUSTOM_ERR_READ_REGISTER;
+          goto error;
+        }
+      }
+    }
     /* Execute new Optional configuration if required */
     else if (IS_CFGSTEP_EXEC_OPT_CFG_TYPE(CustomObject->RegisterConfig[iConfig].ConfigStepType))
     {
-
       /* Initialize memory clock frequency to its final (optional) configuration */
       if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetClock(CustomObject, ClockInput, CustomObject->OptionalConfig.Frequency))
       {
@@ -362,18 +440,30 @@ EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_Init(XSPI_HandleTypeDef 
         goto error;
       }
 
-      /* Init Command with optional config */
-      if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(&CustomObject->OptionalConfig,
-                                                   &CustomObject->Private.Commandbase))
+      if (IS_NOT_MEMORY_HYPERBUS(CustomObject->MemType))
       {
-        retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
-        goto error;
-      }
+        /* Init Command with optional config */
+        if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(&CustomObject->OptionalConfig,
+                                                     &CustomObject->Private.Commandbase))
+        {
+          retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
+          goto error;
+        }
 
-      if (CustomObject->NorFlashConfig.OptionalConfigEnable)
+        if (CustomObject->NorFlashConfig.OptionalConfigEnable)
+        {
+          /* Initialize Current NorFlash config */
+          CustomObject->Private.CurrentFlashConfig = &CustomObject->NorFlashConfig.Optional;
+        }
+      }
+      else
       {
-        /* Initialize Current NorFlash config */
-        CustomObject->Private.CurrentFlashConfig = &CustomObject->NorFlashConfig.Optional;
+        /* Init Command details, based on Startup configuration */
+        if (CUSTOM_XSPI_OK != CUSTOM_XSPI_HYPERBUS_SetCommand(CustomObject))
+        {
+          retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
+          goto error;
+        }
       }
     }
     else
@@ -481,11 +571,13 @@ EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_Read(EXTMEM_DRIVER_CUSTO
       goto error;
     }
   }
-
-  /* Init Command */
-  if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(MemConfig, &CustomObject->Private.Commandbase))
+  else
   {
-    retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
+    /* Init Command */
+    if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(MemConfig, &CustomObject->Private.Commandbase))
+    {
+      retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
+    }
   }
 
   /* Read the data */
@@ -669,6 +761,7 @@ EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_Write(EXTMEM_DRIVER_CUST
     if (CustomObject->NorFlashConfig.OptionalConfigEnable)
     {
       /* Init Command */
+      NorConfig = &CustomObject->NorFlashConfig.Optional;
       if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(&CustomObject->OptionalConfig, &CustomObject->Private.Commandbase))
       {
         retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
@@ -677,6 +770,7 @@ EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_Write(EXTMEM_DRIVER_CUST
     else
     {
       /* Init Command */
+      NorConfig = &CustomObject->NorFlashConfig.Startup;
       if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(&CustomObject->StartupConfig, &CustomObject->Private.Commandbase))
       {
         retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
@@ -693,6 +787,214 @@ EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_Write(EXTMEM_DRIVER_CUST
   }
 
 error:
+  return retr;
+}
+
+/**
+  * @brief Writes data to the memory in mapped mode.
+  * @param CustomObject Pointer to the CUSTOM driver object.
+  * @param Address Memory address to write in mapped mode.
+  * @param Data Pointer to the data buffer to be written.
+  * @param Size Size of data to be written (in bytes).
+  * @retval EXTMEM_DRIVER_CUSTOM_StatusTypeDef: EXTMEM_DRV_CUSTOM_OK if successful, error code otherwise.
+  */
+EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_WriteInMappedMode(EXTMEM_DRIVER_CUSTOM_ObjectTypeDef
+                                                                          *CustomObject, uint32_t Address,
+                                                                          const uint8_t *Data, uint32_t Size)
+{
+  EXTMEM_DRIVER_CUSTOM_StatusTypeDef retr = EXTMEM_DRV_CUSTOM_OK;
+  XSPI_RegularCmdTypeDef *sCommand        = &CustomObject->Private.Commandbase;
+  XSPI_HandleTypeDef *hxspi               = CustomObject->Private.Handle;
+  uint32_t size_write;
+  uint32_t local_size                     = Size;
+  uint32_t local_Address                  = Address;
+  const uint8_t *local_Data               = Data;
+  uint32_t misalignment                   = 0u;
+  uint32_t size;
+  NorFlashBasConfigTypeDef *NorConfig;
+#if defined (__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
+  uint8_t dcache_status = 1;
+#endif /* __DCACHE_PRESENT */
+  DEBUG_API();
+  DEBUG_STR("EXTMEM_DRIVER_CUSTOM_WriteInMappedMode");
+
+  /* Verify if Memory is a NorFlash */
+  if (IS_NOT_MEMORY_FLASH(CustomObject->MemType))
+  {
+    return EXTMEM_DRV_CUSTOM_ERR_MEMORY_TYPE;
+  }
+
+  /* Check if the input address is 32bit aligned */
+  if (0u != (local_Address % 4u))
+  {
+    retr = EXTMEM_DRV_CUSTOM_ERR_ADDRESS_ALIGNMENT;
+    goto error;
+  }
+
+  /* Check if write address is on a page frontier */
+  if (0u != (local_Address % CustomObject->NorFlashConfig.PageSize))
+  {
+    misalignment = 1u;
+  }
+
+#if defined (__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
+  /* Check if DCache is already enabled */
+  if (SCB->CCR & SCB_CCR_DC_Msk)
+  {
+    dcache_status = 1;
+  }
+  else
+  {
+    dcache_status = 0;
+    /* Enable DCache */
+    SCB_EnableDCache();
+  }
+#endif /* __DCACHE_PRESENT */
+
+  while (local_size != 0u)
+  {
+
+    if (misalignment == 1u)
+    {
+      size_write = CustomObject->NorFlashConfig.PageSize - (local_Address % CustomObject->NorFlashConfig.PageSize);
+      size_write = MIN(local_size, size_write);
+      misalignment = 0u;
+    }
+    else
+    {
+      if (local_size > CustomObject->NorFlashConfig.PageSize)
+      {
+        size_write = CustomObject->NorFlashConfig.PageSize;
+      }
+      else
+      {
+        size_write = local_size;
+        if (0u != (local_size % sizeof(uint32_t)))
+        {
+          size_write = size_write + sizeof(uint32_t) - (local_size % sizeof(uint32_t));
+        }
+      }
+    }
+
+    if (CustomObject->MemType == EXTMEM_CUSTOM_NOR_FLASH)
+    {
+      /* Check which memory configuration is to be used */
+      if (CustomObject->NorFlashConfig.OptionalConfigEnable)
+      {
+        NorConfig = &CustomObject->NorFlashConfig.Optional;
+
+        /* Init Command*/
+        if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(&CustomObject->OptionalConfig, &CustomObject->Private.Commandbase))
+        {
+          retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
+        }
+      }
+      else
+      {
+        NorConfig = &CustomObject->NorFlashConfig.Startup;
+
+        /* Init Command*/
+        if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(&CustomObject->StartupConfig, &CustomObject->Private.Commandbase))
+        {
+          retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
+        }
+      }
+
+      /* WIP Command*/
+      if (CUSTOM_XSPI_OK != CUSTOM_XSPI_GetWriteInProgress(hxspi, sCommand,  NorConfig, HAL_XSPI_TIMEOUT_DEFAULT_VALUE))
+      {
+        retr = EXTMEM_DRV_CUSTOM_ERR_FLASH_BUSY;
+        goto error;
+      }
+
+      /* WE Command*/
+      if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetWriteEnable(hxspi, sCommand,  NorConfig))
+      {
+        retr = EXTMEM_DRV_CUSTOM_ERR_WRITE_ENABLE;
+        goto error;
+      }
+    }
+
+    /* Enter the mapped mode */
+    retr = EXTMEM_DRIVER_CUSTOM_Enable_MemoryMappedMode(CustomObject);
+    if (EXTMEM_DRV_CUSTOM_OK != retr)
+    {
+      goto error;
+    }
+
+    size = size_write;
+    /* Execute the copy */
+    EXTMEM_DRIVER_CUSTOM_MemCopy((uint32_t *)local_Address, local_Data, size_write);
+
+#if defined (__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
+    /* Clean DCache starting from a 32 byte aligned address in 32 byte granularity */
+    SCB_CleanDCache_by_Addr((void *)(local_Address), size_write);
+#endif /* __DCACHE_PRESENT */
+
+    /* Enter the mapped mode */
+    retr = EXTMEM_DRIVER_CUSTOM_Disable_MemoryMappedMode(CustomObject);
+    if (EXTMEM_DRV_CUSTOM_OK != retr)
+    {
+      goto error;
+    }
+
+    /* In case of Nor Flash, check for Write operation completion before exiting function */
+    if (CustomObject->MemType == EXTMEM_CUSTOM_NOR_FLASH)
+    {
+      /* Check which memory configuration is to be used */
+      if (CustomObject->NorFlashConfig.OptionalConfigEnable)
+      {
+        NorConfig = &CustomObject->NorFlashConfig.Optional;
+
+        /* Init Command*/
+        if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(&CustomObject->OptionalConfig, &CustomObject->Private.Commandbase))
+        {
+          retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
+        }
+      }
+      else
+      {
+        NorConfig = &CustomObject->NorFlashConfig.Startup;
+
+        /* Init Command*/
+        if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(&CustomObject->StartupConfig, &CustomObject->Private.Commandbase))
+        {
+          retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
+        }
+      }
+
+      /* WIP Command*/
+      if (CUSTOM_XSPI_OK != CUSTOM_XSPI_GetWriteInProgress(CustomObject->Private.Handle, sCommand,  NorConfig,
+                                                           HAL_XSPI_TIMEOUT_DEFAULT_VALUE))
+      {
+        retr = EXTMEM_DRV_CUSTOM_ERR_FLASH_BUSY;
+        goto error;
+      }
+    }
+
+    /* Decrement the transfer size */
+    if (local_size > size)
+    {
+      local_size = local_size - size;
+      local_Data = &local_Data[size];
+      local_Address = local_Address + size;
+    }
+    else
+    {
+      local_size = 0;
+    }
+  }
+
+error:
+
+#if defined (__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
+  /* Disable DCache if deactivated previously */
+  if (!dcache_status)
+  {
+    SCB_DisableDCache();
+  }
+#endif /* __DCACHE_PRESENT */
+
   return retr;
 }
 
@@ -731,6 +1033,10 @@ EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_EraseSector(EXTMEM_DRIVE
   {
     return EXTMEM_DRV_CUSTOM_ERR_SECTOR_SIZE;
   }
+
+  /* Save Xspi command */
+  SavedDataMode                = sCommand->DataMode;
+  SavedDummyCycles             = sCommand->DummyCycles;
 
   /* Check which memory configuration is to be used */
   if (CustomObject->NorFlashConfig.OptionalConfigEnable)
@@ -913,9 +1219,6 @@ EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_MassErase(EXTMEM_DRIVER_
     goto error;
   }
 
-  /* Restore XSPI command previously saved */
-  CUSTOM_XSPI_RestoreCommand(sCommand, &SavedCommand);
-
   /* Check default value of Max duration allowed for Erase operation.
      If 0, then use HAL_XSPI default timeout. */
   if (CustomObject->NorFlashConfig.MaxChipEraseTime == 0)
@@ -927,6 +1230,30 @@ EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_MassErase(EXTMEM_DRIVER_
     max_timing = CustomObject->NorFlashConfig.MaxChipEraseTime;
   }
 
+  /* Check which memory configuration is to be used */
+  if (CustomObject->NorFlashConfig.OptionalConfigEnable)
+  {
+    NorConfig = &CustomObject->NorFlashConfig.Optional;
+
+    /* Init Command */
+    if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(&CustomObject->OptionalConfig, &CustomObject->Private.Commandbase))
+    {
+      retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
+      goto error;
+    }
+  }
+  else
+  {
+    NorConfig = &CustomObject->NorFlashConfig.Startup;
+
+    /* Init Command */
+    if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(&CustomObject->StartupConfig, &CustomObject->Private.Commandbase))
+    {
+      retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
+      goto error;
+    }
+  }
+
   /* WIP Command */
   if (CUSTOM_XSPI_OK != CUSTOM_XSPI_GetWriteInProgress(hxspi, sCommand,  NorConfig, max_timing))
   {
@@ -935,11 +1262,11 @@ EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_MassErase(EXTMEM_DRIVER_
   }
 
 error:
+  /* Restore XSPI command previously saved */
+  CUSTOM_XSPI_RestoreCommand(sCommand, &SavedCommand);
+
   if (retr != EXTMEM_DRV_CUSTOM_OK)
   {
-    /* Restore XSPI command previously saved */
-    CUSTOM_XSPI_RestoreCommand(sCommand, &SavedCommand);
-
     DEBUG_STR("[ERROR] XSPI Abort");
     /* Abort any ongoing transaction for the next action */
     (void)HAL_XSPI_Abort(hxspi);
@@ -957,65 +1284,86 @@ EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_Enable_MemoryMappedMode(
                                                                                 *CustomObject)
 {
   EXTMEM_DRIVER_CUSTOM_StatusTypeDef retr = EXTMEM_DRV_CUSTOM_OK;
-
-  XSPI_RegularCmdTypeDef *sCommand   = &CustomObject->Private.Commandbase;
-  XSPI_HandleTypeDef *hxspi          = CustomObject->Private.Handle;
-  MemoryBaseConfigTypeDef *MemConfig;
-  XSPI_MemoryMappedTypeDef sMemMappedCfg = {0};
+  XSPI_HandleTypeDef *hxspi               = CustomObject->Private.Handle;
+  XSPI_MemoryMappedTypeDef sMemMappedCfg  = {0};
 
   DEBUG_API();
   DEBUG_STR("EXTMEM_DRIVER_CUSTOM_Enable_MemoryMappedMode");
 
-  /* Check which memory configuration is to be used */
-  if (CustomObject->OptionalConfig.Frequency != 0U)
+  /* NorFlash and Psram use case */
+  if (IS_NOT_MEMORY_HYPERBUS(CustomObject->MemType))
   {
-    MemConfig = &CustomObject->OptionalConfig;
-  }
-  else
-  {
-    MemConfig = &CustomObject->StartupConfig;
-  }
+    XSPI_RegularCmdTypeDef *sCommand = &CustomObject->Private.Commandbase;
+    MemoryBaseConfigTypeDef *MemConfig;
 
-  /* Init Command */
-  if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(MemConfig, &CustomObject->Private.Commandbase))
-  {
-    retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
+    /* Check which memory configuration is to be used */
+    if (CustomObject->OptionalConfig.Frequency != 0U)
+    {
+      MemConfig = &CustomObject->OptionalConfig;
+    }
+    else
+    {
+      MemConfig = &CustomObject->StartupConfig;
+    }
+
+    /* Init Command */
+    if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetCommand(MemConfig, &CustomObject->Private.Commandbase))
+    {
+      retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
+    }
+
+    /* Initialize the read ID command */
+    sCommand->OperationType = HAL_XSPI_OPTYPE_READ_CFG;
+    sCommand->Instruction   = MemConfig->CommandRead;
+    sCommand->DummyCycles   = MemConfig->DummyCycleRead;
+
+    /* Configure the read command */
+    if (HAL_XSPI_Command(hxspi, sCommand, CUSTOM_XSPI_TIMEOUT_VALUE) != HAL_OK)
+    {
+      retr = EXTMEM_DRV_CUSTOM_ERR_XSPI_TIMEOUT;
+    }
+
+    /* Init optional write Command */
+    if (IS_ACCESS_MODE_TYPE(MemConfig->OptWriteAccessMode))
+    {
+      if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetWriteCommand(MemConfig, &CustomObject->Private.Commandbase))
+      {
+        retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
+      }
+    }
+
+    /* Initialize the read ID command */
+    sCommand->OperationType = HAL_XSPI_OPTYPE_WRITE_CFG;
+    sCommand->Instruction   = MemConfig->CommandWrite;
+    sCommand->DummyCycles   = MemConfig->DummyCycleWrite;
+    /* Configure the read command */
+    if (HAL_XSPI_Command(hxspi, sCommand, CUSTOM_XSPI_TIMEOUT_VALUE) != HAL_OK)
+    {
+      retr = EXTMEM_DRV_CUSTOM_ERR_XSPI_TIMEOUT;
+    }
   }
-
-  /* Initialize the read ID command */
-  sCommand->OperationType = HAL_XSPI_OPTYPE_READ_CFG;
-  sCommand->Instruction   = MemConfig->CommandRead;
-  sCommand->DummyCycles   = MemConfig->DummyCycleRead;
-
-  /* Configure the read command */
-  if (HAL_XSPI_Command(hxspi, sCommand, CUSTOM_XSPI_TIMEOUT_VALUE)  != HAL_OK)
+  else   /* HyperBus use case */
   {
-    retr = EXTMEM_DRV_CUSTOM_ERR_XSPI_TIMEOUT;
-  }
+    XSPI_HyperbusCmdTypeDef *sCommand = &CustomObject->Private.CommandbaseHyperbus;
 
-  /* Init optional write Command */
-  if (IS_ACCESS_MODE_TYPE(MemConfig->OptWriteAccessMode))
-  {
-    if (CUSTOM_XSPI_OK != CUSTOM_XSPI_SetWriteCommand(MemConfig, &CustomObject->Private.Commandbase))
+    /* Initialize the transmit command */
+    sCommand->AddressSpace = HAL_XSPI_MEMORY_ADDRESS_SPACE;   /* CA[46] = 0 */
+    sCommand->AddressWidth = HAL_XSPI_ADDRESS_32_BITS;
+    sCommand->Address      = 0;
+    sCommand->DQSMode      = CustomObject->StartupConfig.DqsMode;
+    sCommand->DataMode     = ((CustomObject->StartupConfig.AccessMode) & DATA_MASK);
+    sCommand->DataLength   = 0;
+
+    if (HAL_XSPI_HyperbusCmd(hxspi, sCommand, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
     {
       retr = EXTMEM_DRV_CUSTOM_ERR_SET_COMMAND;
     }
   }
 
-  /* Initialize the read ID command */
-  sCommand->OperationType = HAL_XSPI_OPTYPE_WRITE_CFG;
-  sCommand->Instruction   = MemConfig->CommandWrite;
-  sCommand->DummyCycles   = MemConfig->DummyCycleWrite;
-  /* Configure the read command */
-  if (HAL_XSPI_Command(hxspi, sCommand, CUSTOM_XSPI_TIMEOUT_VALUE)  != HAL_OK)
-  {
-    retr = EXTMEM_DRV_CUSTOM_ERR_XSPI_TIMEOUT;
-  }
-
   /* Activation of memory-mapped mode */
   sMemMappedCfg.TimeOutActivation  = HAL_XSPI_TIMEOUT_COUNTER_DISABLE;
   sMemMappedCfg.TimeoutPeriodClock = 0x50;
-  if (HAL_XSPI_MemoryMapped(hxspi, &sMemMappedCfg)  != HAL_OK)
+  if (HAL_XSPI_MemoryMapped(hxspi, &sMemMappedCfg) != HAL_OK)
   {
     retr = EXTMEM_DRV_CUSTOM_ERR_ENABLE_MEM_MAP;
   }
@@ -1153,6 +1501,54 @@ EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_GetInfo(EXTMEM_DRIVER_CU
 }
 
 /**
+  * @brief Default implementation of memory copy functionality.
+  * @param Destination_Address Destination address where data is to be copied.
+  * @param ptrData Pointer to source data to be copied.
+  * @param DataSize Size of data to be copied (in bytes).
+  */
+__weak void EXTMEM_DRIVER_CUSTOM_MemCopy(uint32_t *Destination_Address, const uint8_t *ptrData, uint32_t DataSize)
+{
+  uint32_t *ptrDest = Destination_Address;
+  /* Write the data */
+  for (uint32_t index = 0u; index < DataSize; index = index + 4u)
+  {
+    *ptrDest = ((uint32_t)ptrData[index] | ((uint32_t)ptrData[index + 1u] << 8u) |
+                ((uint32_t)ptrData[index + 2u] << 16u) | ((uint32_t)ptrData[index + 3u] << 24u));
+    ptrDest++;
+  }
+}
+
+/**
+  * @brief Default weak implementation for EXTMEM_CUSTOM_CFGSTEP_USER_CALLBACK steps.
+  * @param CustomObjectCtx User context forwarded to the callback (CBConfigStep.UserCtx).
+  * @param UserArg0 User argument 0 (CBConfigStep.Arg0).
+  * @param UserArg1 User argument 1 (CBConfigStep.Arg1).
+  * @retval EXTMEM_DRIVER_CUSTOM_StatusTypeDef: EXTMEM_DRV_CUSTOM_OK if successful, error code otherwise.
+  */
+__weak EXTMEM_DRIVER_CUSTOM_StatusTypeDef EXTMEM_DRIVER_CUSTOM_UserCallback(void *CustomObjectCtx,
+                                                                            uint32_t UserArg0,
+                                                                            uint32_t UserArg1)
+{
+  (void)UserArg0;
+  (void)UserArg1;
+
+  /* Example: if CustomObjectCtx is set to (void*)CustomObject, retrieve it here. */
+  EXTMEM_DRIVER_CUSTOM_ObjectTypeDef *obj = (EXTMEM_DRIVER_CUSTOM_ObjectTypeDef *)CustomObjectCtx;
+  XSPI_HandleTypeDef *hxspi = NULL;
+  if (obj != NULL)
+  {
+    hxspi = obj->Private.Handle;
+  }
+  (void)hxspi;
+
+  DEBUG_API();
+  DEBUG_STR("EXTMEM_DRIVER_CUSTOM_UserCallback");
+
+  /* User can override this weak function in application code. */
+  return EXTMEM_DRV_CUSTOM_OK;
+}
+
+/**
   * @}
   */
 
@@ -1181,10 +1577,31 @@ static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_Init(EXTMEM_DRIVER_CUSTOM_ObjectTyp
   CustomObject->Private.Handle->Init.FreeRunningClock        = HAL_XSPI_FREERUNCLK_DISABLE;
   CustomObject->Private.Handle->Init.ClockMode               = HAL_XSPI_CLOCK_MODE_0;
 
-  /* Used for PSRAM */
-  CustomObject->Private.Handle->Init.WrapSize                = HAL_XSPI_WRAP_NOT_SUPPORTED;
-  CustomObject->Private.Handle->Init.ChipSelectBoundary      = HAL_XSPI_BONDARYOF_NONE;
-  CustomObject->Private.Handle->Init.Refresh                 = 0;
+  /* Verify if Memory is a Psram Type (PSRAM XSPI or HyperRam) */
+  if (IS_MEMORY_PSRAM(CustomObject->MemType))
+  {
+    if (IS_MEMORY_HYPERBUS(CustomObject->MemType))
+    {
+      /* HyperRam memory */
+      CustomObject->Private.Handle->Init.WrapSize            = CustomObject->HyperRamConfig.RamConfig.WrapSize;
+      CustomObject->Private.Handle->Init.ChipSelectBoundary  = CustomObject->HyperRamConfig.RamConfig.CsBoundarySize;
+      CustomObject->Private.Handle->Init.Refresh             = CustomObject->HyperRamConfig.RamConfig.Refresh;
+    }
+    else
+    {
+      /* PSRAM Memory */
+      CustomObject->Private.Handle->Init.WrapSize            = CustomObject->PsramConfig.WrapSize;
+      CustomObject->Private.Handle->Init.ChipSelectBoundary  = CustomObject->PsramConfig.CsBoundarySize;
+      CustomObject->Private.Handle->Init.Refresh             = CustomObject->PsramConfig.Refresh;
+    }
+  }
+  else
+  {
+    /* Flash memory. Field not used. Keep default value */
+    CustomObject->Private.Handle->Init.WrapSize              = HAL_XSPI_WRAP_NOT_SUPPORTED;
+    CustomObject->Private.Handle->Init.ChipSelectBoundary    = HAL_XSPI_BONDARYOF_NONE;
+    CustomObject->Private.Handle->Init.Refresh               = 0;
+  }
 
   /* Additional settings that could be provided in configuration file.
      If not provided, XPSI configuration as done by CubeMX tool will apply.
@@ -1194,6 +1611,11 @@ static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_Init(EXTMEM_DRIVER_CUSTOM_ObjectTyp
   {
     CustomObject->Private.Handle->Init.SampleShifting        = CUSTOM_SETTING_CFG_VALUE(CustomObject->SampleShiftCfg);
   }
+  else
+  {
+    CustomObject->Private.Handle->Init.SampleShifting        = HAL_XSPI_SAMPLE_SHIFT_NONE;
+  }
+
   /* Other settings (that could be applied to older XSPI versions for instance, for debug purposes
      CustomObject->Private.Handle->Init.DelayHoldQuarterCycle     = HAL_XSPI_DHQC_DISABLE;
   */
@@ -1204,10 +1626,13 @@ static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_Init(EXTMEM_DRIVER_CUSTOM_ObjectTyp
   */
 
   /* DeInit the XSPI */
-  if (HAL_XSPI_DeInit(CustomObject->Private.Handle) != HAL_OK)
+  if (HAL_XSPI_GetState(CustomObject->Private.Handle) != HAL_XSPI_STATE_RESET)
   {
-    DEBUG_STR("[ERROR] XSPI DeInit (before Init)");
-    retr = CUSTOM_XSPI_KO;
+    if (HAL_XSPI_DeInit(CustomObject->Private.Handle) != HAL_OK)
+    {
+      DEBUG_STR("[ERROR] XSPI DeInit (before Init)");
+      retr = CUSTOM_XSPI_KO;
+    }
   }
 
   /* Init the XSPI */
@@ -1356,7 +1781,7 @@ static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_ReadRegister(EXTMEM_DRIVER_CUSTOM_O
   XSPI_RegularCmdTypeDef *sCommand = &CustomObject->Private.Commandbase;
   XSPI_HandleTypeDef *hxspi        = CustomObject->Private.Handle;
   uint32_t SavedCommand            = 0;
-  uint8_t reg[2]                   = {0};
+  uint8_t reg[4]                   = {0};
 
   /* Save current XSPI command */
   CUSTOM_XSPI_SaveCommand(sCommand, &SavedCommand);
@@ -1404,14 +1829,25 @@ static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_ReadRegister(EXTMEM_DRIVER_CUSTOM_O
     goto error;
   }
 
-  /* Check if command use DTR mode */
-  if (sCommand->DataDTRMode == HAL_XSPI_DATA_DTR_ENABLE)
+  /* Set nb of expected data */
+  if (IS_CFGSTEP_DATASIZE_24BIT(RegisterConfig->ConfigStepType))
+  {
+    sCommand->DataLength    = 3;
+  }
+  else if (IS_CFGSTEP_DATASIZE_16BIT(RegisterConfig->ConfigStepType))
   {
     sCommand->DataLength    = 2;
   }
   else
   {
     sCommand->DataLength    = 1;
+  }
+
+  /* Check if command use DTR mode and length is odd : ensure nb of received bytes is even */
+  if ((sCommand->DataDTRMode == HAL_XSPI_DATA_DTR_ENABLE)
+      && (sCommand->DataLength & 1))
+  {
+    sCommand->DataLength    += 1;
   }
 
   if (HAL_XSPI_Command(hxspi, sCommand, CUSTOM_XSPI_TIMEOUT_VALUE) != HAL_OK)
@@ -1429,7 +1865,18 @@ static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_ReadRegister(EXTMEM_DRIVER_CUSTOM_O
   }
 
   /* Can be used for debug */
-  CustomObject->Private.ReadRegValue = reg[0];
+  if (IS_CFGSTEP_DATASIZE_24BIT(RegisterConfig->ConfigStepType))
+  {
+    CustomObject->Private.ReadRegValue = (reg[0] << 16) | (reg[1] << 8) | reg[2];
+  }
+  else if (IS_CFGSTEP_DATASIZE_16BIT(RegisterConfig->ConfigStepType))
+  {
+    CustomObject->Private.ReadRegValue = (reg[0] << 8) | reg[1];
+  }
+  else
+  {
+    CustomObject->Private.ReadRegValue = reg[0];
+  }
   DEBUG_STR_HEX("[READ REG        ] Value:   ", CustomObject->Private.ReadRegValue);
 
 error:
@@ -1452,7 +1899,7 @@ static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_WriteRegister(EXTMEM_DRIVER_CUSTOM_
   XSPI_RegularCmdTypeDef *sCommand = &CustomObject->Private.Commandbase;
   XSPI_HandleTypeDef *hxspi        = CustomObject->Private.Handle;
   uint32_t SavedCommand            = 0;
-  uint8_t reg[2]                   = {0};
+  uint8_t reg[4]                   = {0};
   uint32_t reg_value               = 0;
   uint32_t mask                    = 0;
 
@@ -1462,7 +1909,23 @@ static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_WriteRegister(EXTMEM_DRIVER_CUSTOM_
   DEBUG_STR_HEX("[WRITE REG] Command:  ", RegisterConfig->RWConfigStep.CommandRegisterWrite);
 
   /* Initialize mask and register reg */
-  if (IS_CFGSTEP_DATASIZE_16BIT(RegisterConfig->ConfigStepType))
+  if (IS_CFGSTEP_DATASIZE_24BIT(RegisterConfig->ConfigStepType))
+  {
+    /* 24 bits register content */
+    mask = (0xFFFFFFU - ((RegisterConfig->RWConfigStep.RegisterMask) & 0xFFFFFFU));
+    reg_value = ((RegisterConfig->RWConfigStep.RegisterValue & RegisterConfig->RWConfigStep.RegisterMask) & 0xFFFFFFU)
+                | (CustomObject->Private.ReadRegValue & mask);
+    reg[0] = (uint8_t)(reg_value >> 16U);
+    reg[1] = (uint8_t)((reg_value >> 8U) & 0xFFU);
+    reg[2] = (uint8_t)(reg_value & 0xFFU);
+
+    sCommand->DataLength    = 3;
+
+    DEBUG_STR_HEX("[WRITE REG]  Value1:  ", reg[0]);
+    DEBUG_STR_HEX("[WRITE REG]  Value2:  ", reg[1]);
+    DEBUG_STR_HEX("[WRITE REG]  Value3:  ", reg[2]);
+  }
+  else if (IS_CFGSTEP_DATASIZE_16BIT(RegisterConfig->ConfigStepType))
   {
     /* 16 bits register content */
     mask = (0xFFFFU - ((RegisterConfig->RWConfigStep.RegisterMask) & 0xFFFFU));
@@ -1865,9 +2328,9 @@ static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_SetWriteCommand(MemoryBaseConfigTyp
   sCommand->AlternateBytesDTRMode = HAL_XSPI_ALT_BYTES_DTR_DISABLE;
 
   /* Data part */
-  sCommand->DataMode              = ((ConfigObject->OptWriteAccessMode) & DATA_MASK);;
+  sCommand->DataMode              = ((ConfigObject->OptWriteAccessMode) & DATA_MASK);
   sCommand->DataLength            = 0;
-  sCommand->DataDTRMode           = ((ConfigObject->OptWriteAccessMode) & HAL_XSPI_DATA_DTR_ENABLE);;
+  sCommand->DataDTRMode           = ((ConfigObject->OptWriteAccessMode) & HAL_XSPI_DATA_DTR_ENABLE);
 
   /* Others settings */
   sCommand->DummyCycles           = ConfigObject->DummyCycleWrite;
@@ -2070,6 +2533,159 @@ static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_GetJedecID(EXTMEM_DRIVER_CUSTOM_Obj
 
   /* Restore XSPI command previously saved */
   CUSTOM_XSPI_RestoreCommand(sCommand, &SavedCommand);
+
+  return retr;
+}
+
+/**
+  * @brief This function configures a Command descriptor according to Configuration object
+  * @param ConfigObject Configuration object
+  * @param sCommand Command descriptor to be initialised
+  * @retval @ref CUSTOM_XSPI_StatusTypeDef
+  */
+static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_HYPERBUS_SetCommand(EXTMEM_DRIVER_CUSTOM_ObjectTypeDef *CustomObject)
+{
+  XSPI_HandleTypeDef *hxspi        = CustomObject->Private.Handle;
+  XSPI_HyperbusCfgTypeDef sHyperbusCfg;
+
+  /* Configure the Hyperbus to transmit */
+  sHyperbusCfg.RWRecoveryTimeCycle = CustomObject->HyperRamConfig.HyperbusConfig.RwRecoveryTimeCycle;
+  sHyperbusCfg.AccessTimeCycle     = CustomObject->HyperRamConfig.HyperbusConfig.AccessTimeCycle;
+  sHyperbusCfg.WriteZeroLatency    = CustomObject->HyperRamConfig.HyperbusConfig.WriteZeroLatency;
+  sHyperbusCfg.LatencyMode         = CustomObject->HyperRamConfig.HyperbusConfig.LatencyMode;
+
+  if (HAL_XSPI_HyperbusCfg(hxspi, &sHyperbusCfg, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return CUSTOM_XSPI_KO;
+  }
+
+  return CUSTOM_XSPI_OK;
+}
+
+/**
+  * @brief This function configures a Command descriptor according to Configuration object
+  * @param ConfigObject Configuration object
+  * @param sCommand Command descriptor to be initialised
+  * @retval @ref CUSTOM_XSPI_StatusTypeDef
+  */
+static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_HYPERBUS_ReadRegister(EXTMEM_DRIVER_CUSTOM_ObjectTypeDef *CustomObject,
+                                                                   OptionalRegisterConfigTypeDef *RegisterConfig)
+{
+  CUSTOM_XSPI_StatusTypeDef retr  = CUSTOM_XSPI_OK;
+  XSPI_HandleTypeDef *hxspi        = CustomObject->Private.Handle;
+  XSPI_HyperbusCmdTypeDef *sCommand   = &CustomObject->Private.CommandbaseHyperbus;
+  uint16_t readData[1] = {0};
+
+  /* Initialize the transmit command */
+  sCommand->AddressSpace = HAL_XSPI_REGISTER_ADDRESS_SPACE;   /* CA[46] = 1 */
+  sCommand->AddressWidth = HAL_XSPI_ADDRESS_32_BITS;
+  sCommand->Address      = RegisterConfig->RWConfigStep.RegisterAddress;
+  sCommand->DQSMode      = HAL_XSPI_DQS_ENABLE;
+  sCommand->DataMode     = HAL_XSPI_DATA_8_LINES;
+  sCommand->DataLength   = 2U;
+
+  if (HAL_XSPI_HyperbusCmd(hxspi, sCommand, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return CUSTOM_XSPI_KO;
+  }
+
+  if (HAL_XSPI_Receive(hxspi, (uint8_t *)readData, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    DEBUG_STR_HEX("[ERROR] Read Register Value:  ", readData[0]);
+    return CUSTOM_XSPI_KO;
+  }
+
+  /* Can be used for debug */
+  CustomObject->Private.ReadRegValue = readData[0];
+  DEBUG_STR_HEX("[READ REG        ] Value:   ", CustomObject->Private.ReadRegValue);
+
+  return retr;
+}
+
+/**
+  * @brief This function configures a Command descriptor according to Configuration object
+  * @param ConfigObject Configuration object
+  * @param sCommand Command descriptor to be initialised
+  * @retval @ref CUSTOM_XSPI_StatusTypeDef
+  */
+static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_HYPERBUS_WriteRegister(EXTMEM_DRIVER_CUSTOM_ObjectTypeDef *CustomObject,
+                                                                    OptionalRegisterConfigTypeDef *RegisterConfig)
+{
+  CUSTOM_XSPI_StatusTypeDef retr   = CUSTOM_XSPI_OK;
+  XSPI_HandleTypeDef *hxspi        = CustomObject->Private.Handle;
+  XSPI_HyperbusCmdTypeDef *sCommand   = &CustomObject->Private.CommandbaseHyperbus;
+  uint16_t writeData[1] = {0};
+  uint16_t mask;
+
+  /* 16 bits register content */
+  mask = (0xFFFFU - ((RegisterConfig->RWConfigStep.RegisterMask) & 0xFFFFU));
+  writeData[0] = ((RegisterConfig->RWConfigStep.RegisterValue & RegisterConfig->RWConfigStep.RegisterMask) & 0xFFFFU)
+                 | (CustomObject->Private.ReadRegValue & mask);
+
+  /* Enable the Write Zero Latency bit for Write register */
+  SET_BIT(hxspi->Instance->HLCR, XSPI_HLCR_WZL);
+
+  /* Initialize the transmit command */
+  sCommand->AddressSpace  = HAL_XSPI_REGISTER_ADDRESS_SPACE;   /* CA[46] = 1 */
+  sCommand->AddressWidth  = HAL_XSPI_ADDRESS_32_BITS;
+  sCommand->Address       = RegisterConfig->RWConfigStep.RegisterAddress;
+  sCommand->DQSMode       = CustomObject->StartupConfig.DqsMode;
+  sCommand->DataMode      = HAL_XSPI_DATA_8_LINES;
+  sCommand->DataLength    = 2U;
+
+  if (HAL_XSPI_HyperbusCmd(hxspi, sCommand, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return CUSTOM_XSPI_KO;
+  }
+
+  if (HAL_XSPI_Transmit(hxspi, (uint8_t *) writeData, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    DEBUG_STR_HEX("[ERROR] Write Register Value:  ", writeData[0]);
+    return CUSTOM_XSPI_KO;
+  }
+
+  DEBUG_STR_HEX("[WRITE REG]   Value:  ", writeData[0]);
+  return retr;
+}
+
+
+/**
+  * @brief Retrieves the JEDEC ID from the memory device.
+  * @param CustomObject Pointer to the custom driver object.
+  * @retval @ref CUSTOM_XSPI_StatusTypeDef
+  */
+static CUSTOM_XSPI_StatusTypeDef CUSTOM_XSPI_HYPERBUS_GetDeviceID(EXTMEM_DRIVER_CUSTOM_ObjectTypeDef *CustomObject)
+{
+  CUSTOM_XSPI_StatusTypeDef retr   = CUSTOM_XSPI_OK;
+  XSPI_HandleTypeDef *hxspi        = CustomObject->Private.Handle;
+  XSPI_HyperbusCmdTypeDef *sCommand   = &CustomObject->Private.CommandbaseHyperbus;
+  uint8_t IdRegister0[2] = {0};
+
+  /* Initialize the transmit command */
+  sCommand->AddressSpace = HAL_XSPI_REGISTER_ADDRESS_SPACE;   /* CA[46] = 1 */
+  sCommand->AddressWidth = CustomObject->StartupConfig.AddressSize;
+  sCommand->Address      = 0x0000;                            /* address configuration register 0 */
+  sCommand->DQSMode      = CustomObject->StartupConfig.DqsMode;
+  sCommand->DataMode     = HAL_XSPI_DATA_8_LINES;
+  sCommand->DataLength   = 2U;
+
+  if (HAL_XSPI_HyperbusCmd(hxspi, sCommand, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    retr = CUSTOM_XSPI_KO;
+  }
+
+  if (HAL_XSPI_Receive(hxspi, IdRegister0, HAL_XSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK)
+  {
+    return CUSTOM_XSPI_KO;
+  }
+
+  CustomObject->Private.DeviceID.RowAddrBitCount    = (IdRegister0[1] & 0x0F);
+  CustomObject->Private.DeviceID.ColumnAddrBitCount = (IdRegister0[0] & 0xF0);
+  CustomObject->Private.DeviceID.Manufacturer       = (IdRegister0[0] & 0x0F);
+
+  DEBUG_STR_HEX("[DEVICE ID] Row Addr Bit    :", CustomObject->Private.DeviceID.RowAddrBitCount);
+  DEBUG_STR_HEX("[DEVICE ID] Column Addr Bit :", CustomObject->Private.DeviceID.ColumnAddrBitCount);
+  DEBUG_STR_HEX("[DEVICE ID] Manufacturer    :", CustomObject->Private.DeviceID.Manufacturer);
 
   return retr;
 }

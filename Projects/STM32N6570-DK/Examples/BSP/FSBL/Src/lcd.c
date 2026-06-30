@@ -3,7 +3,7 @@
   * @file    lcd.c
   * @author  MCD Application Team
   * @brief   This example code shows how to use the LCD display feature in the
-  *          STM32H573I-DK driver
+  *          STM32N6570-DK driver
   ******************************************************************************
   * @attention
   *
@@ -20,7 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
-/** @addtogroup STM32H5xx_HAL_Examples
+/** @addtogroup STM32N6xx_HAL_Examples
   * @{
   */
 

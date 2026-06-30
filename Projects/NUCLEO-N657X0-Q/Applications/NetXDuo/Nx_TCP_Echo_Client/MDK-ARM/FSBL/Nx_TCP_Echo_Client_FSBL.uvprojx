@@ -17,7 +17,7 @@
           <Device>STM32N657X0HxQ</Device>
           <Vendor>STMicroelectronics</Vendor>
           <PackID>Keil.STM32N6xx_DFP.1.0.0</PackID>
-          <PackURL>http://www.keil.com/pack</PackURL>
+          <PackURL>https://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x341C0000-0x341FFFFF) IROM(0x34180400-0x341BFFFF) CLOCK(8000000) FPU3(DFPU) CPUTYPE("Cortex-M55") ELITTLE TZ DSP</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32N657xx,NX_INCLUDE_USER_DEFINE_FILE,TX_INCLUDE_USER_DEFINE_FILE,TX_SINGLE_MODE_SECURE=1</Define>
               <Undefine></Undefine>
-              <IncludePath>../../FSBL/NetXDuo/App;../../FSBL/NetXDuo/Target;../../FSBL/Core/Inc;../../FSBL/AZURE_RTOS/App;../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc;../../../../../../../Drivers/CMSIS/Device/ST/STM32N6xx/Include;../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy;../../../../../../../Drivers/BSP/Components/lan8742;../../../../../../../Middlewares/ST/netxduo/addons/dhcp;../../../../../../../Middlewares/ST/netxduo/common/drivers/ethernet;../../../../../../../Middlewares/ST/threadx/common/inc;../../../../../../../Middlewares/ST/netxduo/common/inc;../../../../../../../Middlewares/ST/netxduo/ports/cortex_m55/ac6/inc;../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/inc;../../../../../../../Drivers/CMSIS/Include;..\..\..\..\..\..\..\Middlewares\ST\netxduo\tsn\inc</IncludePath>
+              <IncludePath>../../FSBL/NetXDuo/App;../../FSBL/NetXDuo/Target;../../FSBL/Core/Inc;../../FSBL/AZURE_RTOS/App;../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc;../../../../../../../Drivers/CMSIS/Device/ST/STM32N6xx/Include;../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy;../../../../../../../Drivers/BSP/Components/lan8742;../../../../../../../Middlewares/ST/netxduo/tsn/inc;../../../../../../../Middlewares/ST/netxduo/addons/dhcp;../../../../../../../Middlewares/ST/netxduo/common/drivers/ethernet;../../../../../../../Middlewares/ST/threadx/common/inc;../../../../../../../Middlewares/ST/netxduo/common/inc;../../../../../../../Middlewares/ST/netxduo/ports/cortex_m55/ac6/inc;../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/inc;../../../../../../../Drivers/CMSIS/Include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -358,7 +358,7 @@
               <MiscControls></MiscControls>
               <Define>TX_INCLUDE_USER_DEFINE_FILE,TX_SINGLE_MODE_SECURE=1</Define>
               <Undefine></Undefine>
-              <IncludePath>../../FSBL/NetXDuo/App;../../FSBL/NetXDuo/Target;../../FSBL/Core/Inc;../../FSBL/AZURE_RTOS/App;../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc;../../../../../../../Drivers/CMSIS/Device/ST/STM32N6xx/Include;../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy;../../../../../../../Drivers/BSP/Components/lan8742;../../../../../../../Middlewares/ST/netxduo/addons/dhcp;../../../../../../../Middlewares/ST/netxduo/common/drivers/ethernet;../../../../../../../Middlewares/ST/threadx/common/inc;../../../../../../../Middlewares/ST/netxduo/common/inc;../../../../../../../Middlewares/ST/netxduo/ports/cortex_m55/ac6/inc;../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/inc;../../../../../../../Drivers/CMSIS/Include;..\..\..\..\..\..\..\Middlewares\ST\netxduo\tsn\inc</IncludePath>
+              <IncludePath>../../FSBL/NetXDuo/App;../../FSBL/NetXDuo/Target;../../FSBL/Core/Inc;../../FSBL/AZURE_RTOS/App;../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc;../../../../../../../Drivers/CMSIS/Device/ST/STM32N6xx/Include;../../../../../../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy;../../../../../../../Drivers/BSP/Components/lan8742;../../../../../../../Middlewares/ST/netxduo/tsn/inc;../../../../../../../Middlewares/ST/netxduo/addons/dhcp;../../../../../../../Middlewares/ST/netxduo/common/drivers/ethernet;../../../../../../../Middlewares/ST/threadx/common/inc;../../../../../../../Middlewares/ST/netxduo/common/inc;../../../../../../../Middlewares/ST/netxduo/ports/cortex_m55/ac6/inc;../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/inc;../../../../../../../Drivers/CMSIS/Include</IncludePath>
             </VariousControls>
           </Aads>
           <LDads>
@@ -603,6 +603,11 @@
               <FileName>txe_thread_secure_stack_free.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/src/txe_thread_secure_stack_free.c</FilePath>
+            </File>
+            <File>
+              <FileName>txe_thread_secure_stack_allocate.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Middlewares/ST/threadx/ports/cortex_m55/ac6/src/txe_thread_secure_stack_allocate.c</FilePath>
             </File>
             <File>
               <FileName>tx_thread_context_restore.S</FileName>
@@ -1419,6 +1424,11 @@
         <Group>
           <GroupName>Middlewares/netxduo/NX Core</GroupName>
           <Files>
+            <File>
+              <FileName>nx_shaper.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../../../../../../../Middlewares/ST/netxduo/tsn/src/nx_shaper.c</FilePath>
+            </File>
             <File>
               <FileName>nx_arp_announce_send.c</FileName>
               <FileType>1</FileType>
@@ -3863,11 +3873,6 @@
               <FileName>nx_http_proxy_client.c</FileName>
               <FileType>1</FileType>
               <FilePath>../../../../../../../Middlewares/ST/netxduo/common/src/nx_http_proxy_client.c</FilePath>
-            </File>
-            <File>
-              <FileName>nx_shaper.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\..\..\Middlewares\ST\netxduo\tsn\src\nx_shaper.c</FilePath>
             </File>
           </Files>
         </Group>

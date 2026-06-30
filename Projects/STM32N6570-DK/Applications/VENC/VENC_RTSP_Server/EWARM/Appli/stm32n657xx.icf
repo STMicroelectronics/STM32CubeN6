@@ -32,8 +32,8 @@ define memory mem with size = 4G;
 define region ITCM_Region     = mem:[from 0x10000000 to  0x1000FFFF]; // 128K
 define region DTCM_Region     = mem:[from 0x30000000 to  0x3001FFFF]; // 128K
 define region RO_Region       = mem:[from 0x34000400 to  0x3407D3FF]; // 500
-define region RW_Region       = mem:[from 0x3407D400 to  0x3410BBFF]; // 570K
-define region NOCACHE_Region  = mem:[from 0x3410BC00 to  0x343BFFFF]; // 2769K
+define region RW_Region       = mem:[from 0x3407D400 to  0x3412AFBF]; // 695K
+define region NOCACHE_Region  = mem:[from 0x3412AFC0 to  0x343BFFFF]; // 2644K
 define region PSRAM_region    = mem:[from 0x90000000 to  0x91FFFFFF];
 
 define block CSTACK    with alignment = 8, size = __ICFEDIT_size_cstack__   { };

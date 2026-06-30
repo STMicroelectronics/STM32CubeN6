@@ -3,6 +3,7 @@
  */
 /*
  *  Copyright The Mbed TLS Contributors
+ *  Portions Copyright (C) STMicroelectronics, All Rights Reserved
  *  SPDX-License-Identifier: Apache-2.0
  */
 
@@ -310,9 +311,6 @@ psa_status_t mbedtls_psa_aead_decrypt(
 exit:
     mbedtls_psa_aead_abort(&operation);
 
-    if (status == PSA_SUCCESS) {
-        *plaintext_length = ciphertext_length - operation.tag_length;
-    }
     return status;
 }
 
@@ -578,9 +576,15 @@ psa_status_t mbedtls_psa_aead_finish(
             return PSA_ERROR_BUFFER_TOO_SMALL;
         }
 
+#if defined(MBEDTLS_CCM_ALT) && defined(MBEDTLS_HAL_CCM_ALT) && defined (MBEDTLS_HAL_CCM_MULTIPART_ALT)
         status = mbedtls_to_psa_error(
             mbedtls_ccm_finish(&operation->ctx.ccm,
+                               ciphertext, ciphertext_size, &finish_output_size,
                                tag, operation->tag_length));
+#else
+         status = mbedtls_to_psa_error(
+             mbedtls_ccm_finish(&operation->ctx.ccm, tag, operation->tag_length));
+#endif /* MBEDTLS_CCM_ALT && MBEDTLS_HAL_CCM_ALT && MBEDTLS_HAL_CCM_MULTIPART_ALT */
     } else
 #endif /* MBEDTLS_PSA_BUILTIN_ALG_CCM */
 #if defined(MBEDTLS_PSA_BUILTIN_ALG_CHACHA20_POLY1305)

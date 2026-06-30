@@ -725,11 +725,15 @@ static void SystemInit_ExtMemCtl(void)
   }
 
   /* Delay */
-  for (index = 0; index<1000; index++);
+  for (index = 0; index < 1000; index++)
+  {
+    __NOP();
+  }
 
   /* PALL (precharge all) command */
   FMC_Bank5_6_R->SDCMR   =  (0x2 | FMC_SDCMR_DS1); /* FMC_SDRAM_CMD_PALL | FMC_SDRAM_CMD_TARGET_BANK1 */
   timeout = 0xFFFF;
+  tmpreg = FMC_Bank5_6_R->SDSR & 0x00000020;
   while((tmpreg != 0) && (timeout-- > 0))
   {
     tmpreg = FMC_Bank5_6_R->SDSR & 0x00000020;
@@ -738,6 +742,7 @@ static void SystemInit_ExtMemCtl(void)
   /* Configure a Auto-Refresh command */
   FMC_Bank5_6_R->SDCMR   =  (0x3 | FMC_SDCMR_DS1 | (7 << FMC_SDCMR_NRFS_Pos)); /* FMC_SDRAM_CMD_AUTOREFRESH_MODE | FMC_SDRAM_CMD_TARGET_BANK1 | AutoRefreshNumber = 8 */
   timeout = 0xFFFF;
+  tmpreg = FMC_Bank5_6_R->SDSR & 0x00000020;
   while((tmpreg != 0) && (timeout-- > 0))
   {
     tmpreg = FMC_Bank5_6_R->SDSR & 0x00000020;
@@ -746,6 +751,7 @@ static void SystemInit_ExtMemCtl(void)
   /* Configure Load mode */
   FMC_Bank5_6_R->SDCMR   =  (0x4 | FMC_SDCMR_DS1); /* FMC_SDRAM_CMD_LOAD_MODE | FMC_SDRAM_CMD_TARGET_BANK1 */
   timeout = 0xFFFF;
+  tmpreg = FMC_Bank5_6_R->SDSR & 0x00000020;
   while((tmpreg != 0) && (timeout-- > 0))
   {
     tmpreg = FMC_Bank5_6_R->SDSR & 0x00000020;

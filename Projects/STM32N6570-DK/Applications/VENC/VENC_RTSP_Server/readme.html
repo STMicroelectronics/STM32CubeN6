@@ -85,12 +85,14 @@
 <body>
 <h2 id="venc_rtsp_server-application-description"><b>VENC_RTSP_Server Application Description</b></h2>
 <p>This application demonstrates the H.264 video encoder streaming through Azure RTOS NetX/NetXDuo on the STM32N6570-DK board.</p>
-<p>It enables testing of the following H.264 encoding use cases:</p>
+<p>It enables testing of the following use cases:</p>
 <ul>
-<li>Frame mode or Hardware Handshake mode (also known as Slice mode or Streaming mode)</li>
-<li>1080p, 720p, or 480p</li>
+<li>H.264 encoding in 1080p, 720p, or 480p, in Frame mode or Hardware Handshake mode (also known as Slice mode or Streaming mode)</li>
+<li>H.264 encoding with optional uncompressed audio (PCM)</li>
+<li>H.264 encoding with optional compressed audio (Opus)</li>
 </ul>
 <p>The application streams encoded H.264 video with optional audio.</p>
+<p>The application streams encoded H.264 video with optional compressed audio.</p>
 <p>Frames are transmitted through the Ethernet peripheral using the RTP (Real-time Transport Protocol) to a remote client, such as VLC media player or ffmpeg.</p>
 <p>The RTSP (Real-Time Streaming Protocol) controls media sessions, including SETUP, PLAY, and TEARDOWN commands.</p>
 <h3 id="thread-overview">Thread Overview</h3>
@@ -122,7 +124,7 @@ Manages the IP stack operations, including packet processing, routing, and netwo
 <li>The board IP address is printed on HyperTerminal at 115200 baud</li>
 </ul>
 <h5 id="playback-using-ffplay"><b>Playback using ffplay</b></h5>
-<p>Playback with low latency can be done using ffplay ;</p>
+<p>Playback with low latency can be done using ffplay:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffplay</span> <span class="at">-flags</span> low_delay rtsp://[IP]</span></code></pre></div>
 <p>Note: This application was tested with ffplay version 6.1.1-3ubuntu5</p>
 <h5 id="playback-using-vlc"><b>Playback using VLC</b></h5>
@@ -142,7 +144,7 @@ Manages the IP stack operations, including packet processing, routing, and netwo
 <ul>
 <li>The application uses DHCP to acquire an IP address; thus, a DHCP server should be reachable by the board in the RTL used to test the application.</li>
 <li>The application is configuring the Ethernet IP with a static predefined <i>MAC Address</i>. Ensure to change it if multiple boards are connected on the same RTL to avoid any potential network traffic issues.</li>
-<li>The <i>MAC Address</i> is defined in the <code>main.c</code></li>
+<li>The <i>MAC Address</i> is defined in the <code>main.c</code> file.</li>
 </ul>
 <pre><code>void MX_ETH_Init(void)
 {
@@ -157,19 +159,20 @@ Manages the IP stack operations, including packet processing, routing, and netwo
 <p>The RTSP server is minimalist and does not support multiple client connections/disconnections.</p>
 <h4 id="threadx-usage-hints"><b>ThreadX usage hints</b></h4>
 <ul>
-<li>ThreadX uses the Systick as time base, thus it is mandatory that the HAL uses a separate time base through the TIM IPs.</li>
-<li>ThreadX is configured with 100 ticks/sec by default, this should be considered when using delays or timeouts at application. It can be reconfigured by updating the “TX_TIMER_TICKS_PER_SECOND” define in the “tx_user.h” file. The update should be reflected in “tx_initialize_low_level.S” file too.</li>
+<li>ThreadX uses SysTick as its time base, thus it is mandatory that the HAL uses a separate time base through a TIM peripheral.</li>
+<li>ThreadX is configured with 100 ticks/sec by default. This should be considered when using delays or timeouts in the application. It can be reconfigured by updating the “TX_TIMER_TICKS_PER_SECOND” define in the “tx_user.h” file. The update should be reflected in the “tx_initialize_low_level.S” file too.</li>
 <li>ThreadX is disabling all interrupts during kernel start-up to avoid any unexpected behavior, therefore all system related calls (HAL, BSP) should be done either at the beginning of the application or inside the thread entry functions.</li>
-<li>ThreadX offers the “tx_application_define()” function, that is automatically called by the tx_kernel_enter() API. It is highly recommended to use it to create all applications ThreadX related resources (threads, semaphores, memory pools…) but it should not in any way contain a system API call (HAL or BSP).</li>
-<li>Using dynamic memory allocation requires to apply some changes to the linker file. ThreadX needs to pass a pointer to the first free memory location in RAM to the tx_application_define() function using the first_unused_memory argument. This requires changes in the linker files to expose this memory location.
+<li>ThreadX offers the “tx_application_define()” function, that is automatically called by the tx_kernel_enter() API. It is highly recommended to use it to create all application ThreadX-related resources (threads, semaphores, memory pools…), but it should not contain any system API call (HAL or BSP).</li>
+<li>Using dynamic memory allocation requires applying some changes to the linker file. ThreadX needs to pass a pointer to the first free memory location in RAM to the tx_application_define() function using the first_unused_memory argument. This requires changes in the linker files to expose this memory location.
 <ul>
-<li>For EWARM add the following section into the .icf file: ``` place in RAM_region { last section FREE_MEM };</li>
+<li>For EWARM add the following section into the .icf file:</li>
 </ul></li>
 </ul>
+<pre><code>place in RAM_region    { last section FREE_MEM };</code></pre>
 <h4 id="netx-duo-usage-hints"><b>NetX Duo usage hints</b></h4>
 <ul>
 <li>Depending on the application scenario, the total TX and RX descriptors may need to be increased by updating respectively the “ETH_TX_DESC_CNT” and “ETH_RX_DESC_CNT” in the “stm32n6xx_hal_conf.h”, to ensure the application correct behaviour, but this will cost extra memory to allocate.</li>
-<li>The NetXDuo application needs to allocate a specific pool in a uncached section. Below is an example of the declaration of the nx pool.</li>
+<li>The NetXDuo application needs to allocate a specific pool in an uncached section. Below is an example of the declaration of the nx pool.</li>
 </ul>
 <pre><code>  #if (USE_STATIC_ALLOCATION == 1)
   static UCHAR nx_byte_pool_buffer[NX_APP_MEM_POOL_SIZE] __ALIGN_END __NON_CACHEABLE;
@@ -185,7 +188,7 @@ Manages the IP stack operations, including packet processing, routing, and netwo
 <ul>
 <li><p>This application runs on STM32N657xx devices.</p></li>
 <li><p>This application has been tested with STMicroelectronics STM32N6570-DK boards Revision MB1939-N6570-A03 and can be easily tailored to any other supported device and development board.</p></li>
-<li><p>This application uses USART1 to display logs, the hyperterminal configuration is as follows:</p>
+<li><p>This application uses USART1 to display logs. The HyperTerminal configuration is as follows:</p>
 <ul>
 <li>BaudRate = 115200 baud</li>
 <li>Word Length = 8 Bits</li>
@@ -216,12 +219,12 @@ Manages the IP stack operations, including packet processing, routing, and netwo
 <li>Press the reset button</li>
 <li>The example should execute</li>
 </ul>
-<p><strong>Note</strong>: 2 scripts are provided as example for signing and flashing IAR or CubeIDE builds :</p>
+<p><strong>Note</strong>: 2 scripts are provided as examples for signing and flashing IAR or CubeIDE builds:</p>
 <ul>
-<li>VENC_RTSP_Server/Tools/flash_IAR.sh</li>
-<li>VENC_RTSP_Server/Tools/flash_cubeIDE.sh</li>
+<li>VENC_RTSP_Server_v1.4.0/Tools/flash_IAR.sh</li>
+<li>VENC_RTSP_Server_v1.4.0/Tools/flash_cubeIDE.sh</li>
 </ul>
-<p>Please adapt the scripts to your environment</p>
+<p>Please adapt the scripts to your environment.</p>
 <h4 id="adding-a-header"><b> Adding a header </b></h4>
 <ul>
 <li>Resort to CubeProgrammer to add a header to a binary Project.bin with the following command

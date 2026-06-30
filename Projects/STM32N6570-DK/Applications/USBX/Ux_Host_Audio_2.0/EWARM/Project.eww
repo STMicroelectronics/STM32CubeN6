@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspace>
-    <project>
-        <path>$WS_DIR$\Ux_Host_Audio_2.0.ewp</path>
-    </project>
-    <batchBuild />
+  <project>
+    <path>$WS_DIR$\FSBL\Ux_Host_Audio_2.0_FSBL.ewp</path>
+  </project>
+  <batchBuild />
 </workspace>

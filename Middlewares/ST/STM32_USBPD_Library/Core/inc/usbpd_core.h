@@ -238,8 +238,9 @@ typedef void (*TRACE_ENTRY_POINT)(TRACE_EVENT type, uint8_t port, uint8_t sop, u
 #define PE_SRC_TSAFE0V_T2                650u   /*!< tSafe0V for SRC: 650 ms                                   */
 #define PE_SNK_TSAFE0V_T2                1000u  /*!< tSafe0V for SNK: 1000 ms                                  */
 #define PE_TSRCTURNON_T4                 275u   /*!< tSrcTurnOn: 275 ms                                        */
-#define PE_TPSSOURCEOFF                  900u   /*!< tPSSourceOff: min 750ms to max 920ms                      */
-#define PE_TPSSOURCEON                   440u   /*!< tPSSourceOn: min 390ms to max 480ms                       */
+#define PE_TPSSOURCEOFF                  920u   /*!< tPSSourceOff: min 750ms to max 920ms (SPR)                */
+#define PE_TPSSOURCEOFF_EPR              1260u  /*!< tPSSourceOff: min 1120ms to max 1400ms (EPR)              */
+#define PE_TPSSOURCEON                   400u   /*!< tPSSourceOn: min 390ms to max 480ms                       */
 
 #define PE_TPSTRANSITION                 475u   /*!< tPSTransition: min 450ms to max 550ms                     */
 #define PE_TPSTRANSITION_EPR             925u   /*!< tPSTransition: min 830ms to max 1020ms                    */
@@ -602,7 +603,7 @@ typedef struct
     * @brief  Callback used by a SOURCE to evaluate the SINK request
     * @param  PortNum Port number
     * @param  PtrPowerObject  Pointer on the power data object
-    * @retval Returned values are: @ref USBPD_ACCEPT, @ref USBPD_REJECT, @ref USBPD_WAIT, @ref USBPD_GOTOMIN
+    * @retval Returned values are: @ref USBPD_ACCEPT, @ref USBPD_REJECT, @ref USBPD_WAIT
     */
   USBPD_StatusTypeDef(*USBPD_PE_SRC_EvaluateRequest)(uint8_t PortNum, USBPD_CORE_PDO_Type_TypeDef *PtrPowerObject);
 

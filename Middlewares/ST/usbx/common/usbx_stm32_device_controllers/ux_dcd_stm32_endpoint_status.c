@@ -85,9 +85,16 @@ UX_DCD_STM32_ED      *ed;
     /* Fetch the address of the physical endpoint.  */
     ed = _stm32_ed_get(dcd_stm32, endpoint_index);
 
+    if (ed == UX_NULL)
+    {
+        return(UX_NO_ED_AVAILABLE);
+    }
+
     /* Check the endpoint status, if it is free, we have a illegal endpoint.  */
     if ((ed -> ux_dcd_stm32_ed_status & UX_DCD_STM32_ED_STATUS_USED) == 0)
+    {
         return(UX_ERROR);
+    }
 
     /* Check if the endpoint is stalled.  */
     if ((ed -> ux_dcd_stm32_ed_status & UX_DCD_STM32_ED_STATUS_STALLED) == 0)

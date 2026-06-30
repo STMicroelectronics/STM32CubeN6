@@ -24,6 +24,7 @@
 #include "utils.h"
 #include "app_filex.h"
 #include "h264encapi.h"
+#include "st_monitor_bitrate.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -59,7 +60,7 @@ void sdcard_thread_func(ULONG arg)
     return;
   }
   
-  /* Wait for the first I frame*/
+  /* Wait for the first I-frame. */
   do {
     res = VENC_APP_GetData(&data, &size);
   }
@@ -91,10 +92,11 @@ void sdcard_thread_func(ULONG arg)
       nb_frames = 1;
     }
     
-    /* Write Frame to SDCard */
+    /* Write the frame to the SD card. */
     if (data && size)
     {
       VENC_FileX_write((CHAR*)data, (LONG)size);
+      monitor_bitrate("video", (uint32_t)size);
       data = NULL; size = 0;
       BSP_LED_Toggle(LED_RED);
     }
@@ -102,7 +104,7 @@ void sdcard_thread_func(ULONG arg)
     res = VENC_APP_GetData(&data, &size);
     if (res < 0)
     {
-      printf("Failed to get encoded datas\n");
+      printf("Failed to get encoded data\n");
       tx_thread_sleep(15U*TX_TIMER_TICKS_PER_SECOND/1000U);
     }
     else

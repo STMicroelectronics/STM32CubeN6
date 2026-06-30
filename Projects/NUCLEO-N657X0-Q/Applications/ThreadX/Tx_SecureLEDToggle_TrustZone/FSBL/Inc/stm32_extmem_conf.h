@@ -1,8 +1,9 @@
+/* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file    stm32_extmem_conf.h
-  * @author  GPM Application Team
-  * @brief   Header configuration for extmem module
+  * @file           : stm32_extmem_conf.h
+  * @version        : 1.0.0
+  * @brief          : Header for extmem.c file.
   ******************************************************************************
   * @attention
   *
@@ -15,29 +16,32 @@
   *
   ******************************************************************************
   */
+/* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef EXTMEM_CONF_H_
-#define EXTMEM_CONF_H_
+#ifndef __STM32_EXTMEM_CONF__H__
+#define __STM32_EXTMEM_CONF__H__
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
-/** @defgroup EXTMEN_CONF
-  * @{
-  */
- 
-/*
-  @brief management of the driver layer enable
-*/
-#define EXTMEM_DRIVER_NOR_SFDP   1
-#define EXTMEM_DRIVER_PSRAM  0
+/* Includes ------------------------------------------------------------------*/
 
 /*
   @brief management of the driver layer enable
 */
-#define EXTMEM_SAL_XSPI      1
+
+#define EXTMEM_DRIVER_NOR_SFDP   1
+#define EXTMEM_DRIVER_PSRAM      0
+#define EXTMEM_DRIVER_SDCARD     0
+#define EXTMEM_DRIVER_USER       0
+
+/*
+  @brief management of the sal layer enable
+*/
+#define EXTMEM_SAL_XSPI   1
+#define EXTMEM_SAL_SD     0
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32n6xx_hal.h"
@@ -45,123 +49,78 @@ extern "C" {
 #include "stm32_extmem_type.h"
 #include "boot/stm32_boot_lrun.h"
 
-/*
-  @brief import of the HAL handles for MEMORRY_SERIAL_0
-*/
-extern XSPI_HandleTypeDef       hxspi2;
+/* USER CODE BEGIN INCLUDE */
 
-/*
-  @brief import of the HAL handles for MEMORY_PSRAM_0
-*/
-extern XSPI_HandleTypeDef       hxspi1;
+/* USER CODE END INCLUDE */
+/* Private variables ---------------------------------------------------------*/
+extern XSPI_HandleTypeDef hxspi2;
 
-/* Exported types ------------------------------------------------------------*/
+/* USER CODE BEGIN PV */
+
+/* USER CODE END PV */
+
 /* Exported constants --------------------------------------------------------*/
-
-/** @defgroup EXTMEM_CONF_Exported_constants EXTMEM_CONF exported constante
+/** @defgroup EXTMEM_CONF_Exported_constants EXTMEM_CONF exported constants
   * @{
   */
 enum {
-  EXTMEMORY_1  = 0, /*!< ID 0 of extmem_list_config */
-  EXTMEMORY_2  = 1, /*!< ID 1 of extmem_list_config */
+  EXTMEMORY_1  = 0 /*!< ID=0 for the first memory  */
 };
-/**
-  * @}
-  */
 
-#define EXTMEM_LRUN_DESTINATION_INTERNAL
-#define EXTMEM_LRUN_DESTINATION_ADDRESS  0x34000000
-
+/*
+  @brief management of the boot layer
+*/
+#define EXTMEM_HEADER_OFFSET 0x400
 
 #define EXTMEM_LRUN_SOURCE EXTMEMORY_1
-#define EXTMEM_LRUN_SOURCE_ADDRESS 0x00100000
-#define EXTMEM_LRUN_SOURCE_SIZE 0x00010000
+#define EXTMEM_LRUN_SOURCE_ADDRESS  0x00100000u
+#define EXTMEM_LRUN_SOURCE_SIZE     0x00010000u
+#define EXTMEM_LRUN_DESTINATION_INTERNAL  1
+#define EXTMEM_LRUN_DESTINATION_ADDRESS 0x34000000u
 
 #define EXTMEM_LRUN_TZ_ENABLE_NS
-#define EXTMEM_LRUN_DESTINATION_ADDRESS_NS 0x34100000
-#define EXTMEM_LRUN_SOURCE_ADDRESS_NS 0x180000
+#define EXTMEM_LRUN_DESTINATION_ADDRESS_NS 0x34100000u
+#define EXTMEM_LRUN_SOURCE_ADDRESS_NS 0x00180000u
 
-#define EXTMEM_HEADER_OFFSET 0x400
+/* USER CODE BEGIN EC */
+
+/* USER CODE END EC */
 
 /* Exported configuration --------------------------------------------------------*/
 /** @defgroup EXTMEM_CONF_Exported_configuration EXTMEM_CONF exported configuration definition
   * @{
   */
+
 extern EXTMEM_DefinitionTypeDef extmem_list_config[1];
 #if defined(EXTMEM_C)
-EXTMEM_DefinitionTypeDef extmem_list_config[1] =
-{
-  /* MEMORY_SERIAL_0 */
-  {
-    .MemType = EXTMEM_NOR_SFDP,
-    .Handle = (void*)&hxspi2,
-    .ConfigType = EXTMEM_LINK_CONFIG_8LINES,
-    .NorSfdpObject =
-    {
-      0
-    }
-  },
-//////////  /* MEMORY_PSRAM_0 */
-//////////  {
-//////////    .MemType = EXTMEM_PSRAM,
-//////////    .Handle = (void*)&hxspi1,
-//////////    .ConfigType = EXTMEM_LINK_CONFIG_16LINES,
-//////////    .PsramObject =
-//////////    {
-//////////      .psram_public = {
-//////////        .MemorySize = HAL_XSPI_SIZE_256MB,  /* memory size is 256Mbit */
-//////////        .FreqMax = 200000000u, /* 200Mhz */
-//////////        .NumberOfConfig = 1,
-//////////        /* Config */
-//////////        {
-//////////          {.WriteMask = 0x40, .WriteValue = 0x40, .REGAddress = 8}
-//////////        },
-//////////        
-//////////        /* Memory command configuration */
-//////////        .ReadREG           = 0x40u,
-//////////        .WriteREG          = 0xC0u,
-//////////        .ReadREGSize       = 2u,
-//////////        .REG_DummyCycle    = 4u,
-//////////        
-//////////        .Write_command     = 0xA0u,
-//////////        .Write_DummyCycle  = 4u,
-//////////        .Read_command      = 0x20u,
-//////////        .Read_DummyCycle   = 4u,
-//////////      }
-//////////    }
-//////////  }
-};
+EXTMEM_DefinitionTypeDef extmem_list_config[1];
 #endif /* EXTMEM_C */
+
 /**
   * @}
   */
 
-/* Exported trace --------------------------------------------------------*/
-/** @defgroup EXTMEM_CONF_Exported_debug EXTMEM_CONF exported debug definition
-  * @{
-  */
+/* Private function prototypes -----------------------------------------------*/
+/* USER CODE BEGIN PFP */
 
+/* USER CODE END PFP */
 
 /*
- * @brief debug level of the different layers
+ * -- Insert your variables declaration here --
  */
-#define EXTMEM_DEBUG_LEVEL                   0
+/* USER CODE BEGIN VARIABLES */
 
-#define EXTMEM_DRIVER_NOR_SFDP_DEBUG_LEVEL   0
-#define EXTMEM_DRIVER_PSRAM_DEBUG_LEVEL      0
+/* USER CODE END VARIABLES */
 
-#define EXTMEM_SAL_XSPI_DEBUG_LEVEL          0
-/**
-  * @}
-  */
+/*
+ * -- Insert functions declaration here --
+ */
+/* USER CODE BEGIN FD */
 
-/**
-  * @}
-  */
-
+/* USER CODE END FD */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* EXTMEM_CONF_H_ */
+#endif /* __STM32_EXTMEM_CONF__H__ */

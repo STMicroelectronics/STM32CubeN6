@@ -69,11 +69,6 @@ To run this example in development mode :
 
  - launch the debug with the FSBL configuration. The non secure application is loaded into RAM automatically.
 
-**STM32CubeIDE**:
-
- - create a debug configuration where both applications are loaded into the device
- - launch the debug
-
 
  This program can be run only with boot mode set in development mode.
 

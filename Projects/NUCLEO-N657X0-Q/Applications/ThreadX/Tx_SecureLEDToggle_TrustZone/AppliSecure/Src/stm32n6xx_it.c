@@ -20,10 +20,16 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32n6xx_it.h"
-
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
 extern funcptr_NS pSecureFault_Callback;
 extern funcptr_NS pSecureError_Callback;
 extern funcptr_NS pSecureIT_Callback;
+
+/* USER CODE END Includes */
+
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN TD */
 
 #if defined(__ICCARM__)
 typedef void (CMSE_NS_CALL *SecureFault_Callback)(void);
@@ -34,10 +40,6 @@ typedef void CMSE_NS_CALL (*SecureFault_Callback)(void);
 typedef void CMSE_NS_CALL (*SecureError_Callback)(void);
 typedef void CMSE_NS_CALL (*SecureIT_Callback)(IRQn_Type IrqLine);
 #endif
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN TD */
-
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -57,7 +59,8 @@ typedef void CMSE_NS_CALL (*SecureIT_Callback)(IRQn_Type IrqLine);
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
-
+void IAC_IRQHandler(void);
+void SysTick_Handler(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -66,6 +69,7 @@ typedef void CMSE_NS_CALL (*SecureIT_Callback)(IRQn_Type IrqLine);
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -82,20 +86,24 @@ void NMI_Handler(void)
 
   /* USER CODE END NonMaskableInt_IRQn 0 */
   /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
-
+   while (1)
+  {
+  }
   /* USER CODE END NonMaskableInt_IRQn 1 */
 }
 
 /**
-  * @brief  This function handles Hard Fault exception.
-  * @param  None
-  * @retval None
+  * @brief This function handles Hard fault interrupt.
   */
 void HardFault_Handler(void)
 {
-  /* Go to infinite loop when Hard Fault exception occurs */
+  /* USER CODE BEGIN HardFault_IRQn 0 */
+
+  /* USER CODE END HardFault_IRQn 0 */
   while (1)
   {
+    /* USER CODE BEGIN W1_HardFault_IRQn 0 */
+    /* USER CODE END W1_HardFault_IRQn 0 */
   }
 }
 
@@ -104,45 +112,52 @@ void HardFault_Handler(void)
   */
 void MemManage_Handler(void)
 {
-  /* Go to infinite loop when Memory Manage exception occurs */
+  /* USER CODE BEGIN MemoryManagement_IRQn 0 */
+
+  /* USER CODE END MemoryManagement_IRQn 0 */
   while (1)
   {
+    /* USER CODE BEGIN W1_MemoryManagement_IRQn 0 */
+    /* USER CODE END W1_MemoryManagement_IRQn 0 */
   }
 }
 
 /**
-  * @brief  This function handles Bus Fault exception.
-  * @param  None
-  * @retval None
+  * @brief This function handles Prefetch fault, memory access fault.
   */
 void BusFault_Handler(void)
 {
-  /* Go to infinite loop when Bus Fault exception occurs */
+  /* USER CODE BEGIN BusFault_IRQn 0 */
+
+  /* USER CODE END BusFault_IRQn 0 */
   while (1)
   {
+    /* USER CODE BEGIN W1_BusFault_IRQn 0 */
+    /* USER CODE END W1_BusFault_IRQn 0 */
   }
 }
 
 /**
-  * @brief  This function handles Usage Fault exception.
-  * @param  None
-  * @retval None
+  * @brief This function handles Undefined instruction or illegal state.
   */
 void UsageFault_Handler(void)
 {
-  /* Go to infinite loop when Usage Fault exception occurs */
+  /* USER CODE BEGIN UsageFault_IRQn 0 */
+
+  /* USER CODE END UsageFault_IRQn 0 */
   while (1)
   {
+    /* USER CODE BEGIN W1_UsageFault_IRQn 0 */
+    /* USER CODE END W1_UsageFault_IRQn 0 */
   }
 }
 
 /**
-  * @brief  This function handles Secure Fault exception.
-  * @param  None
-  * @retval None
+  * @brief This function handles Secure fault.
   */
 void SecureFault_Handler(void)
 {
+  /* USER CODE BEGIN SecureFault_IRQn 0 */
   funcptr_NS callback_NS; // non-secure callback function pointer
 
   if(pSecureFault_Callback != (funcptr_NS)NULL)
@@ -165,63 +180,37 @@ void SecureFault_Handler(void)
     HAL_GPIO_Init (GPIOG, &gpio_init_structure);
   }
 
+  /* USER CODE END SecureFault_IRQn 0 */
   while (1)
   {
+    /* USER CODE BEGIN W1_SecureFault_IRQn 0 */
     for(int i = 0; i<20000000; i++);
     HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_10);
+    /* USER CODE END W1_SecureFault_IRQn 0 */
   }
 }
 
 /**
-  * @brief  This function handles SVCall exception.
-  * @param  None
-  * @retval None
-  */
-void SVC_Handler(void)
-{
-}
-
-/**
-  * @brief  This function handles Debug Monitor exception.
-  * @param  None
-  * @retval None
+  * @brief This function handles Debug monitor.
   */
 void DebugMon_Handler(void)
 {
-  while (1)
-  {
-  }
-}
+  /* USER CODE BEGIN DebugMonitor_IRQn 0 */
 
-/**
-  * @brief  This function handles PendSVC exception.
-  * @param  None
-  * @retval None
-  */
-void PendSV_Handler(void)
-{
-  while (1)
-  {
-  }
-}
+  /* USER CODE END DebugMonitor_IRQn 0 */
+  /* USER CODE BEGIN DebugMonitor_IRQn 1 */
 
-/**
-  * @brief  This function handles SysTick Handler.
-  * @param  None
-  * @retval None
-  */
-void SysTick_Handler(void)
-{
-  HAL_IncTick();
+  /* USER CODE END DebugMonitor_IRQn 1 */
 }
 
 /******************************************************************************/
-/*                 STM32N6xx Peripherals Interrupt Handlers                   */
-/*  Add here the Interrupt Handler for the used peripheral(s) (PPP), for the  */
-/*  available peripheral interrupt handler's name please refer to the startup */
-/*  file (startup_stm32n6xx.s).                                               */
+/* STM32N6xx Peripheral Interrupt Handlers                                    */
+/* Add here the Interrupt Handlers for the used peripherals.                  */
+/* For the available peripheral interrupt handler names,                      */
+/* please refer to the startup file (startup_stm32n6xx.s).                    */
 /******************************************************************************/
 
+/* USER CODE BEGIN 1 */
 /**
   * @brief  This function handles IAC interrupt request.
   * @retval None
@@ -243,7 +232,13 @@ void IAC_IRQHandler(void)
   }
 }
 
-
-/* USER CODE BEGIN 1 */
-
+/**
+  * @brief  This function handles SysTick Handler.
+  * @param  None
+  * @retval None
+  */
+void SysTick_Handler(void)
+{
+  HAL_IncTick();
+}
 /* USER CODE END 1 */

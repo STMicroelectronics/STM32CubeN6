@@ -51,12 +51,6 @@ extern "C" {
 #define VENC_OUTPUT_BUFFER_SIZE     (4U * 500U * 1024U)
 #endif
   
-#ifndef VENC_BITRATE
-#define VENC_BITRATE (10*1000U*1000U)
-#endif
-
-
-  
 #ifdef __cplusplus
 }
 #endif

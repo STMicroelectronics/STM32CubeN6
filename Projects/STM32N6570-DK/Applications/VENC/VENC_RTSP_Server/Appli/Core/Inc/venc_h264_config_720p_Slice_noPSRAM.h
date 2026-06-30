@@ -49,14 +49,17 @@ extern "C" {
 #define VENC_INPUT_FORMAT               H264ENC_YUV420_SEMIPLANAR
 /** Bytes per pixel (YUV420 = 12 bits per pixel => 1.5 bytes) */
 #define DCMIPP_BYTES_PER_PIXELS         (1.5f)
-/** Pool size for encoder buffers (bytes) */
-#define VENC_POOL_SIZE                  (2306868U)
+/**
+ * Pool size for encoder buffers (bytes).
+ * Trimmed for the inter-RAM-only 720p slice profile to reduce uncached usage.
+ */
+#define VENC_POOL_SIZE                  (2144U * 1024U)
 #else
 /** Alternative configuration (YUV422) */
 #define DCMIPP_FORMAT                   DCMIPP_PIXEL_PACKER_FORMAT_YUV422_1
 #define VENC_INPUT_FORMAT               H264ENC_YUV422_INTERLEAVED_YUYV
 #define DCMIPP_BYTES_PER_PIXELS         (2U)            /* YUV422: 16 bits per pixel */
-#define VENC_POOL_SIZE                  (2306868U)
+#define VENC_POOL_SIZE                  (2144U * 1024U)
 #endif
 
 
