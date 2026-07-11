@@ -48,7 +48,7 @@ _eDTCM = ORIGIN(DTCM) + LENGTH(DTCM);
 /* Memories definition */
 MEMORY
 {
-  ROM    (xr)     : ORIGIN = 0x34000400,   LENGTH = 256K
+  ROM    (xr)     : ORIGIN = 0x34000400,   LENGTH = 255K
   RAM    (rw)     : ORIGIN = 0x341B7000,   LENGTH = 2340K
   DTCM   (rw)     : ORIGIN = 0x30000000,   LENGTH = 128K
 }
