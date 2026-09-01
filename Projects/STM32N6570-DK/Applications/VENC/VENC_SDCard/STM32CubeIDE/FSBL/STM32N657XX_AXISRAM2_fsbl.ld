@@ -49,7 +49,7 @@ _Min_Stack_Size = 0x800; /* required amount of stack */
 MEMORY
 {
   ROM    (xr)     : ORIGIN = 0x34180400,   LENGTH = 255K
-  RAM    (rw)     : ORIGIN = 0x341C0000,   LENGTH = 255K
+  RAM    (rw)     : ORIGIN = 0x341C0000,   LENGTH = 256K
   DTCM   (rw)     : ORIGIN = 0x30000000,   LENGTH = 128K
 }
 
